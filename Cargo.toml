@@ -1,0 +1,8 @@
+[package]
+name = "litua"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mlua = { version = "0.7", features = ["lua54", "vendored"] }
+anyhow = "1.0"

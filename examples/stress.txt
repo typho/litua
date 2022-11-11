@@ -1,0 +1,9 @@
+{CALL1 content}
+
+{CALL2{key=val}}
+
+{CALL3{key=val} content}
+
+{CALL4{key1=val1}{key2=val2}}
+
+{CALL5{key1=val1}{key2=val2} content}
