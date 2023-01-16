@@ -1,0 +1,65 @@
+= Enumeration example
+
+In this example, we want to discover that litua can be used for enumerations. Fundamentally, we can create a text file which contains the same _call_ several times:
+
+[source]
+----
+Hello World!
+
+This is an ordered list:
+
+{item} foo
+{item} bar
+{item} baz
+{item} caz
+{item} car
+----
+
+In this file we call _item_ exactly five times. Furthermore with Litua, you have the entire runtime of Lua available. So we can define an integer and successively increment it:
+
+[source,lua]
+----
+-- define a variable "enum" in the "Litua.global" table with value "0"
+Litua.global.enum = 0
+
+Litua.global.enum = Litua.global.enum + 1
+-- now "Litua.global.enum" has value "1"
+----
+
+The idea is that we can use variables across calls. So on the first time, _item_ will return 1, then 2, then 3, …. Now we will come up with a representation for an integer in the document:
+
+[source,lua]
+----
+-- tostring(…) converts the supplied argument to the datatype string
+-- the representation will wrap the decimal representation of the number with "(" and ")"
+print("(" .. tostring(Litua.global.enum) .. ")")
+----
+
+So finally, we can initialize enum with value 0 and increment it, before replacing the call with an integer representation.
+Let us consider the file ``hooks.node-to-string.lua``:
+
+[source]
+----
+Litua.global.enum = 0
+
+Litua.add_hook(Litua.Filter.by_call("item"), "node-to-string", function (node)
+  Litua.global.enum = Litua.global.enum + 1
+
+  return "(" .. tostring(Litua.global.enum) .. ") "
+end)
+----
+
+… and store the document above as ``doc.txt`` in the same directory. If we run ``litua doc.txt`` in this directory, we get …
+
+[source]
+----
+Hello World!
+
+This is an ordered list:
+
+(1) foo
+(2) bar
+(3) baz
+(4) caz
+(5) car
+----

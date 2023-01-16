@@ -4,7 +4,6 @@ use std::collections::HashMap;
 use std::iter;
 use std::ops;
 use std::ffi::OsString;
-use std::thread::current;
 
 use crate::tree;
 use crate::lexer;
@@ -13,7 +12,6 @@ pub struct Parser<'s> {
     filepath: OsString,
     source_code: &'s str,
     tree: tree::DocumentNode,
-    path: Vec<usize>,
 }
 
 impl<'s> Parser<'s> {
@@ -22,7 +20,6 @@ impl<'s> Parser<'s> {
             filepath: filepath.clone(),
             source_code,
             tree: tree::DocumentNode::new(),
-            path: Vec::new(),
         }
     }
 

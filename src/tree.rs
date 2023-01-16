@@ -2,10 +2,6 @@ use std::collections::HashMap;
 use std::ffi::OsString;
 use mlua;
 
-const KEY_CALL: &str = "=call";
-const KEY_ARGNAMES: &str = "=args";
-const KEY_CONTENT: &str = "=content";
-
 #[derive(Clone,Debug,PartialEq)]
 pub struct DocumentTree(pub DocumentElement);
 
@@ -57,29 +53,30 @@ impl DocumentFunction {
 
 impl<'lua> mlua::ToLua<'lua> for &DocumentFunction {
     fn to_lua(self, lua: &'lua mlua::Lua) -> mlua::Result<mlua::Value<'lua>> {
-        let tbl = lua.create_table()?;
-        tbl.set("=call", self.name.clone())?;
+        let node = lua.create_table()?;
 
-        let arg_names = lua.create_table()?;
-        for (i, (arg, _)) in self.args.iter().enumerate() {
-            arg_names.set(i + 1, (*arg).clone())?;
-        }
-        tbl.set(KEY_ARGNAMES, arg_names)?;
+        // define call
+        node.set("call", self.name.clone())?;
 
+        // define args
+        let args = lua.create_table()?;
         for (arg, elements) in self.args.iter() {
             let lua_value = lua.create_table()?;
             for (i, element) in elements.iter().enumerate() {
                 lua_value.set(i + 1, element)?;
             }
-            tbl.set((*arg).clone(), lua_value)?;
+            args.set(arg.as_str(), lua_value)?;
         }
+        node.set("args", args)?;
 
-        let lua_content = lua.create_table()?;
+        // define content
+        let content = lua.create_table()?;
         for (i, child) in self.content.iter().enumerate() {
-            lua_content.set(i + 1, child)?;
+            content.set(i + 1, child)?;
         }
-        tbl.set(KEY_CONTENT, lua_content)?;
-        Ok(mlua::Value::Table(tbl))
+        node.set("content", content)?;
+
+        Ok(mlua::Value::Table(node))
     }
 }
 
@@ -95,7 +92,7 @@ impl<'lua> mlua::ToLua<'lua> for &DocumentElement {
     fn to_lua(self, lua: &'lua mlua::Lua) -> mlua::Result<mlua::Value<'lua>> {
         match self {
             DocumentElement::Function(func) => func.to_lua(lua),
-            DocumentElement::Text(text) => Ok(text.clone().to_lua(lua)?),
+            DocumentElement::Text(text) => text.clone().to_lua(lua),
         }
     }
 }
