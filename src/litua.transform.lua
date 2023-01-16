@@ -237,8 +237,8 @@ Litua.transform = function (tree)
         end
     end
 
-    -- (1) take tree data and convert it into Node objects
     --[[
+    -- debug the tree generated
     local function dump_tree(t, depth)
         if depth == nil then depth = 0 end
         local indent = ("  "):rep(depth)
@@ -266,6 +266,7 @@ Litua.transform = function (tree)
     print(dump_tree(tree))
     ]]
 
+    -- (1) take tree data and convert it into Node objects
     local root = Litua.tree_to_nodes(tree)
 
     -- root has a special string representation
@@ -277,8 +278,7 @@ Litua.transform = function (tree)
         return out
     end
 
-    -- TODO call this function with pcall()
-    err = (function()
+    local function middle()
         -- (2) read-new-node hooks
         Litua.log("transform", "run read-new-node hooks")
         err = Litua.recurse_reading(root, 0, "read-new-node")
@@ -315,7 +315,8 @@ Litua.transform = function (tree)
                 return err
             end
         end
-    end)()
+    end
+    local middle_success, err = pcall(middle)
 
     -- (7) run teardown hooks
     hook = "teardown"
@@ -329,6 +330,9 @@ Litua.transform = function (tree)
                 ["source"] = Litua.hooks[hook][""][i].src,
             })
         end
+    end
+    if not middle_success then
+        return err
     end
     if err ~= nil then
         return err

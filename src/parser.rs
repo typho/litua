@@ -2,9 +2,7 @@
 
 use std::collections::HashMap;
 use std::iter;
-use std::ops;
 use std::path;
-use std::ffi::OsString;
 
 use crate::tree;
 use crate::lexer;
@@ -30,25 +28,6 @@ impl<'s> Parser<'s> {
             filepath: filepath.to_owned(),
             source_code,
             tree: tree::DocumentNode::new(),
-        }
-    }
-
-    fn get_start_pos_of_token(current_pos: usize, tok: lexer::Token) -> usize {
-        match tok {
-            lexer::Token::BeginFunction(pos) |
-            lexer::Token::BeginArgValue(pos) |
-            lexer::Token::EndArgValue(pos) |
-            lexer::Token::BeginContent(pos) |
-            lexer::Token::EndContent(pos) |
-            lexer::Token::EndFunction(pos) |
-            lexer::Token::Whitespace(pos, _) |
-            lexer::Token::EndOfFile(pos) => pos,
-            lexer::Token::Call(range) |
-            lexer::Token::ArgKey(range) |
-            lexer::Token::BeginRaw(range) |
-            lexer::Token::EndRaw(range) |
-            lexer::Token::Text(range) => range.start,
-            lexer::Token::BeginArgs | lexer::Token::EndArgs => current_pos,
         }
     }
 
@@ -559,22 +538,30 @@ impl<'s> Parser<'s> {
 
 
 
-
+/*
+/// This parser can be helpful if you want to debug
+/// the interface between lexer and parser.
 pub(crate) struct DebuggingParser<'s> {
-    filepath: OsString,
+    filepath: path::PathBuf,
     source_code: &'s str,
 }
 
 impl<'s> DebuggingParser<'s> {
+    pub fn new(filepath: &path::Path, source_code: &'s str) -> DebuggingParser<'s> {
+        Self {
+            filepath: filepath.to_owned(),
+            source_code
+        }
+    }
 
-    pub(crate) fn show_token(name: &str, indent: &mut i32, indent_change: i32) {
+    fn show_token(name: &str, indent: &mut i32, indent_change: i32) {
         if indent_change < 0 { (*indent) += indent_change; }
         print!("{}", "  ".repeat(*indent as usize));
         println!("{name}");
         if indent_change >= 0 { (*indent) += indent_change; }
     }
 
-    pub(crate) fn show_pos(name: &str, pos: usize, indent: &mut i32, indent_change: i32, src: &str) {
+    fn show_pos(name: &str, pos: usize, indent: &mut i32, indent_change: i32, src: &str) {
         if indent_change < 0 { (*indent) += indent_change; }
         print!("{}", "  ".repeat(*indent as usize));
         let content: char = match &src[pos..].chars().next() {
@@ -585,7 +572,7 @@ impl<'s> DebuggingParser<'s> {
         if indent_change >= 0 { (*indent) += indent_change; }
     }
 
-    pub(crate) fn show_range(name: &str, range: ops::Range<usize>, indent: &mut i32, indent_change: i32, src: &str) {
+    fn show_range(name: &str, range: ops::Range<usize>, indent: &mut i32, indent_change: i32, src: &str) {
         if indent_change < 0 { (*indent) += indent_change; }
         print!("{}", "  ".repeat(*indent as usize));
         let content: &str = &src[range];
@@ -593,7 +580,7 @@ impl<'s> DebuggingParser<'s> {
         if indent_change >= 0 { (*indent) += indent_change; }
     }
 
-    pub(crate) fn consume_iter(&self, iter: lexer::LexingIterator) {
+    pub fn consume_iter(&self, iter: lexer::LexingIterator) -> anyhow::Result<()> {
         let mut indent = 0;
         for tok_or_err in iter {
             match tok_or_err {
@@ -619,5 +606,18 @@ impl<'s> DebuggingParser<'s> {
                 Err(e) => { eprintln!("{e:?}"); break },
             }
         }
+
+        Ok(())
+    }
+
+    /// Declares the end of the text document. Dummy function, in case of `DebuggingParser`.
+    pub fn finalize(&mut self) -> anyhow::Result<()> {
+        Ok(())
+    }
+
+    /// Returns the Abstract Syntax Tree to be processed further.  Dummy function, in case of `DebuggingParser`.
+    pub fn tree(self) -> tree::DocumentTree {
+        tree::DocumentTree::new()
     }
 }
+*/
