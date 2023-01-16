@@ -9,6 +9,8 @@ const CLOSE_FUNCTION: char = '}'; // U+007D  RIGHT CURLY BRACKET
 const OPEN_ARG: char = '['; // U+005B  LEFT SQUARE BRACKET
 const CLOSE_ARG: char = ']'; // U+005D  RIGHT SQUARE BRACKET
 const ASSIGN: char = '='; // U+003D  EQUALS SIGN
+const OPEN_RAW: char = '<'; // U+003C  LESS-THAN SIGN
+const CLOSE_RAW: char = '>'; // U+003E  GREATER-THAN SIGN
 
 #[derive(Clone,Debug,PartialEq)]
 pub struct Lexer<'l> {
@@ -41,6 +43,9 @@ pub(crate) enum LexingState {
     ReadingArgumentValue,
     ReadingArgumentValueText,
     FoundCallOpening,
+    StartRaw,
+    ReadingRaw,
+    EndRaw,
     ReadingCallName,
     FoundArgumentOpening,
     FoundArgumentClosing,
@@ -55,6 +60,9 @@ impl fmt::Display for LexingState {
             LexingState::ReadingArgumentValue => write!(f, "reading an argument value"),
             LexingState::ReadingArgumentValueText => write!(f, "reading text inside an argument value"),
             LexingState::FoundCallOpening => write!(f, "reading the start of a function call"),
+            LexingState::StartRaw => write!(f, "starting a raw text"),
+            LexingState::ReadingRaw => write!(f, "reading raw text"),
+            LexingState::EndRaw => write!(f, "terminating raw text"),
             LexingState::ReadingCallName => write!(f, "reading the name of a function call"),
             LexingState::FoundArgumentOpening => write!(f, "reading a function argument"),
             LexingState::FoundArgumentClosing => write!(f, "finishing one function argument"),
@@ -69,6 +77,13 @@ pub struct LexingIterator<'l> {
     state: LexingState,
     /// byte offset where the current token started
     token_start: usize,
+    /// raw-text ends with a repetition of “>” where the number matches
+    /// the number of “<” of the beginning. Thus we store the number of
+    /// characters here.
+    raw_delimiter_length: u8,
+    /// While parsing we discover a certain length and we will compare it
+    /// with “raw_delimiter_length”
+    raw_current_length: u8,
     /// iterator over (UTF-8 byte offset, Unicode scalar)
     chars: str::CharIndices<'l>,
     /// `stack` stores the hierarchical level, we are in.
@@ -92,6 +107,8 @@ impl<'l> LexingIterator<'l> {
         LexingIterator {
             state: LexingState::ReadingContent,
             token_start: 0,
+            raw_delimiter_length: 0,
+            raw_current_length: 0,
             chars: src.char_indices(),
             stack: Vec::new(),
             next_tokens: VecDeque::new(),
@@ -166,11 +183,11 @@ impl<'l> LexingIterator<'l> {
             },
         };
 
+        // dbg!(&self.state);
         match self.state {
             ReadingContent => {
                 match chr {
                     OPEN_FUNCTION => {
-                        self.next_tokens.push_back(Token::BeginFunction(byte_offset));
                         self.push_scope(LexingScope::FunctionInContent, byte_offset);
                         self.state = FoundCallOpening;
                     },
@@ -188,7 +205,6 @@ impl<'l> LexingIterator<'l> {
                 match chr {
                     OPEN_FUNCTION => {
                         self.next_tokens.push_back(Token::Text(self.token_start..byte_offset));
-                        self.next_tokens.push_back(Token::BeginFunction(byte_offset));
                         self.push_scope(LexingScope::FunctionInContent, byte_offset);
                         self.state = FoundCallOpening;
                     },
@@ -211,7 +227,6 @@ impl<'l> LexingIterator<'l> {
 
                 match chr {
                     OPEN_FUNCTION => {
-                        self.next_tokens.push_back(Token::BeginFunction(byte_offset));
                         self.push_scope(LexingScope::FunctionInArgumentValue, byte_offset);
                         self.state = FoundCallOpening;
                     },
@@ -229,7 +244,6 @@ impl<'l> LexingIterator<'l> {
                 match chr {
                     OPEN_FUNCTION => {
                         self.next_tokens.push_back(Token::Text(self.token_start..byte_offset));
-                        self.next_tokens.push_back(Token::BeginFunction(byte_offset));
                         self.push_scope(LexingScope::FunctionInArgumentValue, byte_offset);
                         self.state = FoundCallOpening;
                     },
@@ -244,12 +258,66 @@ impl<'l> LexingIterator<'l> {
             FoundCallOpening => {
                 match chr {
                     CLOSE_FUNCTION => {
+                        self.next_tokens.push_back(Token::BeginFunction(byte_offset));
                         self.state = Terminated;
-                        self.occured_error = Some(anyhow::anyhow!("the call '{}' was immediately close by '{}' - empty calls are not allowed", OPEN_FUNCTION, CLOSE_FUNCTION));
+                        self.occured_error = Some(anyhow::anyhow!("the call '{}' was immediately closed by '{}' - empty calls are not allowed", OPEN_FUNCTION, CLOSE_FUNCTION));
+                    },
+                    OPEN_RAW => {
+                        self.state = StartRaw;
+                        self.token_start = byte_offset;
+                        self.raw_delimiter_length = 1;
                     },
                     _ => {
+                        self.next_tokens.push_back(Token::BeginFunction(byte_offset));
                         self.state = ReadingCallName;
                         self.token_start = byte_offset;
+                    }
+                }
+            },
+            StartRaw => {
+                match chr {
+                    OPEN_RAW => {
+                        self.raw_delimiter_length += 1;
+                        if self.raw_delimiter_length == 127 {
+                            self.state = Terminated;
+                            self.occured_error = Some(anyhow::anyhow!("raw string delimiter must not exceed length 128"));
+                        }
+                    },
+                    c if c.is_whitespace() => {
+                        self.state = ReadingRaw;
+                        self.token_start = usize::MAX;
+                        self.raw_current_length = 0;
+                    },
+                    c => {
+                        self.state = Terminated;
+                        self.occured_error = Some(anyhow::anyhow!("unexpected character '{}' while reading raw string start", c));
+                    }
+                }
+            },
+            ReadingRaw => {
+                match chr {
+                    CLOSE_RAW => {
+                        self.raw_current_length += 1;
+                        if self.raw_current_length == self.raw_delimiter_length {
+                            self.state = EndRaw;
+                        }
+                    },
+                    _ => {
+                        if self.token_start == usize::MAX {
+                            self.token_start = byte_offset;
+                        }
+                        self.raw_current_length = 0;
+                    }
+                }
+            },
+            EndRaw => {
+                match chr {
+                    CLOSE_FUNCTION => {
+                        self.next_tokens.push_back(Token::Raw(self.token_start..byte_offset));
+                        self.pop_scope(byte_offset);
+                    },
+                    _ => {
+                        self.state = ReadingRaw;
                     }
                 }
             },
@@ -262,6 +330,7 @@ impl<'l> LexingIterator<'l> {
                     },
                     c if c.is_whitespace() => {
                         self.next_tokens.push_back(Token::Call(self.token_start..byte_offset));
+                        self.next_tokens.push_back(Token::Whitespace(byte_offset, c));
                         self.next_tokens.push_back(Token::BeginContent(byte_offset));
                         self.push_scope(LexingScope::ContentInFunction, byte_offset);
                         self.state = ReadingContent;
@@ -301,11 +370,16 @@ impl<'l> LexingIterator<'l> {
                         self.pop_scope(byte_offset);
                         self.next_tokens.push_back(Token::EndFunction(byte_offset));
                     },
-                    _ => {
+                    c if c.is_whitespace() => {
                         self.next_tokens.push_back(Token::EndArgs);
+                        self.next_tokens.push_back(Token::Whitespace(byte_offset, c));
                         self.next_tokens.push_back(Token::BeginContent(byte_offset));
                         self.push_scope(LexingScope::ContentInFunction, byte_offset);
                         self.state = ReadingContent;
+                    },
+                    _ => {
+                        self.state = Terminated;
+                        self.occured_error = Some(anyhow::anyhow!("after ending arguments with '{}', I require a whitespace character to continue with content", CLOSE_ARG));
                     }
                 }
             },
@@ -324,6 +398,7 @@ impl<'l> LexingIterator<'l> {
 pub enum Token {
     BeginFunction(usize),
     Call(ops::Range<usize>),
+    Whitespace(usize, char),
     BeginArgs,
     ArgKey(ops::Range<usize>),
     BeginArgValue(usize),
@@ -332,6 +407,7 @@ pub enum Token {
     BeginContent(usize),
     EndContent(usize),
     EndFunction(usize),
+    Raw(ops::Range<usize>),
     Text(ops::Range<usize>),
     EOF(usize),
 }

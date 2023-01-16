@@ -32,9 +32,11 @@ impl<'s> Parser<'s> {
             lexer::Token::BeginContent(pos) |
             lexer::Token::EndContent(pos) |
             lexer::Token::EndFunction(pos) |
+            lexer::Token::Whitespace(pos, _) |
             lexer::Token::EOF(pos) => pos,
             lexer::Token::Call(range) |
             lexer::Token::ArgKey(range) |
+            lexer::Token::Raw(range) |
             lexer::Token::Text(range) => range.start,
             lexer::Token::BeginArgs | lexer::Token::EndArgs => current_pos,
         }
@@ -73,6 +75,7 @@ impl<'s> Parser<'s> {
             // admissible tokens
             enum NextToken {
                 BeginFunction,
+                Raw,
                 Text,
                 EndContent,
                 Unexpected,
@@ -84,6 +87,7 @@ impl<'s> Parser<'s> {
                 Some(token_or_err) => {
                     next_token = match token_or_err {
                         Ok(lexer::Token::BeginFunction(_)) => NextToken::BeginFunction,
+                        Ok(lexer::Token::Raw(_)) => NextToken::Raw,
                         Ok(lexer::Token::Text(_)) => NextToken::Text,
                         Ok(lexer::Token::EndContent(_)) => NextToken::EndContent,
                         _ => NextToken::Unexpected,
@@ -99,9 +103,15 @@ impl<'s> Parser<'s> {
                     let func = self.parse_function(iter)?;
                     content.push(func);
                 },
+                NextToken::Raw => {
+                    if let Some(Ok(lexer::Token::Raw(range))) = iter.next() {
+                        let text = &self.source_code[range];
+                        content.push(tree::DocumentElement::Text(text.to_owned()));
+                    }
+                },
                 NextToken::Text => {
-                    // (5)   if Text
-                    // (6)     add text
+                    // (7)   if Text
+                    // (8)     add text
                     if let Some(Ok(lexer::Token::Text(range))) = iter.next() {
                         let text = &self.source_code[range];
                         content.push(tree::DocumentElement::Text(text.to_owned()));
@@ -159,6 +169,7 @@ impl<'s> Parser<'s> {
             // admissible tokens
             enum NextToken {
                 BeginFunction,
+                Raw,
                 Text,
                 EndArgValue,
                 Unexpected,
@@ -170,6 +181,7 @@ impl<'s> Parser<'s> {
                 Some(token_or_err) => {
                     next_token = match token_or_err {
                         Ok(lexer::Token::BeginFunction(_)) => NextToken::BeginFunction,
+                        Ok(lexer::Token::Raw(_)) => NextToken::Raw,
                         Ok(lexer::Token::Text(_)) => NextToken::Text,
                         Ok(lexer::Token::EndArgValue(_)) => NextToken::EndArgValue,
                         _ => NextToken::Unexpected,
@@ -185,9 +197,15 @@ impl<'s> Parser<'s> {
                     let func = self.parse_function(iter)?;
                     arg_value.push(func);
                 },
+                NextToken::Raw => {
+                    if let Some(Ok(lexer::Token::Raw(range))) = iter.next() {
+                        let content = &self.source_code[range];
+                        arg_value.push(tree::DocumentElement::Text(content.to_owned()));
+                    }
+                },
                 NextToken::Text => {
-                    // (5)   if Text
-                    // (6)     add text
+                    // (7)   if Text
+                    // (8)     add text
                     if let Some(Ok(lexer::Token::Text(range))) = iter.next() {
                         let content = &self.source_code[range];
                         arg_value.push(tree::DocumentElement::Text(content.to_owned()));
@@ -257,9 +275,26 @@ impl<'s> Parser<'s> {
             None => return Self::unexpected_eof(),
         }
 
-        // (03) if BeginArgs
+        // (03) optionally consume Whitespace
+        if let Some(Ok(lexer::Token::Whitespace(_, _))) = iter.peek() {
+            match iter.next() {
+                Some(tok_or_err) => {
+                    let token = tok_or_err?;
+                    match token {
+                        lexer::Token::Whitespace(_, whitespace) => {
+                            func.args.insert("=whitespace".to_owned(), vec![tree::DocumentElement::Text(format!("{}", whitespace))]);
+                        },
+                        lexer::Token::EOF(_) => return Self::unexpected_eof(),
+                        _ => return Self::unexpected_token(&token),
+                    }
+                },
+                None => return Self::unexpected_eof(),
+            }
+        }
+
+        // (04) if BeginArgs
         if let Some(Ok(lexer::Token::BeginArgs)) = iter.peek() {
-            // (04)   consume BeginArgs
+            // (05)   consume BeginArgs
             match iter.next() {
                 Some(tok_or_err) => {
                     let token = tok_or_err?;
@@ -274,7 +309,7 @@ impl<'s> Parser<'s> {
                 None => return Self::unexpected_eof(),
             }
 
-            // (05)   loop if ArgKey
+            // (06)   loop if ArgKey
             loop {
                 if let Some(Ok(lexer::Token::ArgKey(_))) = iter.peek() {
                     // NOTE: ok, we consume an argument key-value pair
@@ -282,7 +317,7 @@ impl<'s> Parser<'s> {
                     break;
                 }
 
-                // (06)     consume ArgKey
+                // (07)     consume ArgKey
                 let arg_name = match iter.next() {
                     Some(token_or_err) => {
                         let token = token_or_err?;
@@ -301,12 +336,12 @@ impl<'s> Parser<'s> {
                     None => return Self::unexpected_eof(),
                 };
 
-                // (07)     parse_argument_value
+                // (08)     parse_argument_value
                 let arg_value = self.parse_argument_value(iter)?;
                 func.args.insert(arg_name, arg_value);
             }
 
-            // (08)   consume EndArgs
+            // (09)   consume EndArgs
             match iter.next() {
                 Some(tok_or_err) => {
                     let token = tok_or_err?;
@@ -320,20 +355,37 @@ impl<'s> Parser<'s> {
                 },
                 None => return Self::unexpected_eof(),
             }
+
+            // (10)   optionally consume Whitespace
+            if let Some(Ok(lexer::Token::Whitespace(_, _))) = iter.peek() {
+                match iter.next() {
+                    Some(tok_or_err) => {
+                        let token = tok_or_err?;
+                        match token {
+                            lexer::Token::Whitespace(_, whitespace) => {
+                                func.args.insert("=whitespace".to_owned(), vec![tree::DocumentElement::Text(format!("{}", whitespace))]);
+                            },
+                            lexer::Token::EOF(_) => return Self::unexpected_eof(),
+                            _ => return Self::unexpected_token(&token),
+                        }
+                    },
+                    None => return Self::unexpected_eof(),
+                }
+            }
         }
 
-        // (09) if BeginContent
+        // (11) if BeginContent
         let mut found_content = false;
         if let Some(Ok(lexer::Token::BeginContent(_))) = iter.peek() {
             found_content = true;
         }
 
         if found_content {
-            // (10)   parse_content
+            // (12)   parse_content
             func.content = self.parse_content(iter)?;
         }
 
-        // (11) consume EndFunction
+        // (13) consume EndFunction
         match iter.next() {
             Some(tok_or_err) => {
                 let token = tok_or_err?;
@@ -357,6 +409,7 @@ impl<'s> Parser<'s> {
         // admissible tokens
         enum NextToken {
             BeginFunction,
+            Raw,
             Text,
             EOF,
             Unexpected,
@@ -369,6 +422,7 @@ impl<'s> Parser<'s> {
                 Some(token_or_err) => {
                     next_token = match token_or_err {
                         Ok(lexer::Token::BeginFunction(_)) => NextToken::BeginFunction,
+                        Ok(lexer::Token::Raw(_)) => NextToken::Raw,
                         Ok(lexer::Token::Text(_)) => NextToken::Text,
                         Ok(lexer::Token::EOF(_)) => NextToken::EOF,
                         _ => NextToken::Unexpected,
@@ -381,6 +435,12 @@ impl<'s> Parser<'s> {
                 NextToken::BeginFunction => {
                     let func = self.parse_function(&mut peekable_iter)?;
                     self.tree.push(func);
+                },
+                NextToken::Raw => {
+                    if let Some(Ok(lexer::Token::Raw(range))) = peekable_iter.next() {
+                        let text = &self.source_code[range];
+                        self.tree.push(tree::DocumentElement::Text(text.to_owned()));
+                    }
                 },
                 NextToken::Text => {
                     if let Some(Ok(lexer::Token::Text(range))) = peekable_iter.next() {
@@ -477,6 +537,8 @@ impl<'s> DebuggingParser<'s> {
                         lexer::Token::BeginContent(pos) => Self::show_pos("BeginContent", pos, &mut indent, 1, self.source_code),
                         lexer::Token::EndContent(pos) => Self::show_pos("EndContent", pos, &mut indent, -1, self.source_code),
                         lexer::Token::EndFunction(pos) => Self::show_pos("EndFunction", pos, &mut indent, -1, self.source_code),
+                        lexer::Token::Raw(range) => Self::show_range("Raw", range, &mut indent, 0, self.source_code),
+                        lexer::Token::Whitespace(pos, ws) => Self::show_pos(&format!("Whitespace({})", ws), pos, &mut indent, 0, self.source_code),
                         lexer::Token::Text(range) => Self::show_range("Text", range, &mut indent, 0, self.source_code),
                         lexer::Token::EOF(_) => Self::show_token("EOF", &mut indent, 0),
                     }

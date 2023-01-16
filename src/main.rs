@@ -13,13 +13,13 @@ use std::io::prelude::*;
 use std::path;
 use std::str;
 
-fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(dst: A, doc: &tree::DocumentTree, hooks_dir: B, luapath_additions: C) -> anyhow::Result<()> {
+fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(conf: &Settings, dst: A, doc: &tree::DocumentTree, hooks_dir: B, luapath_additions: C) -> anyhow::Result<()> {
     let lua = Lua::new();
 
     let addition_str = path::PathBuf::from(luapath_additions.as_ref());
-    //: Result<&str, anyhow::Error> = luapath_additions.try_into();
     match addition_str.to_str() {
-        Some(s) => lua.load(&format!("package.path = package.path .. ';{}'", s)).exec()?,
+        Some(s) if !s.is_empty() => lua.load(&format!("package.path = package.path .. ';{}'", s)).exec()?,
+        Some(_) => {},
         None => return Err(anyhow::anyhow!("cannot convert the luapath extension path (supplied as --add-require-path) to a UTF-8 string. But this is sadly required by the mlua interface (the library to run Lua)")),
     };
 
@@ -83,7 +83,7 @@ fn derive_destination_filepath(p: &path::Path) -> path::PathBuf {
     }
 }
 
-fn lex_and_parse(src: &path::Path) -> anyhow::Result<tree::DocumentTree> {
+fn lex_and_parse(conf: &Settings, src: &path::Path) -> anyhow::Result<tree::DocumentTree> {
     let mut fd = fs::File::open(src.clone())?;
     let mut buf = Vec::new();
     fd.read_to_end(&mut buf)?;
@@ -91,11 +91,26 @@ fn lex_and_parse(src: &path::Path) -> anyhow::Result<tree::DocumentTree> {
     let source_code = str::from_utf8(&buf)?;
     let l = lexer::Lexer::new(source_code);
 
-    let mut p = parser::Parser::new(src, source_code);
-    p.consume_iter(l.iter())?;
-    p.finalize()?;
+    if conf.dump_lexed {
+        for tok_or_err in l.iter() {
+            let token = tok_or_err?;
+            println!("Token= {:?}", token);
+        }
+    } else if conf.dump_parsed {
+        let mut p = parser::Parser::new(src, source_code);
+        p.consume_iter(l.iter())?;
+        p.finalize()?;
 
-    Ok(p.tree())
+        println!("{:?}", p.tree());
+    } else {
+        let mut p = parser::Parser::new(src, source_code);
+        p.consume_iter(l.iter())?;
+        p.finalize()?;
+
+        return Ok(p.tree());
+    }
+
+    Ok(tree::DocumentTree::new())
 }
 
 #[derive(Parser, Debug)]
@@ -129,29 +144,30 @@ struct Settings {
 
 
 fn main() -> anyhow::Result<()> {
-    let set = Settings::parse();
+    let conf = Settings::parse();
 
-    let src = set.source;
-    let dst = match set.destination {
-        Some(p) => p,
-        None => derive_destination_filepath(src.as_ref()),
+    let src = conf.source.as_path();
+    let derived_dst = derive_destination_filepath(src.as_ref());
+    let dst = match &conf.destination {
+        Some(p) => p.as_path(),
+        None => derived_dst.as_path(),
     };
 
-    if set.dump_lexed {
-        // TODO
-    } else if set.dump_parsed {
-        // TODO
-    } else if set.dump_calls {
-        println!("{:?}", set.hooks_dir);
-        println!("{:?}", set.add_require_path);
-        // TODO
-    } else {
-        let hooks_dir = set.hooks_dir.unwrap_or(path::PathBuf::from("."));
-        let lua_path_additions = set.add_require_path.unwrap_or(path::PathBuf::from(""));
+    let default_hooks_dir = path::PathBuf::from(".");
+    let default_lua_path_additions = path::PathBuf::from("");
 
-        let doctree = lex_and_parse(&src)?;
-        run_lua(&dst, &doctree, hooks_dir, lua_path_additions)?;
+    let hooks_dir = match &conf.hooks_dir {
+        Some(d) => d.as_path(),
+        None => &default_hooks_dir,
+    };
+    let lua_path_additions = match &conf.add_require_path {
+        Some(d) => d.as_path(),
+        None => &default_lua_path_additions,
+    };
 
+    let doctree = lex_and_parse(&conf, &src)?;
+    if !conf.dump_lexed && !conf.dump_parsed {
+        run_lua(&conf, &dst, &doctree, hooks_dir, &lua_path_additions)?;
         println!("File '{}' read. File '{}' written.", src.display(), dst.display());
     }
 
