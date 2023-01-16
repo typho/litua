@@ -73,6 +73,12 @@ end)
 ----
 
 Be aware that the document always lives within one invisible top-level node called ``document``.
+I highly recommend to go through the examples in this order to get an idea how to use the hooks:
+
+1. link:examples/enumeration[enumeration] – replace a call with an incrementing counter
+2. link:examples/replacements[replacements] – first define substitution pairs and then apply them
+3. link:examples/literate-programming[literate-programming] – define documentation and code block and write them to different files
+4. link:examples/markup[markup] – serialize the tree to HTML5
 
 Why should I use it?
 --------------------
@@ -82,6 +88,7 @@ Because you want to handle/modify/use the tree structure of a text document with
 How to install
 --------------
 
+This is a single static executable. It only depends on basic system libraries like pthread, math and libc. I expect it to work out-of-the-box on your operating system.
 
 How to run
 ----------
@@ -91,6 +98,11 @@ Call the litua executable with ``-h`` to get information about additional argume
 ----
 litua -h
 ----
+
+Litua input specification
+-------------------------
+
+TODO
 
 Source Code
 -----------
