@@ -8,7 +8,7 @@ Litua.tree_to_nodes = function (tree)
 
     for argkey, argvalues in pairs(tree.args) do
         local new_arg = {}
-        for _, argvalue in pairs(argvalues) do
+        for _, argvalue in ipairs(argvalues) do
             if type(argvalue) == "table" then
                 table.insert(new_arg, Litua.tree_to_nodes(argvalue))
             else
@@ -18,7 +18,7 @@ Litua.tree_to_nodes = function (tree)
         new_args[argkey] = new_arg
     end
 
-    for _, value in pairs(tree.content) do
+    for _, value in ipairs(tree.content) do
         if type(value) == "table" then
             table.insert(new_content, Litua.tree_to_nodes(value))
         else
@@ -34,9 +34,9 @@ Litua.recurse_reading = function (node, depth, hook_name)
     local err
 
     local calls = { node.call, "" }
-    for _, call in pairs(calls) do
+    for _, call in ipairs(calls) do
         if Litua.hooks[hook_name][call] ~= nil then
-            for i, hook in pairs(Litua.hooks[hook_name][call]) do
+            for i, hook in ipairs(Litua.hooks[hook_name][call]) do
                 err = hook.impl(node:copy(), depth)
                 if err ~= nil then
                     Litua.error(tostring(hook_name) .. " hook #" .. tostring(i) .. " returned non-nil value", {
@@ -51,8 +51,8 @@ Litua.recurse_reading = function (node, depth, hook_name)
         end
     end
 
-    for argkey, argvalues in pairs(node.args) do
-        for i, argvalue in pairs(argvalues) do
+    for _, argvalues in ipairs(node.args) do
+        for _, argvalue in ipairs(argvalues) do
             if argvalue.is_node then
                 err = Litua.recurse_reading(argvalue, depth + 1, hook_name)
                 if err ~= nil then
@@ -62,7 +62,7 @@ Litua.recurse_reading = function (node, depth, hook_name)
         end
     end
 
-    for _, value in pairs(node.content) do
+    for _, value in ipairs(node.content) do
         if value.is_node then
             err = Litua.recurse_reading(value, depth + 1, hook_name)
             if err ~= nil then
@@ -76,9 +76,9 @@ Litua.recurse_modify_node = function (node, depth, hook_name)
     local err
 
     local calls = { node.call, "" }
-    for _, call in pairs(calls) do
+    for _, call in ipairs(calls) do
         if Litua.hooks[hook_name][call] ~= nil then
-            for i, hook in pairs(Litua.hooks[hook_name][call]) do
+            for i, hook in ipairs(Litua.hooks[hook_name][call]) do
                 node, err = hook.impl(node, depth, call)
                 if err ~= nil then
                     Litua.error(tostring(hook_name) .. " hook #" .. tostring(i) .. " returned non-nil value", {
@@ -94,7 +94,7 @@ Litua.recurse_modify_node = function (node, depth, hook_name)
     end
 
     for argkey, argvalues in pairs(node.args) do
-        for i, argvalue in pairs(argvalues) do
+        for i, argvalue in ipairs(argvalues) do
             if argvalue.is_node then
                 node.args[argkey][i], err = Litua.recurse_modify_node(argvalue, depth + 1, hook_name)
                 if err ~= nil then
@@ -104,7 +104,7 @@ Litua.recurse_modify_node = function (node, depth, hook_name)
         end
     end
 
-    for i, value in pairs(node.content) do
+    for i, value in ipairs(node.content) do
         if value.is_node then
             node.content[i], err = Litua.recurse_modify_node(value, depth + 1, hook_name)
             if err ~= nil then
@@ -122,7 +122,7 @@ Litua.recurse_node_to_string = function (node, depth, hook_name)
 
     local apply_hook = function (n)
         local calls = { node.call, "" }
-        for _, call in pairs(calls) do
+        for _, call in ipairs(calls) do
             if Litua.hooks[hook_name][call] ~= nil and Litua.hooks[hook_name][call][1] ~= nil then
                 local hook = Litua.hooks[hook_name][call][1]
 
@@ -156,7 +156,7 @@ Litua.recurse_node_to_string = function (node, depth, hook_name)
 
     -- ASSUMPTION: type(node.call) == "string"
     local args_as_strings = {}
-    for k, arg in pairs(node.args) do
+    for k, arg in ipairs(node.args) do
         if arg.is_node then
             args_as_strings[k] = apply_hook(arg)
         else
@@ -168,12 +168,12 @@ Litua.recurse_node_to_string = function (node, depth, hook_name)
     local content_as_strings = {}
     for i = 1,#node.content do
         if node.content[i].is_node then
-            args_as_strings[i] = apply_hook(node.content[i])
+            content_as_strings[i] = apply_hook(node.content[i])
         else
-            args_as_strings[i] = tostring(node.content[i])
+            content_as_strings[i] = tostring(node.content[i])
         end
     end
-    node.content = args_as_strings
+    node.content = content_as_strings
 
     return tostring(node), nil
 end
@@ -184,7 +184,7 @@ Litua.transform = function (tree)
     -- (0) run setup hooks
     local hook = "setup"
     for i=1,#Litua.hooks[hook][""] do
-        print("INFO: ran " .. Litua.hooks[hook][""][i].src)
+        Litua.log("transform", "ran " .. Litua.hooks[hook][""][i].src)
         err = Litua.hooks[hook][""][i].impl()
         if err ~= nil then
             Litua.error(tostring(hook) .. " hook returned non-nil value", {
@@ -202,18 +202,18 @@ Litua.transform = function (tree)
         local indent = ("  "):rep(depth)
 
         local args = ""
-        for arg, value in pairs(t.args) do
+        for arg, value in ipairs(t.args) do
             args = args .. "  :" .. arg .. " !" .. type(arg)
         end
 
         local out = indent .. "{" .. t.call .. "}" .. args .. " ["
-        for i, c in pairs(t.content) do
+        for i, c in ipairs(t.content) do
             out = out .. type(c) .. " | "
         end
         out = out:sub(1, #out - 3) .. "]\n"
 
         local children_out = ""
-        for _, c in pairs(t.content) do
+        for _, c in ipairs(t.content) do
             if type(c) == "table" then
                 children_out = children_out .. dump_tree(c, depth + 1)
             end
@@ -268,7 +268,7 @@ Litua.transform = function (tree)
     -- TODO: this hook must run even if previous hooks failed
     hook = "teardown"
     for i=1,#Litua.hooks[hook][""] do
-        print("INFO: ran " .. Litua.hooks[hook][""][i].src)
+        Litua.log("transform", "ran " .. Litua.hooks[hook][""][i].src)
         err = Litua.hooks[hook][""][i].impl()
         if err ~= nil then
             Litua.error(tostring(hook) .. " hook returned non-nil value", {

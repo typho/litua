@@ -76,13 +76,16 @@ pub struct LexingIterator<'l> {
     state: LexingState,
     /// byte offset where the current token started
     token_start: usize,
+    /// byte offset where the second-to-most-current token started.
+    /// NOTE: in the case of raw strings, a single `token_start` does not suffice
+    token_start_prev: usize,
     /// raw-text ends with a repetition of “>” where the number matches
     /// the number of “<” of the beginning. Thus we store the number of
     /// characters here.
     raw_delimiter_length: u8,
     /// While parsing we discover a certain length and we will compare it
     /// with “raw_delimiter_length”
-    raw_current_length: u8,
+    raw_delimiter_read: u8,
     /// iterator over (UTF-8 byte offset, Unicode scalar)
     chars: str::CharIndices<'l>,
     /// `stack` stores the hierarchical level, we are in.
@@ -106,8 +109,9 @@ impl<'l> LexingIterator<'l> {
         LexingIterator {
             state: LexingState::ReadingContent,
             token_start: 0,
+            token_start_prev: 0,
             raw_delimiter_length: 0,
-            raw_current_length: 0,
+            raw_delimiter_read: 0,
             chars: src.char_indices(),
             stack: Vec::new(),
             next_tokens: VecDeque::new(),
@@ -281,8 +285,10 @@ impl<'l> LexingIterator<'l> {
                     },
                     c if c.is_whitespace() => {
                         self.state = ReadingRaw;
-                        self.token_start = usize::MAX;
-                        self.raw_current_length = 0;
+                        self.raw_delimiter_read = 0;
+                        self.next_tokens.push_back(Token::BeginRaw(self.token_start..byte_offset));
+                        self.next_tokens.push_back(Token::Whitespace(byte_offset, c));
+                        self.token_start_prev = usize::MAX;
                     },
                     c => {
                         self.state = Terminated;
@@ -293,27 +299,32 @@ impl<'l> LexingIterator<'l> {
             ReadingRaw => {
                 match chr {
                     CLOSE_RAW => {
-                        self.raw_current_length += 1;
-                        if self.raw_current_length == self.raw_delimiter_length {
+                        self.raw_delimiter_read += 1;
+                        if self.raw_delimiter_read == 1 {
+                            self.token_start = byte_offset;
+                        }
+                        if self.raw_delimiter_read == self.raw_delimiter_length {
                             self.state = EndRaw;
                         }
                     },
                     _ => {
-                        if self.token_start == usize::MAX {
-                            self.token_start = byte_offset;
+                        if self.token_start_prev == usize::MAX {
+                            self.token_start_prev = byte_offset;
                         }
-                        self.raw_current_length = 0;
                     }
                 }
             },
             EndRaw => {
                 match chr {
                     CLOSE_FUNCTION => {
-                        self.next_tokens.push_back(Token::Raw(self.token_start..byte_offset));
+                        self.next_tokens.push_back(Token::Text(self.token_start_prev..self.token_start));
+                        self.next_tokens.push_back(Token::EndRaw(self.token_start..byte_offset));
                         self.pop_scope(byte_offset);
                     },
                     _ => {
                         self.state = ReadingRaw;
+                        self.raw_delimiter_read = 0;
+                        self.token_start_prev = byte_offset;
                     }
                 }
             },
@@ -403,7 +414,8 @@ pub enum Token {
     BeginContent(usize),
     EndContent(usize),
     EndFunction(usize),
-    Raw(ops::Range<usize>),
+    BeginRaw(ops::Range<usize>),
+    EndRaw(ops::Range<usize>),
     Text(ops::Range<usize>),
     EOF(usize),
 }

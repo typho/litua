@@ -117,7 +117,7 @@ fn lex_and_parse(conf: &Settings, src: &path::Path) -> anyhow::Result<tree::Docu
 
 #[derive(Parser, Debug)]
 #[command(name = "litua")]
-#[command(author = "meisterluk <kbknapp@gmail.com>")]
+#[command(author = "meisterluk <admin@lukas-prokop.at>")]
 #[command(version = "0.5")]
 #[command(about = "Read document as tree and apply Lua functions to nodes")]
 #[command(author, version, about, long_about = None)]

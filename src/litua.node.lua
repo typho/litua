@@ -4,13 +4,17 @@ local identity_string = function (node)
     local args_string = ""
     local content_string = ""
 
+    local whitespace = " "
     for argkey, argvalues in pairs(node.args) do
         if argkey:match("=") == nil then
             args_string = args_string .. "[" .. argkey .. "="
-            for _, argvalue in pairs(argvalues) do
+            for _, argvalue in ipairs(argvalues) do
                 args_string = args_string .. tostring(argvalue)
             end
             args_string = args_string .. "]"
+        end
+        if argkey == "=whitespace" then
+            whitespace = tostring(argvalues[1])
         end
     end
 
@@ -20,10 +24,13 @@ local identity_string = function (node)
         end
     end
 
-    if args_string == "" and content_string == "" then
+    if node.call:match("<+") ~= nil then
+        local length = #node.call
+        return "{" .. node.call .. whitespace .. node.content[1] .. (">"):rep(length) .. "}"
+    elseif args_string == "" and content_string == "" then
         return "{" .. node.call .. "}"
     elseif args_string == "" then
-        return "{" .. node.call .. " " .. content_string .. "}"
+        return "{" .. node.call .. whitespace .. content_string .. "}"
     elseif content_string == "" then
         return "{" .. node.call .. args_string .. "}"
     else
@@ -44,9 +51,9 @@ Litua.Node.init = function (call, args, content)
         local new_args = {}
         for argkey, argvalues in pairs(self.args) do
             new_args[argkey] = {}
-            for _, argvalue in pairs(argvalues) do
+            for _, argvalue in ipairs(argvalues) do
                 if argvalue.is_node then
-                    table.insert(new_args[argkey], argvalue.copy())
+                    table.insert(new_args[argkey], argvalue:copy())
                 else
                     table.insert(new_args[argkey], tostring(argvalue))
                 end
@@ -54,9 +61,9 @@ Litua.Node.init = function (call, args, content)
         end
 
         local new_content = {}
-        for _, value in pairs(self.content) do
+        for _, value in ipairs(self.content) do
             if value.is_node then
-                table.insert(new_content, value.copy())
+                table.insert(new_content, value:copy())
             else
                 table.insert(new_content, tostring(value))
             end
@@ -74,7 +81,7 @@ Litua.Node.__name = function (self, name)
 end
 
 Litua.Node.__index = function (self, index)
-    for _, key in pairs(Litua.Node.Api) do
+    for _, key in ipairs(Litua.Node.Api) do
         if index == key then
             return rawget(self, index)
         end
@@ -83,7 +90,7 @@ Litua.Node.__index = function (self, index)
 end
 
 Litua.Node.__newindex = function (self, index, value)
-    for _, key in pairs(Litua.Node.Api) do
+    for _, key in ipairs(Litua.Node.Api) do
         if index == key then
             rawset(self, index, value)
             return nil

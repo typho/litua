@@ -24,7 +24,7 @@ impl<'s> Parser<'s> {
         }
     }
 
-    fn get_start_pos_from_token(current_pos: usize, tok: lexer::Token) -> usize {
+    fn get_start_pos_of_token(current_pos: usize, tok: lexer::Token) -> usize {
         match tok {
             lexer::Token::BeginFunction(pos) |
             lexer::Token::BeginArgValue(pos) |
@@ -36,7 +36,8 @@ impl<'s> Parser<'s> {
             lexer::Token::EOF(pos) => pos,
             lexer::Token::Call(range) |
             lexer::Token::ArgKey(range) |
-            lexer::Token::Raw(range) |
+            lexer::Token::BeginRaw(range) |
+            lexer::Token::EndRaw(range) |
             lexer::Token::Text(range) => range.start,
             lexer::Token::BeginArgs | lexer::Token::EndArgs => current_pos,
         }
@@ -50,6 +51,84 @@ impl<'s> Parser<'s> {
     #[inline]
     fn unexpected_eof<T>() -> anyhow::Result<T> {
         Err(anyhow::anyhow!("unexpected end of lexer tokens iterator"))
+    }
+
+    pub fn parse_raw(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> anyhow::Result<tree::DocumentElement> {
+        let whitespace;
+        let name;
+        let text;
+
+        // (1) consume BeginRaw
+        match iter.next() {
+            Some(tok_or_err) => {
+                let token = tok_or_err?;
+                match token {
+                    lexer::Token::BeginRaw(range) => {
+                        // NOTE: expected token, yay!
+                        name = &self.source_code[range];
+                    },
+                    lexer::Token::EOF(_) => return Self::unexpected_eof(),
+                    _ => return Self::unexpected_token(&token),
+                }
+            },
+            None => return Self::unexpected_eof(),
+        }
+
+        // (2) consume Whitespace
+        match iter.next() {
+            Some(tok_or_err) => {
+                let token = tok_or_err?;
+                match token {
+                    lexer::Token::Whitespace(_, ws) => {
+                        whitespace = ws;
+                        // NOTE: expected token, yay!
+                    },
+                    lexer::Token::EOF(_) => return Self::unexpected_eof(),
+                    _ => return Self::unexpected_token(&token),
+                }
+            },
+            None => return Self::unexpected_eof(),
+        }
+
+        // (3) consume Text
+        match iter.next() {
+            Some(tok_or_err) => {
+                let token = tok_or_err?;
+                match token {
+                    lexer::Token::Text(range) => {
+                        text = &self.source_code[range];
+                        // NOTE: expected token, yay!
+                    },
+                    lexer::Token::EOF(_) => return Self::unexpected_eof(),
+                    _ => return Self::unexpected_token(&token),
+                }
+            },
+            None => return Self::unexpected_eof(),
+        }
+
+        // (4) consume EndRaw
+        match iter.next() {
+            Some(tok_or_err) => {
+                let token = tok_or_err?;
+                match token {
+                    lexer::Token::EndRaw(_) => {
+                        // NOTE: expected token, yay!
+                    },
+                    lexer::Token::EOF(_) => return Self::unexpected_eof(),
+                    _ => return Self::unexpected_token(&token),
+                }
+            },
+            None => return Self::unexpected_eof(),
+        }
+
+        // Ok(tree::DocumentElement::Text(text.to_owned()))  // NOTE would not convey `whitespace`
+        let mut h = HashMap::new();
+        h.insert("=whitespace".to_owned(), vec![ tree::DocumentElement::Text(whitespace.to_string()) ]);
+        Ok(tree::DocumentElement::Function(tree::DocumentFunction {
+            name: name.to_string(),
+            args: h,
+            content: vec![tree::DocumentElement::Text(text.to_owned())],
+        }))
     }
 
     pub fn parse_content(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> anyhow::Result<tree::DocumentNode> {
@@ -75,7 +154,7 @@ impl<'s> Parser<'s> {
             // admissible tokens
             enum NextToken {
                 BeginFunction,
-                Raw,
+                BeginRaw,
                 Text,
                 EndContent,
                 Unexpected,
@@ -87,7 +166,7 @@ impl<'s> Parser<'s> {
                 Some(token_or_err) => {
                     next_token = match token_or_err {
                         Ok(lexer::Token::BeginFunction(_)) => NextToken::BeginFunction,
-                        Ok(lexer::Token::Raw(_)) => NextToken::Raw,
+                        Ok(lexer::Token::BeginRaw(_)) => NextToken::BeginRaw,
                         Ok(lexer::Token::Text(_)) => NextToken::Text,
                         Ok(lexer::Token::EndContent(_)) => NextToken::EndContent,
                         _ => NextToken::Unexpected,
@@ -103,11 +182,9 @@ impl<'s> Parser<'s> {
                     let func = self.parse_function(iter)?;
                     content.push(func);
                 },
-                NextToken::Raw => {
-                    if let Some(Ok(lexer::Token::Raw(range))) = iter.next() {
-                        let text = &self.source_code[range];
-                        content.push(tree::DocumentElement::Text(text.to_owned()));
-                    }
+                NextToken::BeginRaw => {
+                    let text = self.parse_raw(iter)?;
+                    content.push(text);
                 },
                 NextToken::Text => {
                     // (7)   if Text
@@ -169,7 +246,7 @@ impl<'s> Parser<'s> {
             // admissible tokens
             enum NextToken {
                 BeginFunction,
-                Raw,
+                BeginRaw,
                 Text,
                 EndArgValue,
                 Unexpected,
@@ -181,7 +258,7 @@ impl<'s> Parser<'s> {
                 Some(token_or_err) => {
                     next_token = match token_or_err {
                         Ok(lexer::Token::BeginFunction(_)) => NextToken::BeginFunction,
-                        Ok(lexer::Token::Raw(_)) => NextToken::Raw,
+                        Ok(lexer::Token::BeginRaw(_)) => NextToken::BeginRaw,
                         Ok(lexer::Token::Text(_)) => NextToken::Text,
                         Ok(lexer::Token::EndArgValue(_)) => NextToken::EndArgValue,
                         _ => NextToken::Unexpected,
@@ -197,11 +274,9 @@ impl<'s> Parser<'s> {
                     let func = self.parse_function(iter)?;
                     arg_value.push(func);
                 },
-                NextToken::Raw => {
-                    if let Some(Ok(lexer::Token::Raw(range))) = iter.next() {
-                        let content = &self.source_code[range];
-                        arg_value.push(tree::DocumentElement::Text(content.to_owned()));
-                    }
+                NextToken::BeginRaw => {
+                    let text = self.parse_raw(iter)?;
+                    arg_value.push(text);
                 },
                 NextToken::Text => {
                     // (7)   if Text
@@ -409,7 +484,7 @@ impl<'s> Parser<'s> {
         // admissible tokens
         enum NextToken {
             BeginFunction,
-            Raw,
+            BeginRaw,
             Text,
             EOF,
             Unexpected,
@@ -422,7 +497,7 @@ impl<'s> Parser<'s> {
                 Some(token_or_err) => {
                     next_token = match token_or_err {
                         Ok(lexer::Token::BeginFunction(_)) => NextToken::BeginFunction,
-                        Ok(lexer::Token::Raw(_)) => NextToken::Raw,
+                        Ok(lexer::Token::BeginRaw(_)) => NextToken::BeginRaw,
                         Ok(lexer::Token::Text(_)) => NextToken::Text,
                         Ok(lexer::Token::EOF(_)) => NextToken::EOF,
                         _ => NextToken::Unexpected,
@@ -436,11 +511,9 @@ impl<'s> Parser<'s> {
                     let func = self.parse_function(&mut peekable_iter)?;
                     self.tree.push(func);
                 },
-                NextToken::Raw => {
-                    if let Some(Ok(lexer::Token::Raw(range))) = peekable_iter.next() {
-                        let text = &self.source_code[range];
-                        self.tree.push(tree::DocumentElement::Text(text.to_owned()));
-                    }
+                NextToken::BeginRaw => {
+                    let text = self.parse_raw(&mut peekable_iter)?;
+                    self.tree.push(text);
                 },
                 NextToken::Text => {
                     if let Some(Ok(lexer::Token::Text(range))) = peekable_iter.next() {
@@ -537,7 +610,8 @@ impl<'s> DebuggingParser<'s> {
                         lexer::Token::BeginContent(pos) => Self::show_pos("BeginContent", pos, &mut indent, 1, self.source_code),
                         lexer::Token::EndContent(pos) => Self::show_pos("EndContent", pos, &mut indent, -1, self.source_code),
                         lexer::Token::EndFunction(pos) => Self::show_pos("EndFunction", pos, &mut indent, -1, self.source_code),
-                        lexer::Token::Raw(range) => Self::show_range("Raw", range, &mut indent, 0, self.source_code),
+                        lexer::Token::BeginRaw(range) => Self::show_range("BeginRaw", range, &mut indent, 1, self.source_code),
+                        lexer::Token::EndRaw(range) => Self::show_range("EndRaw", range, &mut indent, -1, self.source_code),
                         lexer::Token::Whitespace(pos, ws) => Self::show_pos(&format!("Whitespace({})", ws), pos, &mut indent, 0, self.source_code),
                         lexer::Token::Text(range) => Self::show_range("Text", range, &mut indent, 0, self.source_code),
                         lexer::Token::EOF(_) => Self::show_token("EOF", &mut indent, 0),

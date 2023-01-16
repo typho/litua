@@ -1,0 +1,42 @@
+= litua
+
+author::
+  tajpulo
+version::
+  0.5
+
+A tree manipulation, processing, and serialization utility for text documents.
+
+What is it about?
+-----------------
+
+Why should I use it?
+--------------------
+
+How to install
+--------------
+
+
+How to run
+----------
+
+Source Code
+-----------
+
+The source code is available at link:https://github.com/typho/litua[Github].
+
+License
+-------
+
+See link:LICENSE[the LICENSE file] (Hint: MIT license).
+
+Changelog
+---------
+
+0.5::
+  first public release, raw strings, examples, …
+
+Issues
+------
+
+Please report any issues on the link:https://github.com/meisterluk/screenshot-compare/issues[Github issues page].
