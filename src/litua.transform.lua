@@ -290,8 +290,8 @@ Litua.transform = function (tree)
 
         -- (6) modify-final-string hooks
         Litua.log("transform", "run modify-final-string hooks")
-        for i=1,#Litua.hooks["modify-final-string"] do
-            repr, err = Litua.hooks["modify-final-string"][i].impl(repr)
+        for i=1,#Litua.hooks["modify-final-string"][""] do
+            repr, err = Litua.hooks["modify-final-string"][""][i].impl(repr)
             if err ~= nil then
                 return err
             end

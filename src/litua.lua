@@ -8,7 +8,7 @@ Litua = {
         ["modify-node"] = {},
         ["read-modified-node"] = {},
         ["convert-node-to-string"] = {},
-        ["modify-final-string"] = {},
+        ["modify-final-string"] = { [""] = {} },
         ["teardown"] = { [""] = {} },
     },
     ["global"] = {},
@@ -85,7 +85,7 @@ Litua.read_new_node = function (filter, hook) Litua.register_hook("read-new-node
 Litua.modify_node = function (filter, hook) Litua.register_hook("modify-node", filter, hook) end
 Litua.read_modified_node = function (filter, hook) Litua.register_hook("read-modified-node", filter, hook) end
 Litua.convert_node_to_string = function (filter, hook) Litua.register_hook("convert-node-to-string", filter, hook) end
-Litua.modify_final_string = function (filter, hook) Litua.register_hook("modify-final-string", filter, hook) end
+Litua.modify_final_string = function (hook) Litua.register_hook("modify-final-string", "", hook) end
 
 Litua.on_setup = function (hook) Litua.register_hook("setup", "", hook) end
 Litua.on_teardown = function (hook) Litua.register_hook("teardown", "", hook) end
