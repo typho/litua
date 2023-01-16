@@ -105,7 +105,7 @@ Litua input specification
 The following document defines the syntax (see also `design/litua-lexer-state-diagram.jpg`):
 
 [source]
-____
+----
 Node       = (Content | RawString | Function){0,…}
 Content    = (NOT the symbols "{" or "}"){1,…}
 RawString  = "{<" (NOT the string ">}") ">}"
@@ -121,7 +121,7 @@ Function   = "{" Call "}"
 Call       = (NOT the symbols "[" or "<"){1,…}
 Key        = (NOT the symbol "="){1,…}
 Whitespace = any of the 25 Unicode Whitespace characters
-____
+----
 
 In essence, don't use "<" or "[" in function call names, or "=" in argument keys.
 Keep the number of opening and closing braces balanced.
