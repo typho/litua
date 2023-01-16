@@ -3,26 +3,26 @@ local debug = require("debug")
 
 Litua = {
     ["hooks"] = {
-        ["setup"] = {},
+        ["setup"] = { [""] = {} },
         ["read-new-node"] = {},
         ["modify-node"] = {},
         ["read-modified-node"] = {},
         ["convert-node-to-string"] = {},
         ["modify-final-string"] = {},
-        ["teardown"] = {},
+        ["teardown"] = { [""] = {} },
     },
     ["global"] = {},
     ["config"] = {},
 }
 
 Litua.register_hook = function (hook_name, filter, hook_impl)
-    local levels = 2 -- how many calls above is the user scope?
+    local levels = 3 -- how many calls above is the user scope?
 
     -- create a string representation of the call location
     local line_number = debug.getinfo(levels).currentline
     local source_file = debug.getinfo(levels).source
-    local scope = debug.getinfo(levels).name
-    local call_repr = "'" .. tostring(scope) .. "' hook from '" .. tostring(source_file) .. "' at " .. tostring(line_number)
+    local scope = debug.getinfo(levels - 1).name
+    local call_repr = "'" .. tostring(scope) .. "' hook from '" .. tostring(source_file) .. "' at line " .. tostring(line_number)
 
     -- validate arguments
     if type(filter) ~= "string" then
@@ -71,6 +71,7 @@ Litua.register_hook = function (hook_name, filter, hook_impl)
         ["src"] = call_repr,
         ["impl"] = hook_impl,
     })
+    Litua.log("register_hook", call_repr .. " registered")
 
     if hook_name == "modify-string" and #Litua.hooks[hook_name][filter] > 1 then
         Litua.error("hook 'modify-string' must only be registered once for call '" .. filter .. "'", {

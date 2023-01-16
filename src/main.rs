@@ -27,9 +27,10 @@ fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(con
 
     // (1) load litua libraries
     let litua_table = include_str!("litua.lua");
-    lua.load(litua_table).exec()?;
+    // TODO don't load string but chunk implementing AsChunk https://docs.rs/mlua/0.8.6/mlua/trait.AsChunk.html
+    lua.load(litua_table).set_name("litua.lua")?.exec()?;
     let litua_lib = include_str!("litua.lib.lua");
-    lua.load(litua_lib).exec()?;
+    lua.load(litua_lib).set_name("litua.lib.lua")?.exec()?;
 
     // (2) find hook files
     let mut hook_files = vec![];
@@ -47,7 +48,12 @@ fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(con
     // (3) read hook files
     for hook_file in hook_files.iter() {
         let lua_file_src = fs::read_to_string(hook_file)?;
-        lua.load(&lua_file_src).exec()?;
+        let mut chunk = lua.load(&lua_file_src);
+        {
+            let filepath = hook_file.display();
+            chunk = chunk.set_name(&filepath.to_string())?;
+        }
+        chunk.exec()?;
     }
 
     // (4) load tree to lua environment
@@ -55,9 +61,9 @@ fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(con
 
     // (5) load transform function and node object (libraries, users cannot modify)
     let litua_trans = include_str!("litua.transform.lua");
-    lua.load(litua_trans).exec()?;
+    lua.load(litua_trans).set_name("litua.transform.lua")?.exec()?;
     let litua_node = include_str!("litua.node.lua");
-    lua.load(litua_node).exec()?;
+    lua.load(litua_node).set_name("litua.node.lua")?.exec()?;
 
     // (6) call transformation
     let globals = lua.globals();
