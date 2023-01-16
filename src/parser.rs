@@ -3,21 +3,22 @@ use anyhow;
 use std::collections::HashMap;
 use std::iter;
 use std::ops;
+use std::path;
 use std::ffi::OsString;
 
 use crate::tree;
 use crate::lexer;
 
 pub struct Parser<'s> {
-    filepath: OsString,
+    filepath: path::PathBuf,
     source_code: &'s str,
     tree: tree::DocumentNode,
 }
 
 impl<'s> Parser<'s> {
-    pub fn new(filepath: OsString, source_code: &'s str) -> Parser<'s> {
+    pub fn new(filepath: &path::Path, source_code: &'s str) -> Parser<'s> {
         Parser{
-            filepath: filepath.clone(),
+            filepath: filepath.to_owned(),
             source_code,
             tree: tree::DocumentNode::new(),
         }
@@ -411,10 +412,8 @@ impl<'s> Parser<'s> {
 
     pub fn tree(self) -> tree::DocumentTree {
         let mut args = HashMap::new();
-        if !self.filepath.is_empty() {
-            if let Some(fp) = self.filepath.to_str() {
-                args.insert("filepath".to_owned(), vec![tree::DocumentElement::Text(fp.to_owned())]);
-            }
+        if let Some(fp) = self.filepath.to_str() {
+            args.insert("filepath".to_owned(), vec![tree::DocumentElement::Text(fp.to_owned())]);
         }
 
         let elem = tree::DocumentElement::Function(tree::DocumentFunction {

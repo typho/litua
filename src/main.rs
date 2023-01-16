@@ -5,21 +5,20 @@ mod parser;
 mod tree;
 
 use mlua::prelude::*;
+use clap::Parser;
 
-use std::fs;
 use std::ffi::OsString;
+use std::fs;
 use std::io::prelude::*;
 use std::path;
 use std::str;
 
-fn run_lua<P: AsRef<path::Path>>(doc: &tree::DocumentTree, hooks_dir: P, output_file: P) -> anyhow::Result<()> {
+fn run_lua<D: AsRef<path::Path>, P: AsRef<path::Path>>(doc: &tree::DocumentTree, hooks_dir: P, dst: D) -> anyhow::Result<()> {
     let lua = Lua::new();
 
     // (1) load litua libraries
     let litua_table = include_str!("litua.lua");
     lua.load(litua_table).exec()?;
-    let litua_filter = include_str!("litua.filter.lua");
-    lua.load(litua_filter).exec()?;
     let litua_lib = include_str!("litua.lib.lua");
     lua.load(litua_lib).exec()?;
 
@@ -58,67 +57,95 @@ fn run_lua<P: AsRef<path::Path>>(doc: &tree::DocumentTree, hooks_dir: P, output_
     let result = lua_result.to_str()?;
 
     // (7) print the result
-    fs::write(output_file, result)?;
+    fs::write(dst, result)?;
 
     Ok(())
 }
 
-fn handle_file(filepath: OsString) -> anyhow::Result<String> {
-    let output_filepath = match (&filepath).to_str() {
-        Some(s) => {
-            let spath = path::Path::new(s);
-            let new_extension = if let Some(ext_osstr) = spath.extension() {
-                if let Some(ext) = ext_osstr.to_str() {
-                    if ext == "lit" { Some("out") } else { Some("lit") }
-                } else { None }
-            } else { None };
+fn derive_destination_filepath(p: &path::Path) -> path::PathBuf {
+    if let Some(ext) = p.extension() {
+        if ext == OsString::from("lit") {
+            p.with_extension("out")
+        } else {
+            p.with_extension("lit")
+        }
+    } else {
+        path::PathBuf::from("doc.out")
+    }
+}
 
-            match new_extension {
-                Some(ext) => {
-                    let mut p = String::new();
-                    p.push_str(&s[0..s.rfind(".").unwrap()]);
-                    p.push_str(".");
-                    p.push_str(ext);
-                    p
-                },
-                None =>  {
-                    let mut p = s.to_owned();
-                    p.push_str(".out");
-                    p
-                }
-            }
-        },
-        None => "out.txt".to_owned(),
-    };
-
-    let mut fd = fs::File::open(filepath.clone())?;
+fn handle_file(src: &path::Path, dst: &path::Path) -> anyhow::Result<()> {
+    let mut fd = fs::File::open(src.clone())?;
     let mut buf = Vec::new();
     fd.read_to_end(&mut buf)?;
 
     let source_code = str::from_utf8(&buf)?;
     let l = lexer::Lexer::new(source_code);
 
-    let mut p = parser::Parser::new(filepath, source_code);
+    let mut p = parser::Parser::new(src, source_code);
     p.consume_iter(l.iter())?;
     p.finalize()?;
 
     let tree = p.tree();
-    run_lua(&tree, ".", &output_filepath)?;
+    run_lua(&tree, ".", dst)?;
 
-    Ok(output_filepath)
+    Ok(())
 }
 
+#[derive(Parser, Debug)]
+#[command(name = "MyApp")]
+#[command(author = "Kevin K. <kbknapp@gmail.com>")]
+#[command(version = "1.0")]
+#[command(about = "Does awesome things", long_about = None)]
+#[command(author, version, about, long_about = None)]
+struct Settings {
+    // helpful for debugging 
+    #[arg(long)]
+    dump_lexed: bool,
+    #[arg(long)]
+    dump_parsed: bool,
+    #[arg(long)]
+    dump_calls: bool,
+
+    // configuration
+    #[arg(long, value_name = "DIR")]
+    hooks_dir: Option<path::PathBuf>,
+    #[arg(long, value_name = "DIR")]
+    add_require_path: Option<path::PathBuf>,
+
+    // optional argument
+    #[arg(short = 'o', long, value_name = "PATH")]
+    destination: Option<path::PathBuf>,
+
+    // positional argument
+    source: path::PathBuf,
+}
+
+
 fn main() -> anyhow::Result<()> {
-    // CLI proposal:
-    //   • litua [-h|--help] [-v|--version] [--verbose] [--dump-lexed] [--dump-parsed] [--dump-calls] [--hooks-dir PATH] [--add-require-path PATH] TEXTFILE
+    let set = Settings::parse();
 
-    for filepath in std::env::args_os().skip(1) {
-        let dst = handle_file(filepath.clone())?;
+    let src = set.source;
+    let dst = match set.destination {
+        Some(p) => p,
+        None => derive_destination_filepath(src.as_ref()),
+    };
 
-        match filepath.to_str() {
-            Some(src) => println!("File '{}' handled ⇒ '{}' written.", src, dst),
-            None => println!("File handled. File '{}' written.", dst),
-        }
+    if set.dump_lexed {
+        // TODO
+    } else if set.dump_parsed {
+        // TODO
+    } else if set.dump_calls {
+        println!("{:?}", set.hooks_dir);
+        println!("{:?}", set.add_require_path);
+        // TODO
+    } else {
+        println!("{:?}", set.hooks_dir);
+        println!("{:?}", set.add_require_path);
+
+        handle_file(&src, &dst)?;
+
+        println!("File '{}' read. File '{}' written.", src.display(), dst.display());
     }
 
     Ok(())
