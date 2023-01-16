@@ -77,7 +77,10 @@ pub struct LexingIterator<'l> {
     /// byte offset where the current token started
     token_start: usize,
     /// byte offset where the second-to-most-current token started.
-    /// NOTE: in the case of raw strings, a single `token_start` does not suffice
+    /// there are two scenarios where one 'token_start' does not suffice.
+    /// (1) raw strings have a start of the '{<' and a start of the text.
+    /// (2) any content string needs to store where it started and where
+    ///     it currently is because EOF needs to be reported with the final position
     token_start_prev: usize,
     /// raw-text ends with a repetition of “>” where the number matches
     /// the number of “<” of the beginning. Thus we store the number of
@@ -178,8 +181,14 @@ impl<'l> LexingIterator<'l> {
         let (byte_offset, chr) = match self.chars.next() {
             Some((bo, ch)) => (bo, ch),
             None => {
+                if self.token_start != self.token_start_prev {
+                    // TODO token_start and token_start_prev are swapped compared to their name
+                    self.next_tokens.push_back(Token::Text(self.token_start..self.token_start_prev + 1));
+                    self.token_start = self.token_start_prev;
+                    return None;
+                }
                 self.state = Terminated;
-                return Some(Token::EOF(self.token_start));
+                return Some(Token::EOF(self.token_start_prev));
             },
         };
 
@@ -198,6 +207,7 @@ impl<'l> LexingIterator<'l> {
                     _ => {
                         self.state = ReadingContentText;
                         self.token_start = byte_offset;
+                        self.token_start_prev = byte_offset;
                     },
                 }
             },
@@ -213,7 +223,9 @@ impl<'l> LexingIterator<'l> {
                         self.next_tokens.push_back(Token::EndContent(byte_offset));
                         assert_eq!(self.pop_scope(byte_offset), LexingScope::ContentInFunction);
                     },
-                    _ => {},
+                    _ => {
+                        self.token_start_prev = byte_offset;
+                    },
                 }
             },
             ReadingArgumentValue => {
