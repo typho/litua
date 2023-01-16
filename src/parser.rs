@@ -360,7 +360,7 @@ impl<'s> Parser<'s> {
                     let token = tok_or_err?;
                     match token {
                         lexer::Token::Whitespace(_, whitespace) => {
-                            func.args.insert("=whitespace".to_owned(), vec![tree::DocumentElement::Text(format!("{}", whitespace))]);
+                            func.args.insert("=whitespace".to_owned(), vec![tree::DocumentElement::Text(format!("{whitespace}"))]);
                         },
                         lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
                         _ => return Self::unexpected_token(&token),
@@ -437,7 +437,7 @@ impl<'s> Parser<'s> {
                         let token = tok_or_err?;
                         match token {
                             lexer::Token::Whitespace(_, whitespace) => {
-                                func.args.insert("=whitespace".to_owned(), vec![tree::DocumentElement::Text(format!("{}", whitespace))]);
+                                func.args.insert("=whitespace".to_owned(), vec![tree::DocumentElement::Text(format!("{whitespace}"))]);
                             },
                             lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
                             _ => return Self::unexpected_token(&token),
@@ -570,7 +570,7 @@ impl<'s> DebuggingParser<'s> {
     pub(crate) fn show_token(name: &str, indent: &mut i32, indent_change: i32) {
         if indent_change < 0 { (*indent) += indent_change; }
         print!("{}", "  ".repeat(*indent as usize));
-        println!("{}", name);
+        println!("{name}");
         if indent_change >= 0 { (*indent) += indent_change; }
     }
 
@@ -579,9 +579,9 @@ impl<'s> DebuggingParser<'s> {
         print!("{}", "  ".repeat(*indent as usize));
         let content: char = match &src[pos..].chars().next() {
             Some(c) => *c,
-            None => panic!("invalid UTF-8 offset position {} in token {} received", pos, name),
+            None => panic!("invalid UTF-8 offset position {pos} in token {name} received"),
         };
-        println!("{}({})", name, content);
+        println!("{name}({content})");
         if indent_change >= 0 { (*indent) += indent_change; }
     }
 
@@ -589,7 +589,7 @@ impl<'s> DebuggingParser<'s> {
         if indent_change < 0 { (*indent) += indent_change; }
         print!("{}", "  ".repeat(*indent as usize));
         let content: &str = &src[range];
-        println!("{}({})", name, content);
+        println!("{name}({content})");
         if indent_change >= 0 { (*indent) += indent_change; }
     }
 
@@ -611,12 +611,12 @@ impl<'s> DebuggingParser<'s> {
                         lexer::Token::EndFunction(pos) => Self::show_pos("EndFunction", pos, &mut indent, -1, self.source_code),
                         lexer::Token::BeginRaw(range) => Self::show_range("BeginRaw", range, &mut indent, 1, self.source_code),
                         lexer::Token::EndRaw(range) => Self::show_range("EndRaw", range, &mut indent, -1, self.source_code),
-                        lexer::Token::Whitespace(pos, ws) => Self::show_pos(&format!("Whitespace({})", ws), pos, &mut indent, 0, self.source_code),
+                        lexer::Token::Whitespace(pos, ws) => Self::show_pos(&format!("Whitespace({ws})"), pos, &mut indent, 0, self.source_code),
                         lexer::Token::Text(range) => Self::show_range("Text", range, &mut indent, 0, self.source_code),
                         lexer::Token::EndOfFile(_) => Self::show_token("EOF", &mut indent, 0),
                     }
                 },
-                Err(e) => { println!("{:?}", e); break },
+                Err(e) => { eprintln!("{e:?}"); break },
             }
         }
     }

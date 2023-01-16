@@ -17,7 +17,7 @@ fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(_co
 
     let addition_str = path::PathBuf::from(luapath_additions.as_ref());
     match addition_str.to_str() {
-        Some(s) if !s.is_empty() => lua.load(&format!("package.path = package.path .. ';{}'", s)).exec()?,
+        Some(s) if !s.is_empty() => lua.load(&format!("package.path = package.path .. ';{s}'")).exec()?,
         Some(_) => {},
         None => return Err(anyhow::anyhow!("cannot convert the luapath extension path (supplied as --add-require-path) to a UTF-8 string. But this is sadly required by the mlua interface (the library to run Lua)")),
     };
@@ -35,7 +35,7 @@ fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(_co
         let basename = entry.file_name();
         if let Some(name) = basename.to_str() {
             if name.starts_with("hook") && name.ends_with(".lua") {
-                println!("Loading hook file '{}'", name);
+                println!("Loading hook file '{name}'");
                 hook_files.push(entry.path());
             }
         }
@@ -98,7 +98,7 @@ fn lex_and_parse(conf: &Settings, src: &path::Path) -> anyhow::Result<tree::Docu
     if conf.dump_lexed {
         for tok_or_err in l.iter() {
             let token = tok_or_err?;
-            println!("Token= {:?}", token);
+            println!("Token= {token:?}");
         }
     } else if conf.dump_parsed {
         let mut p = parser::Parser::new(src, source_code);
