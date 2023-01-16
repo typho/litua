@@ -1,20 +1,20 @@
 Loading hook file 'hooks.all.lua'
-LOG[register_hook]: 'on_setup' hook from '../examples/literate-programming/hooks.all.lua' at line 3 registered
-LOG[register_hook]: 'read_new_node' hook from '../examples/literate-programming/hooks.all.lua' at line 8 registered
-LOG[register_hook]: 'read_new_node' hook from '../examples/literate-programming/hooks.all.lua' at line 14 registered
-LOG[register_hook]: 'on_teardown' hook from '../examples/literate-programming/hooks.all.lua' at line 20 registered
+LOG[register_hook]: 'on_setup' hook from './examples/literate-programming/hooks.all.lua' at line 3 registered
+LOG[register_hook]: 'read_new_node' hook from './examples/literate-programming/hooks.all.lua' at line 8 registered
+LOG[register_hook]: 'read_new_node' hook from './examples/literate-programming/hooks.all.lua' at line 14 registered
+LOG[register_hook]: 'on_teardown' hook from './examples/literate-programming/hooks.all.lua' at line 20 registered
 Running transformation.
 LOG[transform]: run setup hooks
-LOG[transform]: ran 'on_setup' hook from '../examples/literate-programming/hooks.all.lua' at line 3
+LOG[transform]: ran 'on_setup' hook from './examples/literate-programming/hooks.all.lua' at line 3
 LOG[transform]: run read-new-node hooks
-LOG[transform]: ran 'read_new_node' hook from '../examples/literate-programming/hooks.all.lua' at line 14 for call 'docu'
-LOG[transform]: ran 'read_new_node' hook from '../examples/literate-programming/hooks.all.lua' at line 8 for call 'code'
-LOG[transform]: ran 'read_new_node' hook from '../examples/literate-programming/hooks.all.lua' at line 14 for call 'docu'
-LOG[transform]: ran 'read_new_node' hook from '../examples/literate-programming/hooks.all.lua' at line 8 for call 'code'
+LOG[transform]: ran 'read_new_node' hook from './examples/literate-programming/hooks.all.lua' at line 14 for call 'docu'
+LOG[transform]: ran 'read_new_node' hook from './examples/literate-programming/hooks.all.lua' at line 8 for call 'code'
+LOG[transform]: ran 'read_new_node' hook from './examples/literate-programming/hooks.all.lua' at line 14 for call 'docu'
+LOG[transform]: ran 'read_new_node' hook from './examples/literate-programming/hooks.all.lua' at line 8 for call 'code'
 LOG[transform]: run modify-node hooks
 LOG[transform]: run read-modified-node hooks
 LOG[transform]: run convert-node-to-string hooks
 LOG[transform]: run modify-final-string hooks
-LOG[transform]: ran 'on_teardown' hook from '../examples/literate-programming/hooks.all.lua' at line 20
-File '../examples/literate-programming/doc.txt' read.
-File '../examples/literate-programming/doc.lit' written.
+LOG[transform]: ran 'on_teardown' hook from './examples/literate-programming/hooks.all.lua' at line 20
+File './examples/literate-programming/doc.lit' read.
+File './examples/literate-programming/doc.out' written.

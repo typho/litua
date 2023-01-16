@@ -1,6 +1,6 @@
-local string = require("string")
 local debug = require("debug")
 
+-- global variable with hooks, global user variables, and configuration
 Litua = {
     ["hooks"] = {
         ["setup"] = { [""] = {} },
@@ -15,6 +15,13 @@ Litua = {
     ["config"] = {},
 }
 
+--- Register a new hook
+-- Store the hook function `hook_impl` in the Litua hooks table
+-- to trigger it for every call named `filter` (or every call if
+-- filter is ""). The type of hook is defined by `hook_name`
+-- @param hook_name  a hook name like read-new-node or setup
+-- @param filter  call name to filter for, or "" to call hook for every call
+-- @param hook_impl  hook function to invoke
 Litua.register_hook = function (hook_name, filter, hook_impl)
     local levels = 3 -- how many calls above is the user scope?
 
@@ -73,21 +80,46 @@ Litua.register_hook = function (hook_name, filter, hook_impl)
     })
     Litua.log("register_hook", call_repr .. " registered")
 
-    if hook_name == "modify-string" and #Litua.hooks[hook_name][filter] > 1 then
-        Litua.error("hook 'modify-string' must only be registered once for call '" .. filter .. "'", {
+    if hook_name == "convert-node-to-string" and #Litua.hooks[hook_name][filter] > 1 then
+        Litua.error("hook 'convert-node-to-string' must only be registered once for call '" .. filter .. "'", {
             ["source"] = call_repr,
         })
     end
 end
 
 -- hooks API
+
+--- Register a new read_new_node hook, invoked after the setup hook
+-- @param filter  call name to filter for, or "" to call hook for every call
+-- @param hook  hook ``function (node_copy, depth) return nil end`` to invoke
 Litua.read_new_node = function (filter, hook) Litua.register_hook("read-new-node", filter, hook) end
+
+--- Register a new modify_node hook, invoked after read_new_node hooks
+-- @param filter  call name to filter for, or "" to call hook for every call
+-- @param hook  hook ``function (node, depth, call_name) return node, nil end`` to invoke
 Litua.modify_node = function (filter, hook) Litua.register_hook("modify-node", filter, hook) end
+
+--- Register a new read_modified_node hook, invoked after modify_node hooks
+-- @param filter  call name to filter for, or "" to call hook for every call
+-- @param hook  hook ``function (node_copy, depth) return nil end`` to invoke
 Litua.read_modified_node = function (filter, hook) Litua.register_hook("read-modified-node", filter, hook) end
+
+--- Register a new convert_node_to_string hook, invoked after read_modified_node hooks
+-- @param filter  call name to filter for, or "" to call hook for every call
+-- @param hook  hook ``function (node, depth, call_name) return "…", nil end`` to invoke
 Litua.convert_node_to_string = function (filter, hook) Litua.register_hook("convert-node-to-string", filter, hook) end
+
+--- Register a new modify_final_string hook, invoked after convert_node_to_string hooks
+-- @param filter  call name to filter for, or "" to call hook for every call
+-- @param hook  hook ``function (repr) return repr end`` to invoke
 Litua.modify_final_string = function (hook) Litua.register_hook("modify-final-string", "", hook) end
 
+--- Register a new setup hook, invoked once after all nodes where just created
+-- @param hook  hook ``function () return nil end`` to invoke
 Litua.on_setup = function (hook) Litua.register_hook("setup", "", hook) end
+
+--- Register a new teardown hook, invoked once after modify_final_string hooks
+-- @param hook  hook ``function () return nil end`` to invoke
 Litua.on_teardown = function (hook) Litua.register_hook("teardown", "", hook) end
 
--- Litua.transform will be inserted later
+-- NOTE: Litua.transform will be inserted later from the file litua.transform.lua

@@ -1,3 +1,6 @@
+--- Generate an error object and invoke error() to terminate with an error
+-- @param errmsg  string to explain issue
+-- @param info  more detailed context information like expected and actual value in a table
 Litua.error = function (errmsg, info)
     local out = "ERROR: " .. tostring(errmsg) .. "\n"
     if type(info) == "table" then
@@ -20,10 +23,15 @@ Litua.error = function (errmsg, info)
     error(out)
 end
 
+--- Generate a message and log it to stdout for human consumption
+-- @param component  the component where this issue occurs
+-- @param msg  the string explaining the issue
 Litua.log = function (component, msg)
     print("LOG[" .. component .. "]: " .. msg)
 end
 
+--- Take a table and print it to stdout
+-- @param tbl  the table to represent
 Litua.print_table = function (tbl)
     print("<table>")
     for k, v in pairs(tbl) do

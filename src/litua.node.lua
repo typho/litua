@@ -1,5 +1,13 @@
+
+--- Data structure to represent nodes of the tree
 Litua.Node = {}
 
+--- Identity string representation of a node
+-- Considers the given node and represents it in litua input syntax.
+-- It uses the "=whitespace" key to recover the original whitespace
+-- character where any whitespace would have been accepted
+-- @param node  A Litua.Node to represent
+-- @return  node's string representation
 local identity_string = function (node)
     local args_string = ""
     local content_string = ""
@@ -38,8 +46,16 @@ local identity_string = function (node)
     end
 end
 
+--- The set of admissible API call
 Litua.Node.Api = { "call", "args", "content", "copy", "is_node", "tostring" }
 
+--- Constructor for a new node
+-- It takes the `call` name, arguments `args`, and a table `content`.
+-- Here, `content` can be Nodes or strings themselves.
+-- @param call  name of the call
+-- @param args  the table with key-value associations defining arguments
+-- @param content  the content of this element (enumerated table with Litua.Node or string instances)
+-- @return  a Litua.Node instance
 Litua.Node.init = function (call, args, content)
     local node = {
         ["call"] = tostring(call),

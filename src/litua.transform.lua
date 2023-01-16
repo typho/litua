@@ -1,6 +1,8 @@
-local string = require("string")
-
--- FUNCTION given a nested structure of tables, return a nested structure of Litua.Node tables
+--- Given a nested structure of tables, return a nested structure of Litua.Node tables
+-- This function converts the hierarchy of tables into actual Litua.Node
+-- (also in a hierarchical structure)
+-- @param tree  the root node
+-- @return  the Litua.Node instance
 Litua.tree_to_nodes = function (tree)
     local new_call = tostring(tree.call)
     local new_args = {}
@@ -29,7 +31,13 @@ Litua.tree_to_nodes = function (tree)
     return Litua.Node.init(new_call, new_args, new_content)
 end
 
--- FUNCTION recurse into elements of the tree and provide nodes
+--- Implementation of the read-new-node hooks
+-- This function invokes the hook for the node and then recurses
+-- into any content or arg nodes
+-- @param node  the current node to process
+-- @param depth  the current recursion depth
+-- @param hook_name  "read-new-node"
+-- @return  error or nil
 Litua.recurse_reading = function (node, depth, hook_name)
     local err
 
@@ -73,6 +81,13 @@ Litua.recurse_reading = function (node, depth, hook_name)
     end
 end
 
+--- Implementation of the modify-node hooks
+-- This function invokes the hook for the node and
+-- then recurses into any content or arg nodes
+-- @param node  the current node to process
+-- @param depth  the current recursion depth
+-- @param hook_name  "modify-node"
+-- @return  (modified node, error or nil)
 Litua.recurse_modify_node = function (node, depth, hook_name)
     local err
 
@@ -126,6 +141,13 @@ Litua.recurse_modify_node = function (node, depth, hook_name)
     return node, nil
 end
 
+--- Implementation of the convert-node-to-string hooks
+-- This function invokes the hook for the args nodes,
+-- then content nodes and finally for the node itself
+-- @param node  the current node to process
+-- @param depth  the current recursion depth
+-- @param hook_name  "convert-node-to-string"
+-- @return  (string representation, error or nil)
 Litua.recurse_node_to_string = function (node, depth, hook_name)
     local err
     if node.call == "left-curly-brace" then return "{", nil end
@@ -193,6 +215,10 @@ Litua.recurse_node_to_string = function (node, depth, hook_name)
     return tostring(node), nil
 end
 
+--- Transformation function taking a root element `tree`,
+--- invoking all hooks, and return a string representation
+-- @param tree  the Litua.Node instance of the root
+-- @return  error or string representation
 Litua.transform = function (tree)
     local err, repr
 
