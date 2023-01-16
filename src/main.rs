@@ -175,8 +175,8 @@ fn lex_and_parse(conf: &Settings, src: &path::Path) -> Result<tree::DocumentTree
 
 #[derive(Parser, Debug)]
 #[command(name = "litua")]
-#[command(author = "meisterluk <admin@lukas-prokop.at>")]
-#[command(version = "0.5")]
+#[command(author = "tajpulo <admin@lukas-prokop.at>")]
+#[command(version = "0.9")]
 #[command(about = "Read document as tree and apply Lua functions to nodes")]
 #[command(author, version, about, long_about = None)]
 struct Settings {

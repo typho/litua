@@ -3,7 +3,7 @@
 author::
   tajpulo
 version::
-  0.5
+  0.9
 
 Read a text document, receive its tree in Lua and manipulate it before representing it as string.
 
@@ -126,6 +126,15 @@ ____
 In essence, don't use "<" or "[" in function call names, or "=" in argument keys.
 Keep the number of opening and closing braces balanced.
 
+Improvements
+------------
+
+The following parts can be improved:
+
+* the `.parsed.expected` files are not checked in the testsuite, because rust's HashMap representation is not consistent across builds.
+* verify that error handling for user code works well
+* improved error reporting for syntax errors (tokens position, etc)
+
 Source Code
 -----------
 
@@ -139,7 +148,7 @@ See link:LICENSE[the LICENSE file] (Hint: MIT license).
 Changelog
 ---------
 
-1.0::
+0.9::
   first public release with raw strings and four examples
 
 Issues
