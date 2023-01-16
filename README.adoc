@@ -5,13 +5,79 @@ author::
 version::
   0.5
 
-A tree manipulation, processing, and serialization utility for text documents.
+Read a text document, receive its tree in Lua and manipulate it to your liking before representing it as string.
 
 What is it about?
 -----------------
 
+Text documents can be considered as trees. LISP (e.g.) makes it very explicit. Specifically, we propose the following syntax (“Litua input syntax”):
+
+----
+{element[attr1=value1][attribute2=val2] text content of element}
+----
+
+In LISP, it might be represented as …
+
+----
+(element :attr1 "value1" :attribute2 "val2" "text content of element")
+----
+
+In XML, it might be represented as …
+
+----
+<element attr1="value1" attribute2="val2">text content of element</element>
+----
+
+After providing a text document (``doc.txt``) in this Litua input syntax, we can invoke the compiler:
+
+----
+litua doc.txt
+----
+
+In most cases, it will write the input document as output document ``doc.lit``.
+But consider these elements as tree of nested elements. Specifically, we parse it into the following Lua tables:
+
+[source,lua]
+----
+local node = {
+    -- the string giving the node type
+    ["call"] = "element",
+    -- the key-value pairs of arguments.
+    -- values are sequences of strings or nodes
+    ["args"] = { ["attr1"] = { [1] = "value1" }, ["attribute2"] = { [1] = "val2" } },
+    -- the sequence of elements occuring in the body of a node.
+    -- the items of content can be strings or nodes themselves
+    ["content"] = {
+        [1] = "text content of element"
+    },
+}
+----
+
+Then you can use the hooks …
+
+* ``Litua.modify_final_string = function (hook) […] end`` where ``hook`` takes a string and returns a string
+* ``Litua.on_setup = function (hook) […] end`` where ``hook`` takes no argument and returns nil
+* ``Litua.on_teardown = function (hook) […] end`` where ``hook`` takes no argument and returns nil
+* ``Litua.read_new_node = function (filter, hook) […] end`` where ``hook`` takes a copy of the current node and the tree depth as integer and returns nil
+* ``Litua.modify_node = function (filter, hook) […] end`` where ``hook`` takes the current node, the tree depth as integer, and the call name and returns some node and nil
+* ``Litua.read_modified_node = function (filter, hook) […] end`` where ``hook`` takes a copy of the current node and the tree depth as integer and returns nil
+* ``Litua.convert_node_to_string = function (filter, hook) […] end`` where ``hook`` takes the current node, the tree depth as integer, and the call name and returns a string and nil
+
+… to modify the generation process of the output document. ``hook`` is a function, you need to provide and ``filter`` is either the call name or ``""`` to be invoked for every call. The names should give an idea of their purpose. E.g. ``on_setup`` and ``on_teardown`` run before/after all other hooks. You can supply a hook by creating a file ``hooks.lua`` next to your input ``doc.txt`` with the content:
+
+[source,lua]
+----
+Litua.read_new_node("element", function (node, depth)
+    Litua.log("hook", "found call '" .. tostring(node.call) .. "' at depth " .. tostring(depth))
+end)
+----
+
+Be aware that the document always lives within one invisible top-level node called ``document``.
+
 Why should I use it?
 --------------------
+
+Because you want to handle/modify/use the tree structure of a text document without integrating sophisticated tools like XSLT. Instead the document is parsed for you and Lua (a simple and established programming language) allows you to modify the default behavior of the program.
 
 How to install
 --------------
@@ -19,6 +85,12 @@ How to install
 
 How to run
 ----------
+
+Call the litua executable with ``-h`` to get information about additional arguments:
+
+----
+litua -h
+----
 
 Source Code
 -----------
@@ -33,10 +105,10 @@ See link:LICENSE[the LICENSE file] (Hint: MIT license).
 Changelog
 ---------
 
-0.5::
-  first public release, raw strings, examples, …
+1.0::
+  first public release with raw strings and four examples
 
 Issues
 ------
 
-Please report any issues on the link:https://github.com/meisterluk/screenshot-compare/issues[Github issues page].
+Please report any issues on the link:https://github.com/typho/litua/issues[Github issues page].

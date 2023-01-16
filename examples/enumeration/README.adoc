@@ -1,6 +1,10 @@
 = Enumeration example
 
-In this example, we want to discover that litua can be used for enumerations. Fundamentally, we can create a text file which contains the same _call_ several times:
+In this example, we want to discover that litua can be used for enumerations.
+
+== Text document
+
+Fundamentally, we can create a text file which contains the same _call_ several times (the _call_ in this example is called _item_):
 
 [source]
 ----
@@ -15,41 +19,63 @@ This is an ordered list:
 {item} car
 ----
 
-In this file we call _item_ exactly five times. Furthermore with Litua, you have the entire runtime of Lua available. So we can define an integer and successively increment it:
+In this file we call _item_ exactly five times.
+
+== Lua
+
+So in Lua, we can define an integer and successively increment it:
 
 [source,lua]
 ----
 -- define a variable "enum" in the "Litua.global" table with value "0"
 Litua.global.enum = 0
 
-Litua.global.enum = Litua.global.enum + 1
 -- now "Litua.global.enum" has value "1"
-----
+Litua.global.enum = Litua.global.enum + 1
 
-The idea is that we can use variables across calls. So on the first time, _item_ will return 1, then 2, then 3, …. Now we will come up with a representation for an integer in the document:
-
-[source,lua]
-----
--- tostring(…) converts the supplied argument to the datatype string
--- the representation will wrap the decimal representation of the number with "(" and ")"
+-- ".." is Lua's string concatentation operator.
+-- tostring(…) converts the supplied argument to the datatype string.
+-- the representation will wrap the decimal representation of the number with "(" and ")".
 print("(" .. tostring(Litua.global.enum) .. ")")
 ----
 
-So finally, we can initialize enum with value 0 and increment it, before replacing the call with an integer representation.
-Let us consider the file ``hooks.node-to-string.lua``:
+``Litua.global`` is a table where you can store any values, you need during runtime.
+To facilitate this increment in Litua, we need to plug this code into hooks. These hooks will be called whenever certain actions with calls happen.
 
-[source]
+== Litua hooks
+
+In our Litua implementation, the code is distributed between a _setup_ hook and a _convert-node-to-string_ hook:
+
+[source,lua]
 ----
-Litua.global.enum = 0
+Litua.on_setup(function ()
+    -- the on_setup hook is executed once in the beginning.
+    -- the on_setup hook takes one argument which must be a function.
+    -- here we initialize the variable in this hook.
+    Litua.global.enum = 0
+end)
 
-Litua.add_hook(Litua.Filter.by_call("item"), "node-to-string", function (node)
-  Litua.global.enum = Litua.global.enum + 1
+Litua.convert_node_to_string("item", function (node)
+    -- the set of calls and their nested structure create a hierarchical structure.
+    -- this hierarchy creates a structure, we call tree where a node can have zero or more children nodes.
+    -- the convert_node_to_string hook is executed when we convert a node into a string.
+    -- the convert_node_to_string hook takes two arguments which must be a string and a function.
+    -- the string must be the name of the call (or a empty string which means that the hook is called for every node).
+    -- the function takes a node as argument. We could access node data from this node, but not in this example.
+    -- the function must return a string representing this node
 
-  return "(" .. tostring(Litua.global.enum) .. ") "
+    -- increment
+    Litua.global.enum = Litua.global.enum + 1
+
+    -- the return value is a concatenated string "(", N, and ")"
+    -- where N is the string representation of integer Litua.global.enum
+    return "(" .. tostring(Litua.global.enum) .. ")"
 end)
 ----
 
-… and store the document above as ``doc.txt`` in the same directory. If we run ``litua doc.txt`` in this directory, we get …
+This example illustrates that we can use variables across calls. So on the first time, _item_ will return 1, then 2, then 3, ….
+We store this Lua source code in some file with a filename starting with “hooks” and ending with “.lua” (``hooks.enumeration.lua``, for example).
+In the same directory, we store the text content above in a text document (``doc.txt``, for example).
 
 [source]
 ----

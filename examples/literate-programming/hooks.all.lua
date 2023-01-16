@@ -7,7 +7,7 @@ end)
 
 Litua.read_new_node("code", function (node)
     for i=1,#node.content do
-            Litua.global.file_code:write(tostring(node.content[i]))
+        Litua.global.file_code:write(tostring(node.content[i]))
     end
 end)
 

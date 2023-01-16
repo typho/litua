@@ -251,6 +251,7 @@ Litua.transform = function (tree)
         return out
     end
 
+    -- TODO call this function with pcall()
     err = (function()
         -- (2) read-new-node hooks
         Litua.log("transform", "run read-new-node hooks")

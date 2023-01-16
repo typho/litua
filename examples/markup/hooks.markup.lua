@@ -123,7 +123,6 @@ Litua.convert_node_to_string("document", function (node)
     local nonempty_content_nodes = {}
 
     for _, content in ipairs(node.content) do
-        --print("(element is-type='" .. type(content) .. "' is-node='" .. tostring(content.is_node) .. "' str='" .. tostring(content):sub(1, 5) .. "' len='" .. content:len() .. "' matches='" .. tostring(content:find("[\x09\x0A\x0B\x0C\x0D\x20\x85\xA0]*$") == 1) .. "')")
         if content:find("[\x09\x0A\x0B\x0C\x0D\x20\x85\xA0]*$") == 1 then
             table.insert(nonempty_content_nodes, content)
         end

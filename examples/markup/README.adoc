@@ -1,0 +1,129 @@
+= Markup example
+
+In this example, we want to take Litua input and write is as (somewhat valid) HTML5 output.
+
+* We assume the Litua input document uses calls which map to valid HTML5 tag names
+* We assume the Litua input document structure represents a valid HTML5 DOM
+
+== Equivalence of Litua and HTML5
+
+So, consider the following document as output:
+
+[source,html]
+----
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Sample document</title>
+  </head>
+  <body>
+    <h1>Example content</h1>
+  </body>
+</html>
+----
+
+Intuitively, we have the following text document as input to resemble the same structure shown in the input document:
+
+[source]
+----
+{html
+  {head {meta[charset=utf-8]} {title Sample document}}
+  {body {h1 Example content}}
+}
+----
+
+The mapping between Litua and HTML5 looks pretty intuitive, but the devil is in the detail:
+
+* Litua is pretty lenient regarding its admissible call names. Specifically Litua allows any non-empty string as call name which does not include a whitespace, does not start with ``<`` and does not include ``[``. On the other hand, HTML5 has a restricted set of element and attribute names. We could hardcode the set of element names, but at least the set of attribute names is infinite, because link:https://html.spec.whatwg.org/multipage/dom.html#embedding-custom-non-visible-data-with-the-data-*-attributes[attributes with prefix ``data-`` can be chosen by the user]. Specifically, the HTML5 standard refers to XML in these cases. Thus, we use link:https://www.w3.org/TR/xml/[XML] as a stricter version of link:https://en.wikipedia.org/wiki/Standard_Generalized_Markup_Language[SGML]. I wrote a small function ``is_valid_xml_element_name_or_attribute`` returning true or false which determines whether the name provided could resemble a valid element or attribute name according to the XML standard.
+* Text within elements must be escaped with five predefined escape sequences. For example ``{p Beauty & the beast}`` must be represented as ``<p>Beauty &amp; the beast</p>``. The function ``escape_text_for_xml`` returns its argument with escape sequences inserted.
+
+[source,lua]
+----
+local function is_valid_xml_element_name_or_attribute(name)
+    return true or false
+end
+
+local function escape_text_for_xml(str)
+    return str:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;"):gsub("'", "&apos;"):gsub('"', "&quot;")
+end
+----
+
+It is interesting to discover that the ``gsub`` order in ``escape_text_for_xml`` is significant.
+
+== An implementation idea
+
+One implementation idea is to use the ``convert-node-to-string`` hook. For which calls shall this hook be applied? All calls. There is the special filter ``""`` (empty string) which results in calling the hook for all calls. Thus for this filter, we provide a function which represents a node ``p`` with attribute ``style`` as ``text-align:center`` and text node ``paragraph`` as ``<p style="text-align:center">paragraph</p>``. An implementation could then look as follows:
+
+[source,lua]
+----
+Litua.convert_node_to_string("", function (node)
+    -- attach element name
+    local out = "<" .. node.call
+
+    -- attach attributes
+    local attributes = ""
+    for attr, values in pairs(node.args) do
+        local value = ""
+        for i=1,#values do
+            value = value .. tostring(values[i])
+        end
+
+        -- NOTE: skip attributes like "=whitespace" which are provided
+        --       as special attributes by the lexer
+        if attr:find("^=") == nil then
+            attributes = attributes .. " " .. attr .. '="' .. escape_text_for_xml(value) .. '"'
+        end
+    end
+    if #node.content == 0 then
+        -- empty element
+        return out .. attributes .. " /" .. ">", nil
+    else
+        out = out .. attributes .. ">"
+    end
+
+    -- attach content
+    for _, content in ipairs(node.content) do
+        out = out .. escape_text_for_xml(tostring(content))
+    end
+
+    -- attach closing xml element
+    return out .. "</" .. node.call .. ">", nil
+end)
+----
+
+== A problem
+
+But you will soon recognize a problem once you run the example with a nested structure. For example …
+
+----
+{main
+  {p Hello World}}
+----
+
+… will be represented by …
+
+----
+<main>
+  &lt;p&gt;Hello World&lt;/p&gt;
+</main>
+----
+
+Thus the inner elements are HTML escaped. This happens because the hook is first called for call ``p``. Its result is ``<p>Hello World</p>``. But now this result will be supplied as text to the hook for call ``main``. In this second call, it will be escaped.
+
+== Solving the problem by substitution
+
+We need to prevent escaping to prevent these errors. For my implementation, I approached with a dirty, but simple mechanism: We replace the symbols ``<``, ``>``, and ``"`` occuring in XML notation with characters which do not usually occur in text. Specifically, we define:
+
+[source,lua]
+----
+local SUB_ELEMENT_START = "\x02"  -- substitutes <
+local SUB_ELEMENT_END = "\x03"    -- substitutes >
+local SUB_ATTR_START = "\x0F"     -- substitutes "
+local SUB_ATTR_END = "\x0E"       -- substitutes "
+----
+
+Now, usually we introduce the XML notation with those substitution characters. Successively, they will not be replaced because the XML characters to escape (``<>&"'``) do not include those characters. When we invoke the top-level element ``document``, we can replace any to those characters with their XML counterpart.
+
+The result is the implementation given.
+
+A more beautiful approach would be to introduce a custom type ``XMLElement`` with a metatable overwriting ``tostring``. We provide a hook for ``modify-node`` which replaces node with a ``XMLElement`` value which escapes string children and turns node children into ``XMLElement`` as well. This should work, but I did not spend the time to do it this right way yet.

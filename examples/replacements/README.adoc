@@ -1,0 +1,44 @@
+= Replacements example
+== Text document
+
+Consider a simple document which invokes the ``let`` call. Its arguments define substitution pairs.
+
+----
+{let[name=세종대왕][occasion=52][achievement=Korean alphabet][who=tajpulo]}
+----
+
+Here, we want to replace e.g. ``name`` by ``세종대왕`` and ``who`` by ``tajpulo``.
+Consecutively, we want to use calls to insert these substitution sequences:
+
+----
+{let[name=세종대왕][occasion=52][achievement=Korean alphabet][who=tajpulo]}
+
+Dear {name},
+
+I want to congratulate on the occasion of your {occasion}th birthday.
+I am a big fan of your development of the {achievement}!
+
+All the best,
+{who}
+----
+
+So, ``let`` is supposed to define call hooks for each of its arguments.
+
+== The hooks
+
+We only need to consider the ``convert-node-to-string`` hook called for ``let``. In this case, we iterate over its arguments and for each ``arg``, we define a new ``convert-node-to-string`` hook which just returns the substitution value. Remember that ``val`` is a table since it might be a concatenation of several strings and calls. ``let`` calls themselves shall disappear and thus be represented as empty string (``return ""``).
+
+[source,lua]
+----
+Litua.convert_node_to_string("let", function (node)
+    for arg, val in pairs(node.args) do
+        local content = ""
+        for i=1,#val do
+            content = content .. tostring(val[i])
+        end
+
+        Litua.convert_node_to_string(arg, function (_) return content end)
+    end
+    return ""
+end)
+----
