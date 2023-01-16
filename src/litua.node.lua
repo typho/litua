@@ -5,11 +5,13 @@ local identity_string = function (node)
     local content_string = ""
 
     for argkey, argvalues in pairs(node.args) do
-        args_string = args_string .. "[" .. argkey .. "="
-        for _, argvalue in pairs(argvalues) do
-            args_string = args_string .. tostring(argvalue)
+        if argkey:match("=") == nil then
+            args_string = args_string .. "[" .. argkey .. "="
+            for _, argvalue in pairs(argvalues) do
+                args_string = args_string .. tostring(argvalue)
+            end
+            args_string = args_string .. "]"
         end
-        args_string = args_string .. "]"
     end
 
     if #node.content > 0 then
