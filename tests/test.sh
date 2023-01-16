@@ -5,7 +5,7 @@ set -e
 TEMP_DIR="/tmp"
 PROJECT_DIR="."
 TESTS_DIR="tests"
-BIN="$PROJECT_DIR/target/debug/litua"
+BIN="$PROJECT_DIR/target/release/litua"
 
 [ ! -f "$BIN" ] && echo "executable '$BIN' not found" && exit 1;
 
