@@ -15,13 +15,14 @@ use std::str;
 use std::error;
 use std::fmt;
 
+// Error type
 #[derive(Debug)]
 enum Error {
-    CLIArgError(String),
-    IoError(io::Error),
-    Utf8Error(str::Utf8Error),
-    LituaError(errors::Error),
-    MluaError(mlua::Error),
+    CLIArg(String),
+    Io(io::Error),
+    Encoding(str::Utf8Error),
+    Litua(errors::Error),
+    Mlua(mlua::Error),
 }
 
 impl error::Error for Error {}
@@ -31,36 +32,36 @@ impl fmt::Display for Error {
         use Error::*;
 
         match self {
-            CLIArgError(msg) => write!(f, "{}", msg),
-            IoError(err) => write!(f, "{:?}", err),
-            Utf8Error(err) => write!(f, "{:?}", err),
-            LituaError(err) => write!(f, "{:?}", err),
-            MluaError(err) => write!(f, "{:?}", err),
+            CLIArg(msg) => write!(f, "{msg}"),
+            Io(err) => write!(f, "{err:?}"),
+            Encoding(err) => write!(f, "{err:?}"),
+            Litua(err) => write!(f, "{err:?}"),
+            Mlua(err) => write!(f, "{err:?}"),
         }
     }
 }
 
 impl From<io::Error> for Error {
     fn from(error: io::Error) -> Self {
-        Self::IoError(error)
+        Self::Io(error)
     }
 }
 
 impl From<str::Utf8Error> for Error {
     fn from(error: str::Utf8Error) -> Self {
-        Self::Utf8Error(error)
+        Self::Encoding(error)
     }
 }
 
 impl From<errors::Error> for Error {
     fn from(error: errors::Error) -> Self {
-        Self::LituaError(error)
+        Self::Litua(error)
     }
 }
 
 impl From<mlua::Error> for Error {
     fn from(error: mlua::Error) -> Self {
-        Self::MluaError(error)
+        Self::Mlua(error)
     }
 }
 
@@ -74,7 +75,7 @@ fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(_co
     match addition_str.to_str() {
         Some(s) if !s.is_empty() => lua.load(&format!("package.path = package.path .. ';{s}'")).exec()?,
         Some(_) => {},
-        None => return Err(Error::CLIArgError("cannot convert the luapath extension path (supplied as --add-require-path) to a UTF-8 string. But this is sadly required by the mlua interface (the library to run Lua)".to_owned())),
+        None => return Err(Error::CLIArg("cannot convert the luapath extension path (supplied as --add-require-path) to a UTF-8 string. But this is sadly required by the mlua interface (the library to run Lua)".to_owned())),
     };
 
     // (1) load litua libraries

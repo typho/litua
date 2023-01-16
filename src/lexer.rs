@@ -297,7 +297,7 @@ impl<'l> LexingIterator<'l> {
                     CLOSE_FUNCTION => {
                         self.next_tokens.push_back(Token::BeginFunction(byte_offset));
                         self.state = Terminated;
-                        self.occured_error = Some(errors::Error::SyntaxError(format!("call '{}' was immediately closed by '{}', but empty calls are not allowed", OPEN_FUNCTION, CLOSE_FUNCTION)));
+                        self.occured_error = Some(errors::Error::InvalidSyntax(format!("call '{OPEN_FUNCTION}' was immediately closed by '{CLOSE_FUNCTION}', but empty calls are not allowed")));
                     },
                     OPEN_RAW => {
                         self.state = StartRaw;
@@ -317,7 +317,7 @@ impl<'l> LexingIterator<'l> {
                         self.raw_delimiter_length += 1;
                         if self.raw_delimiter_length == 127 {
                             self.state = Terminated;
-                            self.occured_error = Some(errors::Error::SyntaxError(format!("raw string delimiter must not exceed length 128")));
+                            self.occured_error = Some(errors::Error::InvalidSyntax("raw string delimiter must not exceed length 128".to_string()));
                         }
                     },
                     c if c.is_whitespace() => {
@@ -329,7 +329,7 @@ impl<'l> LexingIterator<'l> {
                     },
                     c => {
                         self.state = Terminated;
-                        self.occured_error = Some(errors::Error::SyntaxError(format!("unexpected character '{}' while reading raw string start", c)));
+                        self.occured_error = Some(errors::Error::InvalidSyntax(format!("unexpected character '{c}' while reading raw string start")));
                     }
                 }
             },
@@ -420,7 +420,7 @@ impl<'l> LexingIterator<'l> {
                     },
                     _ => {
                         self.state = Terminated;
-                        self.occured_error = Some(errors::Error::SyntaxError(format!("after ending arguments with '{}', I require a whitespace character to continue with content", CLOSE_ARG)));
+                        self.occured_error = Some(errors::Error::InvalidSyntax(format!("after ending arguments with '{CLOSE_ARG}', I require a whitespace character to continue with content")));
                     }
                 }
             },

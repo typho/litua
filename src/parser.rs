@@ -34,7 +34,7 @@ impl<'s> Parser<'s> {
 
     #[inline]
     fn unexpected_token<T>(tok: &lexer::Token, expected: &str) -> Result<T, errors::Error> {
-        Err(errors::Error::UnexpectedToken(format!("{:?}", tok), expected.to_owned()))
+        Err(errors::Error::UnexpectedToken(format!("{tok:?}"), expected.to_owned()))
     }
 
     #[inline]
