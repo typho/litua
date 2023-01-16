@@ -6,6 +6,8 @@ use std::mem;
 use std::ops;
 use std::str;
 
+use crate::errors;
+
 // characters part of the litua text document syntax
 
 /// U+007B  LEFT CURLY BRACKET
@@ -128,7 +130,7 @@ pub struct LexingIterator<'l> {
     pub next_tokens: VecDeque<Token>,
     /// if an error occured, the error is returned once
     /// and the lexer switches to the infinite EOF state
-    pub occured_error: Option<anyhow::Error>,
+    pub occured_error: Option<errors::Error>,
 }
 
 impl<'l> LexingIterator<'l> {
@@ -160,7 +162,7 @@ impl<'l> LexingIterator<'l> {
             Some(t) => t,
             None => {
                 self.state = LexingState::Terminated;
-                self.occured_error = Some(anyhow::anyhow!("unbalanced end of function call at byte {}", self.token_start));
+                self.occured_error = Some(errors::Error::UnbalancedParentheses(format!("there is some function end too many - function ended at {} but never started", self.token_start)));
                 return LexingScope::ContentInFunction; // NOTE: arbitrary token
             }
         };
@@ -295,7 +297,7 @@ impl<'l> LexingIterator<'l> {
                     CLOSE_FUNCTION => {
                         self.next_tokens.push_back(Token::BeginFunction(byte_offset));
                         self.state = Terminated;
-                        self.occured_error = Some(anyhow::anyhow!("the call '{}' was immediately closed by '{}' - empty calls are not allowed", OPEN_FUNCTION, CLOSE_FUNCTION));
+                        self.occured_error = Some(errors::Error::SyntaxError(format!("call '{}' was immediately closed by '{}', but empty calls are not allowed", OPEN_FUNCTION, CLOSE_FUNCTION)));
                     },
                     OPEN_RAW => {
                         self.state = StartRaw;
@@ -315,7 +317,7 @@ impl<'l> LexingIterator<'l> {
                         self.raw_delimiter_length += 1;
                         if self.raw_delimiter_length == 127 {
                             self.state = Terminated;
-                            self.occured_error = Some(anyhow::anyhow!("raw string delimiter must not exceed length 128"));
+                            self.occured_error = Some(errors::Error::SyntaxError(format!("raw string delimiter must not exceed length 128")));
                         }
                     },
                     c if c.is_whitespace() => {
@@ -327,7 +329,7 @@ impl<'l> LexingIterator<'l> {
                     },
                     c => {
                         self.state = Terminated;
-                        self.occured_error = Some(anyhow::anyhow!("unexpected character '{}' while reading raw string start", c));
+                        self.occured_error = Some(errors::Error::SyntaxError(format!("unexpected character '{}' while reading raw string start", c)));
                     }
                 }
             },
@@ -418,7 +420,7 @@ impl<'l> LexingIterator<'l> {
                     },
                     _ => {
                         self.state = Terminated;
-                        self.occured_error = Some(anyhow::anyhow!("after ending arguments with '{}', I require a whitespace character to continue with content", CLOSE_ARG));
+                        self.occured_error = Some(errors::Error::SyntaxError(format!("after ending arguments with '{}', I require a whitespace character to continue with content", CLOSE_ARG)));
                     }
                 }
             },
@@ -428,7 +430,7 @@ impl<'l> LexingIterator<'l> {
         self.next_tokens.pop_front()
     }
 
-    pub(crate) fn emit_occured_error(&mut self) -> Option<anyhow::Error> {
+    pub(crate) fn emit_occured_error(&mut self) -> Option<errors::Error> {
         mem::take(&mut self.occured_error)
     }
 }
@@ -465,7 +467,7 @@ impl Eq for Token {}
 impl<'l> Iterator for LexingIterator<'l> {
     /// An item identifies when this token started (UTF-8 byte offset)
     /// and whether we get an error here (Err) or some token (Ok).
-    type Item = anyhow::Result<Token>;
+    type Item = Result<Token, errors::Error>;
 
     /// An iterator over tokens emitted by the lexer.
     /// It implements the rust's Iterator protocol, but additionally guarantees

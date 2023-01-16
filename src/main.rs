@@ -1,16 +1,71 @@
 mod lexer;
 mod parser;
 mod tree;
+mod errors;
 
 use mlua::prelude::*;
 use clap::Parser;
 
 use std::fs;
+use std::io;
 use std::io::prelude::*;
 use std::path;
 use std::str;
 
-fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(_conf: &Settings, dst: A, doc: &tree::DocumentTree, hooks_dir: B, luapath_additions: C) -> anyhow::Result<()> {
+use std::error;
+use std::fmt;
+
+#[derive(Debug)]
+enum Error {
+    CLIArgError(String),
+    IoError(io::Error),
+    Utf8Error(str::Utf8Error),
+    LituaError(errors::Error),
+    MluaError(mlua::Error),
+}
+
+impl error::Error for Error {}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use Error::*;
+
+        match self {
+            CLIArgError(msg) => write!(f, "{}", msg),
+            IoError(err) => write!(f, "{:?}", err),
+            Utf8Error(err) => write!(f, "{:?}", err),
+            LituaError(err) => write!(f, "{:?}", err),
+            MluaError(err) => write!(f, "{:?}", err),
+        }
+    }
+}
+
+impl From<io::Error> for Error {
+    fn from(error: io::Error) -> Self {
+        Self::IoError(error)
+    }
+}
+
+impl From<str::Utf8Error> for Error {
+    fn from(error: str::Utf8Error) -> Self {
+        Self::Utf8Error(error)
+    }
+}
+
+impl From<errors::Error> for Error {
+    fn from(error: errors::Error) -> Self {
+        Self::LituaError(error)
+    }
+}
+
+impl From<mlua::Error> for Error {
+    fn from(error: mlua::Error) -> Self {
+        Self::MluaError(error)
+    }
+}
+
+
+fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(_conf: &Settings, dst: A, doc: &tree::DocumentTree, hooks_dir: B, luapath_additions: C) -> Result<(), Error> {
     // NOTE: 'debug' library is only available with Lua::unsafe_new()
     //       https://github.com/khvzak/mlua/issues/39
     let lua = unsafe { Lua::unsafe_new() };
@@ -19,7 +74,7 @@ fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(_co
     match addition_str.to_str() {
         Some(s) if !s.is_empty() => lua.load(&format!("package.path = package.path .. ';{s}'")).exec()?,
         Some(_) => {},
-        None => return Err(anyhow::anyhow!("cannot convert the luapath extension path (supplied as --add-require-path) to a UTF-8 string. But this is sadly required by the mlua interface (the library to run Lua)")),
+        None => return Err(Error::CLIArgError("cannot convert the luapath extension path (supplied as --add-require-path) to a UTF-8 string. But this is sadly required by the mlua interface (the library to run Lua)".to_owned())),
     };
 
     // (1) load litua libraries
@@ -87,7 +142,7 @@ fn derive_destination_filepath(p: &path::Path) -> path::PathBuf {
     }
 }
 
-fn lex_and_parse(conf: &Settings, src: &path::Path) -> anyhow::Result<tree::DocumentTree> {
+fn lex_and_parse(conf: &Settings, src: &path::Path) -> Result<tree::DocumentTree, Error> {
     let mut fd = fs::File::open(src)?;
     let mut buf = Vec::new();
     fd.read_to_end(&mut buf)?;
@@ -147,7 +202,7 @@ struct Settings {
 }
 
 
-fn main() -> anyhow::Result<()> {
+fn main() -> Result<(), Error> {
     let conf = Settings::parse();
 
     let src = conf.source.as_path();

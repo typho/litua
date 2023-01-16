@@ -6,6 +6,7 @@ use std::path;
 
 use crate::tree;
 use crate::lexer;
+use crate::errors;
 
 /// `Parser` holds a reference to the text document source code.
 /// To generate better error messages, we also store the filepath.
@@ -32,16 +33,16 @@ impl<'s> Parser<'s> {
     }
 
     #[inline]
-    fn unexpected_token<T>(tok: &lexer::Token) -> anyhow::Result<T> {
-        Err(anyhow::anyhow!("unexpected token {:?}", tok))
+    fn unexpected_token<T>(tok: &lexer::Token, expected: &str) -> Result<T, errors::Error> {
+        Err(errors::Error::UnexpectedToken(format!("{:?}", tok), expected.to_owned()))
     }
 
     #[inline]
-    fn unexpected_eof<T>() -> anyhow::Result<T> {
-        Err(anyhow::anyhow!("unexpected end of lexer tokens iterator"))
+    fn unexpected_eof<T>() -> Result<T, errors::Error> {
+        Err(errors::Error::UnexpectedEOF("unexpected end of lexer tokens iterator".to_owned()))
     }
 
-    fn parse_raw(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> anyhow::Result<tree::DocumentElement> {
+    fn parse_raw(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> Result<tree::DocumentElement, errors::Error> {
         let whitespace;
         let name;
         let text;
@@ -56,7 +57,7 @@ impl<'s> Parser<'s> {
                         name = &self.source_code[range];
                     },
                     lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                    _ => return Self::unexpected_token(&token),
+                    _ => return Self::unexpected_token(&token, "start of raw string"),
                 }
             },
             None => return Self::unexpected_eof(),
@@ -72,7 +73,7 @@ impl<'s> Parser<'s> {
                         // NOTE: expected token, yay!
                     },
                     lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                    _ => return Self::unexpected_token(&token),
+                    _ => return Self::unexpected_token(&token, "some whitespace"),
                 }
             },
             None => return Self::unexpected_eof(),
@@ -88,7 +89,7 @@ impl<'s> Parser<'s> {
                         // NOTE: expected token, yay!
                     },
                     lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                    _ => return Self::unexpected_token(&token),
+                    _ => return Self::unexpected_token(&token, "text string"),
                 }
             },
             None => return Self::unexpected_eof(),
@@ -103,7 +104,7 @@ impl<'s> Parser<'s> {
                         // NOTE: expected token, yay!
                     },
                     lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                    _ => return Self::unexpected_token(&token),
+                    _ => return Self::unexpected_token(&token, "end of raw string"),
                 }
             },
             None => return Self::unexpected_eof(),
@@ -119,7 +120,7 @@ impl<'s> Parser<'s> {
         }))
     }
 
-    fn parse_content(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> anyhow::Result<tree::DocumentNode> {
+    fn parse_content(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> Result<tree::DocumentNode, errors::Error> {
         let mut content = tree::DocumentNode::new();
 
         // (1) consume BeginContent
@@ -131,7 +132,7 @@ impl<'s> Parser<'s> {
                         // NOTE: expected token, yay!
                     },
                     lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                    _ => return Self::unexpected_token(&token),
+                    _ => return Self::unexpected_token(&token, "start of content"),
                 }
             },
             None => return Self::unexpected_eof(),
@@ -183,7 +184,7 @@ impl<'s> Parser<'s> {
                 NextToken::Unexpected => {
                     // protocol violation
                     match iter.next() {
-                        Some(Ok(tok)) => return Self::unexpected_token(&tok),
+                        Some(Ok(tok)) => return Self::unexpected_token(&tok, "start of function/raw string or some text or end of content"),
                         Some(Err(err)) => Err(err)?,
                         None => return Self::unexpected_eof(),
                     }
@@ -199,7 +200,7 @@ impl<'s> Parser<'s> {
                         // NOTE: expected token, yay!
                     },
                     lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                    _ => return Self::unexpected_token(&token),
+                    _ => return Self::unexpected_token(&token, "end of content"),
                 }
             },
             None => return Self::unexpected_eof(),
@@ -208,7 +209,7 @@ impl<'s> Parser<'s> {
         Ok(content)
     }
 
-    fn parse_argument_value(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> anyhow::Result<tree::DocumentNode> {
+    fn parse_argument_value(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> Result<tree::DocumentNode, errors::Error> {
         let mut arg_value = tree::DocumentNode::new();
 
         // (1) consume BeginArgValue
@@ -220,7 +221,7 @@ impl<'s> Parser<'s> {
                         // NOTE: expected token, yay!
                     },
                     lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                    _ => return Self::unexpected_token(&token),
+                    _ => return Self::unexpected_token(&token, "start of argument value"),
                 }
             },
             None => return Self::unexpected_eof(),
@@ -272,7 +273,7 @@ impl<'s> Parser<'s> {
                 NextToken::Unexpected => {
                     // protocol violation
                     match iter.next() {
-                        Some(Ok(tok)) => return Self::unexpected_token(&tok),
+                        Some(Ok(tok)) => return Self::unexpected_token(&tok, "start of function/raw string or some text or end of argument value"),
                         Some(Err(err)) => Err(err)?,
                         None => return Self::unexpected_eof(),
                     }
@@ -289,7 +290,7 @@ impl<'s> Parser<'s> {
                         // NOTE: expected token, yay!
                     },
                     lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                    _ => return Self::unexpected_token(&token),
+                    _ => return Self::unexpected_token(&token, "end of argument value"),
                 }
             },
             None => return Self::unexpected_eof(),
@@ -298,7 +299,7 @@ impl<'s> Parser<'s> {
         Ok(arg_value)
     }
 
-    fn parse_function(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> anyhow::Result<tree::DocumentElement> {
+    fn parse_function(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> Result<tree::DocumentElement, errors::Error> {
         let mut func = tree::DocumentFunction::new();
 
         // (01) consume BeginFunction
@@ -310,7 +311,7 @@ impl<'s> Parser<'s> {
                         // NOTE: expected token, yay!
                     },
                     lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                    _ => return Self::unexpected_token(&token),
+                    _ => return Self::unexpected_token(&token, "start of function"),
                 }
             },
             None => return Self::unexpected_eof(),
@@ -326,7 +327,7 @@ impl<'s> Parser<'s> {
                         func.name = name.to_owned();
                     },
                     lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                    _ => return Self::unexpected_token(&token),
+                    _ => return Self::unexpected_token(&token, "call name"),
                 }
             },
             None => return Self::unexpected_eof(),
@@ -342,7 +343,7 @@ impl<'s> Parser<'s> {
                             func.args.insert("=whitespace".to_owned(), vec![tree::DocumentElement::Text(format!("{whitespace}"))]);
                         },
                         lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                        _ => return Self::unexpected_token(&token),
+                        _ => return Self::unexpected_token(&token, "whitespace"),
                     }
                 },
                 None => return Self::unexpected_eof(),
@@ -360,7 +361,7 @@ impl<'s> Parser<'s> {
                             // NOTE: expected token, yay!
                         },
                         lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                        _ => return Self::unexpected_token(&token),
+                        _ => return Self::unexpected_token(&token, "start of arguments"),
                     }
                 },
                 None => return Self::unexpected_eof(),
@@ -383,7 +384,7 @@ impl<'s> Parser<'s> {
                                 &self.source_code[range]
                             }
                             lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                            _ => return Self::unexpected_token(&token),
+                            _ => return Self::unexpected_token(&token, "end of arguments or the next argument key"),
                         }
                     },
                     None => return Self::unexpected_eof(),
@@ -403,7 +404,7 @@ impl<'s> Parser<'s> {
                             // NOTE: expected token, yay!
                         },
                         lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                        _ => return Self::unexpected_token(&token),
+                        _ => return Self::unexpected_token(&token, "end of arguments"),
                     }
                 },
                 None => return Self::unexpected_eof(),
@@ -419,7 +420,7 @@ impl<'s> Parser<'s> {
                                 func.args.insert("=whitespace".to_owned(), vec![tree::DocumentElement::Text(format!("{whitespace}"))]);
                             },
                             lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                            _ => return Self::unexpected_token(&token),
+                            _ => return Self::unexpected_token(&token, "some whitespace"),
                         }
                     },
                     None => return Self::unexpected_eof(),
@@ -447,7 +448,7 @@ impl<'s> Parser<'s> {
                         // NOTE: expected token, yay!
                     },
                     lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                    _ => return Self::unexpected_token(&token),
+                    _ => return Self::unexpected_token(&token, "end of function"),
                 }
             },
             None => return Self::unexpected_eof(),
@@ -457,7 +458,7 @@ impl<'s> Parser<'s> {
     }
 
     /// Consumes the tokens provided by the `LexingIterator` argument
-    pub fn consume_iter(&mut self, iter: lexer::LexingIterator) -> anyhow::Result<()> {
+    pub fn consume_iter(&mut self, iter: lexer::LexingIterator) -> Result<(), errors::Error> {
         let mut peekable_iter = iter.peekable();
 
         // admissible tokens
@@ -504,9 +505,9 @@ impl<'s> Parser<'s> {
                 NextToken::Unexpected => {
                     // protocol violation
                     match peekable_iter.next() {
-                        Some(Ok(tok)) => return Err(anyhow::anyhow!("unexpected token {:?}", tok)),
+                        Some(Ok(tok)) => return Self::unexpected_token(&tok, "start of function/raw string or some text or end of file"),
                         Some(Err(err)) => Err(err)?,
-                        None => return Err(anyhow::anyhow!("unexpected end of lexer tokens iterator")),
+                        None => return Self::unexpected_token(&lexer::Token::EndOfFile(0), "unexpected end of lexer tokens iterator"),
                     }
                 },
             }
@@ -516,7 +517,7 @@ impl<'s> Parser<'s> {
     }
 
     /// Declares the end of the text document
-    pub fn finalize(&mut self) -> anyhow::Result<()> {
+    pub fn finalize(&mut self) -> Result<(), errors::Error> {
         Ok(())
     }
 
@@ -580,7 +581,7 @@ impl<'s> DebuggingParser<'s> {
         if indent_change >= 0 { (*indent) += indent_change; }
     }
 
-    pub fn consume_iter(&self, iter: lexer::LexingIterator) -> anyhow::Result<()> {
+    pub fn consume_iter(&self, iter: lexer::LexingIterator) -> Result<(), errors::Error> {
         let mut indent = 0;
         for tok_or_err in iter {
             match tok_or_err {
@@ -611,7 +612,7 @@ impl<'s> DebuggingParser<'s> {
     }
 
     /// Declares the end of the text document. Dummy function, in case of `DebuggingParser`.
-    pub fn finalize(&mut self) -> anyhow::Result<()> {
+    pub fn finalize(&mut self) -> Result<(), errors::Error> {
         Ok(())
     }
 
