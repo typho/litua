@@ -23,25 +23,8 @@ fn handle_file(filepath: OsString) -> anyhow::Result<()> {
     let source_code = str::from_utf8(&buf)?;
     let mut l = lexer::Lexer::new(source_code);
     let mut p = parser::Parser::new(filepath, source_code);
-    /*for token in l.iter() {
-        match token {
-            Ok(tok) => {
-                println!("{:?}", tok.format_with_src(str::from_utf8(buf.as_ref())?));
-                p.feed(tok)?;
-            },
-            Err(e) => {
-                println!("{:?}", e);
-                return Err(e);
-            }
-        }
-    }*/
-    let mut err = None;
-    p.consume_iter(l.iter().take_while(|elem| {
-        match elem {
-            Err(e) => { err = Some(*e); false },
-            Ok(_) => true,
-        }
-    }).map(|elem| elem?));
+
+    p.consume_iter(l.iter());
     p.finalize()?;
 
     let tree = p.tree();

@@ -1,12 +1,8 @@
 use std::collections::VecDeque;
 use std::fmt;
-use std::fs;
 use std::mem;
 use std::ops;
-use std::path;
 use std::str;
-
-use std::io::Read;
 
 const OPEN_CALL: char = '{'; // U+007B  LEFT CURLY BRACKET
 const CLOSE_CALL: char = '}'; // U+007D  RIGHT CURLY BRACKET
@@ -64,7 +60,7 @@ impl fmt::Display for LexingState {
     }
 }
 
-#[derive(Clone,Debug)]
+#[derive(Debug)]
 pub struct LexingIterator<'l> {
     /// state of this iterator
     state: LexingState,
@@ -83,7 +79,9 @@ pub struct LexingIterator<'l> {
     next_tokens: VecDeque<Token>,
     /// byte offset where the current token started
     token_start: usize,
-
+    /// if an error occured, the error is returned once
+    /// and the lexer switches to the infinite EOF state
+    occured_error: Option<anyhow::Error>,
 }
 
 impl<'l> LexingIterator<'l> {
@@ -96,6 +94,7 @@ impl<'l> LexingIterator<'l> {
             stack: Vec::new(),
             next_tokens: toks,
             token_start: 0,
+            occured_error: None,
         }
     }
 }
@@ -137,6 +136,10 @@ impl<'l> LexingIterator<'l> {
     /// since the token consists of multiple scalars.
     pub(crate) fn progress(&mut self) -> Option<Token> {
         use LexingState::*;
+
+        if self.occured_error.is_some() {
+            return None;
+        }
 
         let front = self.next_tokens.pop_front();
         if front.is_some() {
@@ -256,6 +259,10 @@ impl<'l> LexingIterator<'l> {
 
         None
     }
+
+    pub(crate) fn emit_occured_error(&mut self) -> Option<anyhow::Error> {
+        mem::take(&mut self.occured_error)
+    }
 }
 
 #[derive(Clone,Debug,PartialEq)]
@@ -321,7 +328,7 @@ impl Token {
 }
 
 impl<'l> Iterator for LexingIterator<'l> {
-    type Item = anyhow::Result<Token>;
+    type Item = Token;
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
@@ -331,8 +338,7 @@ impl<'l> Iterator for LexingIterator<'l> {
                     assert!(self.stack.is_empty());
                     return None;
                 },
-                Some(Token::Error(errmsg)) => return Some(Err(anyhow::anyhow!(errmsg))),
-                Some(t) => return Some(Ok(t)),
+                Some(t) => return Some(t),
                 None => continue,
             }
         }
