@@ -29,7 +29,6 @@ impl<'l> Lexer<'l> {
 
 #[derive(Clone,Debug,Hash,PartialEq)]
 enum LexingScope {
-    ContentInDocument,
     ContentInFunction,
     ArgumentValueInFunction,
     FunctionInContent,
@@ -134,9 +133,6 @@ impl<'l> LexingIterator<'l> {
         };
 
         match top.clone() {
-            ContentInDocument => {
-                self.pop_scope(byte_offset);
-            },
             ArgumentValueInFunction => {
                 self.state = LexingState::FoundArgumentClosing;
             },

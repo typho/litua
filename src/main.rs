@@ -14,7 +14,9 @@ use std::path;
 use std::str;
 
 fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(conf: &Settings, dst: A, doc: &tree::DocumentTree, hooks_dir: B, luapath_additions: C) -> anyhow::Result<()> {
-    let lua = Lua::new();
+    // NOTE: 'debug' library is only available with Lua::unsafe_new()
+    //       https://github.com/khvzak/mlua/issues/39
+    let lua = unsafe { Lua::unsafe_new() };
 
     let addition_str = path::PathBuf::from(luapath_additions.as_ref());
     match addition_str.to_str() {
