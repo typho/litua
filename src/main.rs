@@ -13,14 +13,23 @@ use std::io::prelude::*;
 use std::path;
 use std::str;
 
-fn run_lua<D: AsRef<path::Path>, P: AsRef<path::Path>>(doc: &tree::DocumentTree, hooks_dir: P, dst: D) -> anyhow::Result<()> {
+fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(dst: A, doc: &tree::DocumentTree, hooks_dir: B, luapath_additions: C) -> anyhow::Result<()> {
     let lua = Lua::new();
+
+    let addition_str = path::PathBuf::from(luapath_additions.as_ref());
+    //: Result<&str, anyhow::Error> = luapath_additions.try_into();
+    match addition_str.to_str() {
+        Some(s) => lua.load(&format!("package.path = package.path .. ';{}'", s)).exec()?,
+        None => return Err(anyhow::anyhow!("cannot convert the luapath extension path (supplied as --add-require-path) to a UTF-8 string. But this is sadly required by the mlua interface (the library to run Lua)")),
+    };
 
     // (1) load litua libraries
     let litua_table = include_str!("litua.lua");
     lua.load(litua_table).exec()?;
     let litua_lib = include_str!("litua.lib.lua");
     lua.load(litua_lib).exec()?;
+
+    // TODO luapath_additions
 
     // (2) find hook files
     let mut hook_files = vec![];
@@ -74,7 +83,7 @@ fn derive_destination_filepath(p: &path::Path) -> path::PathBuf {
     }
 }
 
-fn handle_file(src: &path::Path, dst: &path::Path) -> anyhow::Result<()> {
+fn lex_and_parse(src: &path::Path) -> anyhow::Result<tree::DocumentTree> {
     let mut fd = fs::File::open(src.clone())?;
     let mut buf = Vec::new();
     fd.read_to_end(&mut buf)?;
@@ -86,17 +95,14 @@ fn handle_file(src: &path::Path, dst: &path::Path) -> anyhow::Result<()> {
     p.consume_iter(l.iter())?;
     p.finalize()?;
 
-    let tree = p.tree();
-    run_lua(&tree, ".", dst)?;
-
-    Ok(())
+    Ok(p.tree())
 }
 
 #[derive(Parser, Debug)]
-#[command(name = "MyApp")]
-#[command(author = "Kevin K. <kbknapp@gmail.com>")]
-#[command(version = "1.0")]
-#[command(about = "Does awesome things", long_about = None)]
+#[command(name = "litua")]
+#[command(author = "meisterluk <kbknapp@gmail.com>")]
+#[command(version = "0.5")]
+#[command(about = "Read document as tree and apply Lua functions to nodes")]
 #[command(author, version, about, long_about = None)]
 struct Settings {
     // helpful for debugging 
@@ -140,10 +146,11 @@ fn main() -> anyhow::Result<()> {
         println!("{:?}", set.add_require_path);
         // TODO
     } else {
-        println!("{:?}", set.hooks_dir);
-        println!("{:?}", set.add_require_path);
+        let hooks_dir = set.hooks_dir.unwrap_or(path::PathBuf::from("."));
+        let lua_path_additions = set.add_require_path.unwrap_or(path::PathBuf::from(""));
 
-        handle_file(&src, &dst)?;
+        let doctree = lex_and_parse(&src)?;
+        run_lua(&dst, &doctree, hooks_dir, lua_path_additions)?;
 
         println!("File '{}' read. File '{}' written.", src.display(), dst.display());
     }

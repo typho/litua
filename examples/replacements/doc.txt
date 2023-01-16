@@ -1,0 +1,9 @@
+{let[name=세종대왕][occasion=52][achievement=Korean alphabet][who=tajpulo]}
+
+Dear {name},
+
+I want to congratulate on the occasion of your {occasion}th birthday.
+I am a big fan of your development of the {achievement}!
+
+All the best,
+{who}

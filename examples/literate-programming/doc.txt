@@ -1,20 +1,20 @@
-{docu
+{docu 
   Hello World!
 }
 
-{code
+{code {<
     let mut p = String::new();
     p.push_str(&s[0..s.rfind(".").unwrap()]);
     p.push_str(".");
     p.push_str(ext);
     p
-}
+>}}
 
 {docu
   This is an ordered list:
 }
 
-{code
+{code {<<
     if args_string == "" and content_string == "" then
         return "{" .. node.call .. "}"
     elseif args_string == "" then
@@ -24,4 +24,4 @@
     else
         return "{" .. node.call .. args_string .. "\n" .. content_string .. "}"
     end
-}
+>>}}
