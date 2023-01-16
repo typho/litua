@@ -134,7 +134,7 @@ impl<'l> LexingIterator<'l> {
     /// Continue reading the next Unicode scalar.
     /// Maybe the result is some Token to omit or maybe the result is None,
     /// since the token consists of multiple scalars.
-    pub(crate) fn progress(&mut self) -> Option<Token> {
+    pub(crate) fn progress(&mut self) -> Option<anyhow::Result<Token>> {
         use LexingState::*;
 
         if self.occured_error.is_some() {
@@ -142,8 +142,8 @@ impl<'l> LexingIterator<'l> {
         }
 
         let front = self.next_tokens.pop_front();
-        if front.is_some() {
-            return front;
+        if let Some(tok) = front {
+            return Some(Ok(tok));
         }
 
         if self.state == Error || self.state == EOF { 
@@ -152,7 +152,7 @@ impl<'l> LexingIterator<'l> {
 
         let (byte_offset, chr) = match self.chars.next() {
             Some((bo, ch)) => (bo, ch),
-            None => return Some(Token::EOF),
+            None => return Some(Ok(Token::EOF)),
         };
 
         match self.state {
@@ -189,7 +189,7 @@ impl<'l> LexingIterator<'l> {
                 match chr {
                     CLOSE_CALL => {
                         self.state = Error;
-                        return Some(Token::Error(format!("the call '{}' was immediately close by '{}' - empty calls are not allowed", OPEN_CALL, CLOSE_CALL)));
+                        return Some(Err(anyhow::anyhow!("the call '{}' was immediately close by '{}' - empty calls are not allowed", OPEN_CALL, CLOSE_CALL)));
                     },
                     _ => {
                         self.state = ReadingCallName;
@@ -278,7 +278,6 @@ pub enum Token {
     EndContent(usize),
     EndFunction(usize),
     EOF,
-    Error(String),
 }
 
 impl Eq for Token {}
@@ -322,23 +321,24 @@ impl Token {
                 None => format!("EndFunction @ {}", pos),
             },
             EOF => format!("EOF"),
-            Error(errmsg) => format!("Error({:?})", errmsg),
         }
     }
 }
 
 impl<'l> Iterator for LexingIterator<'l> {
-    type Item = Token;
+    /// An item identifies when this token started (UTF-8 byte offset)
+    /// and whether we get an error here (Err) or some token (Ok).
+    //type Item = (usize, anyhow::Result<Token>);
+    type Item = anyhow::Result<Token>;
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             match self.progress() {
-                Some(Token::EOF) => {
-                    eprintln!("{:?}", self.stack);
+                Some(Ok(Token::EOF)) => {
                     assert!(self.stack.is_empty());
                     return None;
                 },
-                Some(t) => return Some(t),
+                Some(tok) => return Some(tok),
                 None => continue,
             }
         }

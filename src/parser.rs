@@ -147,20 +147,22 @@ impl<'s> Parser<'s> {
         let mut end_of_previous_token = 0;
 
         match iter.next() {
-            Some(lexer::Token::BeginContent(this_start)) => end_of_previous_token = this_start,
-            _ => {
-                // TODO protocol violated
+            Some(token_or_err) => {
+                if let Ok(lexer::Token::BeginFunction(pos)) = token_or_err {
+                    end_of_previous_token = pos;
+                } else {
+                    return Err(anyhow::anyhow!("unexpected token {:?} while starting to parse content", token_or_err));
+                }
             },
+            None => return Err(anyhow::anyhow!("unexpected end of tokens while starting to parse content")),
         }
         
         loop {
             match iter.peek() {
                 // TODO update end_of_previous_token with parse_function. Then end_of_previous_token.._start is text to add
-                Some(lexer::Token::BeginFunction(_start)) => node.push(self.parse_function(iter)?),
-                Some(lexer::Token::EndContent(_)) => break,
-                _ => {
-                    // TODO protocol violated
-                }
+                Some(Ok(lexer::Token::BeginFunction(_start))) => node.push(self.parse_function(iter)?),
+                Some(Ok(lexer::Token::EndContent(_))) => break,
+                None => return Err(anyhow::anyhow!("unexpected end of tokens while starting to parse content")),
             }
         }
 
@@ -175,13 +177,25 @@ impl<'s> Parser<'s> {
 
         loop {
             let mut found_function = false;
-
-            if let Some(lexer::Token::BeginFunction(_)) = peekable_iter.peek() {
+            let errmsg = anyhow::anyhow!("unexpected end of tokens at byte offset {}", pos_latest);
+            /*
+            let next = (*peekable_iter.peek().ok_or(errmsg)?)?;
+            if let lexer::Token::BeginFunction(_) = next {
                 found_function = true;
-            } else if let Some(lexer::Token::EOF) = peekable_iter.peek() {
+            } else if let lexer::Token::EOF = next {
                 break;
-            } else if let None = peekable_iter.peek() {
-                // potentially a
+            } else {}
+            */
+
+            match peekable_iter.peek() {
+                Some(token_or_err) => {
+                    if let Ok(lexer::Token::BeginFunction(_)) = token_or_err {
+                        found_function = true;
+                    } else if let Ok(lexer::Token::EOF) = token_or_err {
+                        break;
+                    }
+                },
+                _ => return Err(anyhow::anyhow!(errmsg)),
             }
 
             if found_function {
