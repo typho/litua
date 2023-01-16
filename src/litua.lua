@@ -3,12 +3,13 @@ local debug = require("debug")
 
 Litua = {
     ["hooks"] = {
-        ["init"] = {},
-        ["pre-debug"] = {},
+        ["setup"] = {},
+        ["read-new-node"] = {},
         ["modify-node"] = {},
-        ["node-to-string"] = {},
-        ["post-debug"] = {},
-        ["final"] = {},
+        ["read-modified-node"] = {},
+        ["convert-node-to-string"] = {},
+        ["modify-final-string"] = {},
+        ["teardown"] = {},
     },
     ["global"] = {},
     ["config"] = {},
@@ -21,40 +22,71 @@ Litua.register_hook = function (hook_name, filter, hook_impl)
     local line_number = debug.getinfo(levels).currentline
     local source_file = debug.getinfo(levels).source
     local scope = debug.getinfo(levels).name
-    local call_repr = "hook from '" .. tostring(scope) .. "' in '" .. tostring(source_file) .. "' at " .. tostring(line_number)
+    local call_repr = "'" .. tostring(scope) .. "' hook from '" .. tostring(source_file) .. "' at " .. tostring(line_number)
 
     -- validate arguments
-    if type(filter) ~= "string" or type(hook_impl) ~= "function" then
-        print("ERROR: when registering a hook, the 1st argument must be a string and the 2nd argument be a function. I received " .. type(filter) .. " and " .. type(hook_impl))
+    if type(filter) ~= "string" then
+        Litua.error("filter argument must be a string", {
+            ["source"] = call_repr,
+            ["expected"] = "a string with the name of the call",
+            ["actual"] = "'" .. tostring(filter) .. "'",
+            ["fix"] = "change the filter argument to a call name as a string",
+        })
+    end
+    if type(hook_impl) ~= "function" then
+        Litua.error("hook argument must be a function", {
+            ["source"] = call_repr,
+            ["expected"] = "a function as implementation of the hook",
+            ["actual"] = "'" .. tostring(hook_impl) .. "'",
+            ["fix"] = "change the hook argument to a function",
+        })
     end
     if filter:match("[%s]") ~= nil then
-        print("ERROR: hook names must not contain whitespaces, but received '" .. tostring(filter) .. "' in " .. call_repr)
+        Litua.error("filter argument must not contain a whitespace", {
+            ["source"] = call_repr,
+            ["expected"] = "a valid call name, since the filter argument must be a call name",
+            ["actual"] = "'" .. tostring(filter) .. "'",
+        })
     end
     if filter:match("[\\[]") ~= nil then
-        print("ERROR: hook names must not contain square braces, but received '" .. tostring(filter) .. "' in " .. call_repr)
+        Litua.error("filter argument must not contain square braces", {
+            ["source"] = call_repr,
+            ["expected"] = "a valid call name, since the filter argument must be a call name",
+            ["actual"] = "'" .. tostring(filter) .. "'",
+        })
+    end
+    if type(Litua.hooks[hook_name]) ~= "table" then
+        Litua.error("unknown hook '" .. tostring(hook_name) .. "'", {
+            ["source"] = call_repr,
+            ["expected"] = "hook name like 'read-new-node' or 'modify-node'",
+            ["actual"] = "'" .. tostring(filter) .. "'",
+        })
     end
 
-    -- register hook
-    if Litua.hooks[hook_name] ~= nil then
-        print("WARN: overwriting existing hook.", Litua.hooks[hook_name].src, "overwritten by", call_repr)
+    -- everything fine, let's insert the hook!
+    if type(Litua.hooks[hook_name][filter]) == "nil" then
+        Litua.hooks[hook_name][filter] = {}
     end
-
-    Litua.hooks[hook_name] = {
-        ["match"] = (function(f)
-            -- match will return true if the argument matches `filter`
-            return function (name) return name == f end
-        end)(filter),
+    table.insert(Litua.hooks[hook_name][filter], {
         ["src"] = call_repr,
         ["impl"] = hook_impl,
-    }
+    })
+
+    if hook_name == "modify-string" and #Litua.hooks[hook_name][filter] > 1 then
+        Litua.error("hook 'modify-string' must only be registered once for call '" .. filter .. "'", {
+            ["source"] = call_repr,
+        })
+    end
 end
 
 -- hooks API
-Litua.on_init = function (filter, hook) Litua.register_hook("init", filter, hook) end
-Litua.look_at_new_node = function (filter, hook) Litua.register_hook("pre-debug", filter, hook) end
+Litua.read_new_node = function (filter, hook) Litua.register_hook("read-new-node", filter, hook) end
 Litua.modify_node = function (filter, hook) Litua.register_hook("modify-node", filter, hook) end
-Litua.convert_node_to_string = function (filter, hook) Litua.register_hook("node-to-string", filter, hook) end
-Litua.look_at_finished_node = function (filter, hook) Litua.register_hook("post-debug", filter, hook) end
-Litua.modify_final_string = function (filter, hook) Litua.register_hook("final", filter, hook) end
+Litua.read_modified_node = function (filter, hook) Litua.register_hook("read-modified-node", filter, hook) end
+Litua.convert_node_to_string = function (filter, hook) Litua.register_hook("convert-node-to-string", filter, hook) end
+Litua.modify_final_string = function (filter, hook) Litua.register_hook("modify-final-string", filter, hook) end
+
+Litua.on_setup = function (hook) Litua.register_hook("setup", "", hook) end
+Litua.on_teardown = function (hook) Litua.register_hook("teardown", "", hook) end
 
 -- Litua.transform will be inserted later

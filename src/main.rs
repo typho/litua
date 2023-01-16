@@ -31,8 +31,6 @@ fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(con
     let litua_lib = include_str!("litua.lib.lua");
     lua.load(litua_lib).exec()?;
 
-    // TODO luapath_additions
-
     // (2) find hook files
     let mut hook_files = vec![];
     for dir_entry in fs::read_dir(hooks_dir)? {
@@ -40,6 +38,7 @@ fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(con
         let basename = entry.file_name();
         if let Some(name) = basename.to_str() {
             if name.starts_with("hook") && name.ends_with(".lua") {
+                println!("Loading hook file '{}'", name);
                 hook_files.push(entry.path());
             }
         }
@@ -64,6 +63,7 @@ fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(con
     let globals = lua.globals();
     let global_litua: mlua::Table = globals.get("Litua")?;
     let transform: mlua::Function = global_litua.get("transform")?;
+    println!("Running transformation.");
     let lua_result = transform.call::<mlua::Value, mlua::String>(tree)?;
     let result = lua_result.to_str()?;
 
@@ -128,7 +128,7 @@ struct Settings {
     #[arg(long)]
     dump_parsed: bool,
     #[arg(long)]
-    dump_calls: bool,
+    dump_hooks: bool,
 
     // configuration
     #[arg(long, value_name = "DIR")]
@@ -160,7 +160,7 @@ fn main() -> anyhow::Result<()> {
 
     let hooks_dir = match &conf.hooks_dir {
         Some(d) => d.as_path(),
-        None => &default_hooks_dir,
+        None => conf.source.parent().unwrap_or(default_hooks_dir.as_path()),
     };
     let lua_path_additions = match &conf.add_require_path {
         Some(d) => d.as_path(),
@@ -170,7 +170,8 @@ fn main() -> anyhow::Result<()> {
     let doctree = lex_and_parse(&conf, &src)?;
     if !conf.dump_lexed && !conf.dump_parsed {
         run_lua(&conf, &dst, &doctree, hooks_dir, &lua_path_additions)?;
-        println!("File '{}' read. File '{}' written.", src.display(), dst.display());
+        println!("File '{}' read.", src.display());
+        println!("File '{}' written.", dst.display());
     }
 
     Ok(())

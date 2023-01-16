@@ -79,7 +79,7 @@ Litua.Node.__index = function (self, index)
             return rawget(self, index)
         end
     end
-    error("cannot fetch property '" .. tostring(index) .. "' of node '" .. self.call .. "'")
+    Litua.error("cannot fetch property '" .. tostring(index) .. "' of node '" .. self.call .. "'")
 end
 
 Litua.Node.__newindex = function (self, index, value)
@@ -89,7 +89,7 @@ Litua.Node.__newindex = function (self, index, value)
             return nil
         end
     end
-    error("cannot modify property '" .. tostring(index) .. "' of node '" .. self.call .. "'")
+    Litua.error("cannot modify property '" .. tostring(index) .. "' of node '" .. self.call .. "'")
 end
 
 Litua.Node.__tostring = function (self)
