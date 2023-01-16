@@ -1,5 +1,3 @@
-use anyhow;
-
 mod lexer;
 mod parser;
 mod tree;
@@ -7,13 +5,12 @@ mod tree;
 use mlua::prelude::*;
 use clap::Parser;
 
-use std::ffi::OsString;
 use std::fs;
 use std::io::prelude::*;
 use std::path;
 use std::str;
 
-fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(conf: &Settings, dst: A, doc: &tree::DocumentTree, hooks_dir: B, luapath_additions: C) -> anyhow::Result<()> {
+fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(_conf: &Settings, dst: A, doc: &tree::DocumentTree, hooks_dir: B, luapath_additions: C) -> anyhow::Result<()> {
     // NOTE: 'debug' library is only available with Lua::unsafe_new()
     //       https://github.com/khvzak/mlua/issues/39
     let lua = unsafe { Lua::unsafe_new() };
@@ -81,7 +78,7 @@ fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(con
 
 fn derive_destination_filepath(p: &path::Path) -> path::PathBuf {
     if let Some(ext) = p.extension() {
-        if ext == OsString::from("lit") {
+        if ext == "lit" {
             p.with_extension("out")
         } else {
             p.with_extension("lit")
@@ -92,7 +89,7 @@ fn derive_destination_filepath(p: &path::Path) -> path::PathBuf {
 }
 
 fn lex_and_parse(conf: &Settings, src: &path::Path) -> anyhow::Result<tree::DocumentTree> {
-    let mut fd = fs::File::open(src.clone())?;
+    let mut fd = fs::File::open(src)?;
     let mut buf = Vec::new();
     fd.read_to_end(&mut buf)?;
 
@@ -155,7 +152,7 @@ fn main() -> anyhow::Result<()> {
     let conf = Settings::parse();
 
     let src = conf.source.as_path();
-    let derived_dst = derive_destination_filepath(src.as_ref());
+    let derived_dst = derive_destination_filepath(src);
     let dst = match &conf.destination {
         Some(p) => p.as_path(),
         None => derived_dst.as_path(),
@@ -173,9 +170,9 @@ fn main() -> anyhow::Result<()> {
         None => &default_lua_path_additions,
     };
 
-    let doctree = lex_and_parse(&conf, &src)?;
+    let doctree = lex_and_parse(&conf, src)?;
     if !conf.dump_lexed && !conf.dump_parsed {
-        run_lua(&conf, &dst, &doctree, hooks_dir, &lua_path_additions)?;
+        run_lua(&conf, dst, &doctree, hooks_dir, lua_path_additions)?;
         println!("File '{}' read.", src.display());
         println!("File '{}' written.", dst.display());
     }

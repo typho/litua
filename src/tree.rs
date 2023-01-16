@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use std::ffi::OsString;
-use mlua;
 
 #[derive(Clone,Debug,PartialEq)]
 pub struct DocumentTree(pub DocumentElement);
@@ -28,9 +27,15 @@ impl DocumentTree {
     }
 }
 
+impl Default for DocumentTree {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'lua> mlua::ToLua<'lua> for &DocumentTree {
     fn to_lua(self, lua: &'lua mlua::Lua) -> mlua::Result<mlua::Value<'lua>> {
-        Ok(self.0.to_lua(lua)?)
+        self.0.to_lua(lua)
     }
 }
 
@@ -48,6 +53,12 @@ impl DocumentFunction {
 
     pub fn empty_element() -> DocumentElement {
         DocumentElement::Function(Self::new())
+    }
+}
+
+impl Default for DocumentFunction {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

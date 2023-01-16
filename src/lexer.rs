@@ -18,8 +18,8 @@ pub struct Lexer<'l> {
 }
 
 impl<'l> Lexer<'l> {
-    pub fn new<'a>(src: &'a str) -> Lexer<'a> {
-        Lexer { source: src }
+    pub fn new(src: &'l str) -> Self {
+        Self { source: src }
     }
 
     pub fn iter(&'l self) -> LexingIterator {
@@ -139,7 +139,7 @@ impl<'l> LexingIterator<'l> {
             }
         };
 
-        match top.clone() {
+        match top {
             ArgumentValueInFunction => {
                 self.state = LexingState::FoundArgumentClosing;
             },
@@ -188,7 +188,7 @@ impl<'l> LexingIterator<'l> {
                     return None;
                 }
                 self.state = Terminated;
-                return Some(Token::EOF(self.token_start_prev));
+                return Some(Token::EndOfFile(self.token_start_prev));
             },
         };
 
@@ -368,14 +368,11 @@ impl<'l> LexingIterator<'l> {
                     self.token_start = byte_offset;
                 }
 
-                match chr {
-                    ASSIGN => {
-                        self.next_tokens.push_back(Token::ArgKey(self.token_start..byte_offset));
-                        self.push_scope(LexingScope::ArgumentValueInFunction, byte_offset);
-                        self.token_start = usize::MAX; // invalidate value
-                        self.state = ReadingArgumentValue;
-                    },
-                    _ => {},
+                if chr == ASSIGN {
+                    self.next_tokens.push_back(Token::ArgKey(self.token_start..byte_offset));
+                    self.push_scope(LexingScope::ArgumentValueInFunction, byte_offset);
+                    self.token_start = usize::MAX; // invalidate value
+                    self.state = ReadingArgumentValue;
                 }
             },
             FoundArgumentClosing => {
@@ -429,7 +426,7 @@ pub enum Token {
     BeginRaw(ops::Range<usize>),
     EndRaw(ops::Range<usize>),
     Text(ops::Range<usize>),
-    EOF(usize),
+    EndOfFile(usize),
 }
 
 impl Eq for Token {}
@@ -460,7 +457,7 @@ impl<'l> Iterator for LexingIterator<'l> {
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             match self.progress() {
-                Some(Token::EOF(pos)) => return Some(Ok(Token::EOF(pos))),
+                Some(Token::EndOfFile(pos)) => return Some(Ok(Token::EndOfFile(pos))),
                 Some(token) => return Some(Ok(token)),
                 None if self.state != LexingState::Terminated => continue,
                 None => {
