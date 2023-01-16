@@ -1,39 +1,41 @@
-{head
-  {meta[charset=utf-8]}
-  {title An HTML5 document represented in litua}
-  {meta[name=dcterms.subject][content=HTML5 document]}
-  {meta[name=dcterms.creator][content=meisterluk]}
-  {meta[name=dcterms.description][content=a website about me]}
-  {meta[name=description][content=a webite about me]}
-  {meta[name=dcterms.language][content=en]}
-  {meta[name=viewport][content=width=device-width, initial-scale=1]}
-  {meta[name=robots][content=all]}
-  {link[rel=me][href=https://typo.social/@tajpulo]}
-  {link[rel=author][type=text/plain][href=/humans.txt]}
-  {link[rel=shortcut icon][href=/static/img/favicon.png]}
-  {link[rel=stylesheet][type=text/css][href=/static/css/style.css]}
-  {script[src=/static/js/categories_filter.js]}
-}
+{html[lang=en]
+  {head
+    {meta[charset=utf-8]}
+    {title An HTML5 document represented in litua}
+    {meta[name=dcterms.subject][content=HTML5 document]}
+    {meta[name=dcterms.creator][content=meisterluk]}
+    {meta[name=dcterms.description][content=a website about me]}
+    {meta[name=description][content=a webite about me]}
+    {meta[name=dcterms.language][content=en]}
+    {meta[name=viewport][content=width=device-width, initial-scale=1]}
+    {meta[name=robots][content=all]}
+    {link[rel=me][href=https://typo.social/@tajpulo]}
+    {link[rel=author][type=text/plain][href=/humans.txt]}
+    {link[rel=shortcut icon][href=/static/img/favicon.png]}
+    {link[rel=stylesheet][type=text/css][href=/static/css/style.css]}
+    {script[src=/static/js/categories_filter.js]}
+  }
 
-{body[lang=en-US][id=index]
-  {main
-    {h1[id=logo-font] {span My profile}}
-    {nav
-      {ul
-        {li {a[href=about] {strong About}}}
-        {li {a[href=contact] {strong Contact}}}
-        {li {a[href=projects] {strong Projects}}}
-        {li {a[href=articles] {strong Articles}}}
+  {body[lang=en-US][id=index]
+    {main
+      {h1[id=logo-font] {span My profile}}
+      {nav
+        {ul
+          {li {a[href=about] {strong About}}}
+          {li {a[href=contact] {strong Contact}}}
+          {li {a[href=projects] {strong Projects}}}
+          {li {a[href=articles] {strong Articles}}}
+        }
       }
     }
-  }
-  {footer
-    {p
-      Switch to {a[href=/eo/] Esperanto}.
-      {br}
-      Impressum can be found under {a[href=/en/contact] contact}.
-      For copyright, see {a[href=/static/license/cc-by-4-intl.txt] CC-BY-4 Intl}.
+    {footer
+      {p
+        Switch to {a[href=/eo/] Esperanto}.
+        {br}
+        Impressum can be found under {a[href=/en/contact] contact}.
+        For copyright, see {a[href=/static/license/cc-by-4-intl.txt] CC-BY-4 Intl}.
+      }
+      {p Letzte Aktualisierung: {time 2020-12-28}}
     }
-    {p Letzte Aktualisierung: {time 2020-12-28}}
   }
 }

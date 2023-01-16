@@ -127,76 +127,68 @@ Litua.recurse_modify_node = function (node, depth, hook_name)
 end
 
 Litua.recurse_node_to_string = function (node, depth, hook_name)
-    -- NOTE this implementation needs to resolve its children first,
-    --      then generate its own string representation
     local err
+    if node.call == "left-curly-brace" then return "{", nil end
+    if node.call == "right-curly-brace" then return "}", nil end
 
-    local apply_hooks_to_node = function (this_node)
-        if this_node.call == "left-curly-brace" then return "{", nil end
-        if this_node.call == "right-curly-brace" then return "}", nil end
-
-        -- NOTE: hooks for "" should always be called
-        local calls = { this_node.call, "" }
-        for _, call in ipairs(calls) do
-            local hooks = Litua.hooks[hook_name][call]
-            if hooks ~= nil and hooks[1] ~= nil then
-                local hook = hooks[1]
-                Litua.log("transform", "ran " .. hook.src .. " for call '" .. this_node.call .. "'")
-
-                local result_string, err2 = hook.impl(this_node, depth)
-                if err2 ~= nil then
-                    Litua.error(tostring(hook_name) .. " hook returned non-nil value as second value", {
-                        ["context"] = tostring(hook_name) .. " hooks must return two values (node and error)",
-                        ["expected"] = "error return value to be nil",
-                        ["actual"] = "error return value is '" .. tostring(err2) .. "'",
-                        ["fix"] = "make hook return no error",
-                        ["source"] = hook.src,
-                    })
-                    return nil, err
-                end
-                if type(result_string) ~= "string" then
-                    Litua.error(tostring(hook_name) .. " hook returned non-string value as first return value", {
-                        ["context"] = tostring(hook_name) .. " hooks must return two values (string representation and error)",
-                        ["expected"] = "string representation return value to be a string",
-                        ["actual"] = "string representation return value is '" .. type(result_string) .. "'",
-                        ["fix"] = "make hook return a string",
-                        ["source"] = hook.src,
-                    })
-                    return "error", err2
-                end
-    
-                return result_string, nil
-            end
-        end
-        return tostring(this_node), nil
-    end
-
-    -- ASSUMPTION: type(node.call) == "string"
-    local args_as_strings = {}
-    for k, arg in ipairs(node.args) do
+    -- (1) resolve args to string
+    for i, arg in ipairs(node.args) do
         if arg.is_node then
-            args_as_strings[k], err = apply_hooks_to_node(arg)
+            node.args[i], err = Litua.recurse_node_to_string(arg, depth + 1, hook_name)
             if err ~= nil then
-                return args_as_strings[k], err
+                return node.args[i], err
             end
         else
-            args_as_strings[k] = tostring(arg)
+            node.args[i] = tostring(arg)
         end
     end
-    node.args = args_as_strings
 
-    local content_as_strings = {}
+    -- (2) resolve content to string
     for i = 1,#node.content do
         if node.content[i].is_node then
-            content_as_strings[i], err = apply_hooks_to_node(node.content[i])
+            node.content[i], err = Litua.recurse_node_to_string(node.content[i], depth + 1, hook_name)
             if err ~= nil then
-                return content_as_strings[i], err
+                return node.content[i], err
             end
         else
-            content_as_strings[i] = tostring(node.content[i])
+            node.content[i] = tostring(node.content[i])
         end
     end
-    node.content = content_as_strings
+
+    -- (3) call hooks for this node
+    local calls = { node.call, "" }
+    for _, call in ipairs(calls) do
+        local hooks = Litua.hooks[hook_name][call]
+        if hooks ~= nil and hooks[1] ~= nil then
+            local hook = hooks[1]
+            Litua.log("transform", "ran " .. hook.src .. " for call '" .. node.call .. "'")
+
+            local result
+            result, err = hook.impl(node, depth)
+            if err ~= nil then
+                Litua.error(tostring(hook_name) .. " hook returned non-nil value as second value", {
+                    ["context"] = tostring(hook_name) .. " hooks must return two values (node and error)",
+                    ["expected"] = "error return value to be nil",
+                    ["actual"] = "error return value is '" .. tostring(err) .. "'",
+                    ["fix"] = "make hook return no error",
+                    ["source"] = hook.src,
+                })
+                return nil, err
+            end
+            if type(result) ~= "string" then
+                Litua.error(tostring(hook_name) .. " hook returned non-string value as first return value", {
+                    ["context"] = tostring(hook_name) .. " hooks must return two values (string representation and error)",
+                    ["expected"] = "string representation return value to be a string",
+                    ["actual"] = "string representation return value is '" .. type(result) .. "'",
+                    ["fix"] = "make hook return a string",
+                    ["source"] = hook.src,
+                })
+                return "error", err
+            end
+
+            return result, nil
+        end
+    end
 
     return tostring(node), nil
 end
