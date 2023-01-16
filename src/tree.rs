@@ -1,27 +1,18 @@
-use std::collections::HashMap;
-use std::ffi::OsString;
+//! Tree structure of a litua text document
 
+use std::collections::HashMap;
+
+/// `DocumentTree` represents the root element of the Abstract Syntax Tree
 #[derive(Clone,Debug,PartialEq)]
 pub struct DocumentTree(pub DocumentElement);
 
 impl DocumentTree {
+    /// Create a new `DocumentTree`, which consists of one root
+    /// call `document`.
     pub fn new() -> DocumentTree {
         DocumentTree(DocumentElement::Function(DocumentFunction {
             name: "document".to_owned(),
             args: HashMap::new(),
-            content: Vec::new()
-        }))
-    }
-
-    pub fn from_filepath(filepath: OsString) -> DocumentTree {
-        let mut attrs = HashMap::new();
-        if let Some(file) = filepath.to_str() {
-            attrs.insert("filepath".to_owned(), vec![DocumentElement::Text(file.to_owned())]);
-        }
-
-        DocumentTree(DocumentElement::Function(DocumentFunction{
-            name: "document".to_owned(),
-            args: attrs,
             content: Vec::new()
         }))
     }
@@ -39,6 +30,10 @@ impl<'lua> mlua::ToLua<'lua> for &DocumentTree {
     }
 }
 
+/// `DocumentFunction` is a function call in the text document. For example,
+/// ``{text[style=bold] message}`` is a `DocumentFunction` with `name` “text”,
+/// `args` such that `style` is associated with `DocumentNode::Text` “bold”
+/// and `content` is given as `DocumentNode::Text` “message”.
 #[derive(Clone,Debug,PartialEq)]
 pub struct DocumentFunction {
     pub name: String,
@@ -47,10 +42,12 @@ pub struct DocumentFunction {
 }
 
 impl DocumentFunction {
+    /// Returns an empty `DocumentFunction` without args or content and `name` is set to “”.
     pub fn new() -> DocumentFunction {
         DocumentFunction { name: "".to_owned(), args: HashMap::new(), content: Vec::new() }
     }
 
+    /// Returns an empty `DocumentElement::Function` without args or content and `name` is set to “”.
     pub fn empty_element() -> DocumentElement {
         DocumentElement::Function(Self::new())
     }
@@ -63,6 +60,7 @@ impl Default for DocumentFunction {
 }
 
 impl<'lua> mlua::ToLua<'lua> for &DocumentFunction {
+    /// Lua representation of a `DocumentFunction`
     fn to_lua(self, lua: &'lua mlua::Lua) -> mlua::Result<mlua::Value<'lua>> {
         let node = lua.create_table()?;
 
@@ -91,8 +89,8 @@ impl<'lua> mlua::ToLua<'lua> for &DocumentFunction {
     }
 }
 
-/// `DocumentElement` is either a function (call a name with arguments and text content)
-/// or simply text without association to a function. 
+/// `DocumentElement` is either a function (call with arguments and text content)
+/// or simply Unicode text without association to a function.
 #[derive(Clone,Debug,PartialEq)]
 pub enum DocumentElement {
     Function(DocumentFunction),
@@ -100,6 +98,7 @@ pub enum DocumentElement {
 }
 
 impl<'lua> mlua::ToLua<'lua> for &DocumentElement {
+    /// Lua representation of a `DocumentElement`.
     fn to_lua(self, lua: &'lua mlua::Lua) -> mlua::Result<mlua::Value<'lua>> {
         match self {
             DocumentElement::Function(func) => func.to_lua(lua),

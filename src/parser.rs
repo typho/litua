@@ -1,3 +1,5 @@
+//! Parser for litua text documents
+
 use std::collections::HashMap;
 use std::iter;
 use std::ops;
@@ -7,10 +9,19 @@ use std::ffi::OsString;
 use crate::tree;
 use crate::lexer;
 
+/// `Parser` holds a reference to the text document source code.
+/// To generate better error messages, we also store the filepath.
+/// The parsing process fills a tree with data.
+///
+/// A typical parsing process is done with the following methods:
+/// `consume_iter(iter)` takes a `LexingIterator` and consumes the
+/// generated tokens. Then `finalize` declares the termination of
+/// the token consumption. Finally one can fetch the resulting
+/// abstract syntax tree by calling the method `tree()`.
 pub struct Parser<'s> {
-    filepath: path::PathBuf,
-    source_code: &'s str,
-    tree: tree::DocumentNode,
+    pub filepath: path::PathBuf,
+    pub source_code: &'s str,
+    pub tree: tree::DocumentNode,
 }
 
 impl<'s> Parser<'s> {
@@ -51,7 +62,7 @@ impl<'s> Parser<'s> {
         Err(anyhow::anyhow!("unexpected end of lexer tokens iterator"))
     }
 
-    pub fn parse_raw(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> anyhow::Result<tree::DocumentElement> {
+    fn parse_raw(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> anyhow::Result<tree::DocumentElement> {
         let whitespace;
         let name;
         let text;
@@ -129,7 +140,7 @@ impl<'s> Parser<'s> {
         }))
     }
 
-    pub fn parse_content(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> anyhow::Result<tree::DocumentNode> {
+    fn parse_content(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> anyhow::Result<tree::DocumentNode> {
         let mut content = tree::DocumentNode::new();
 
         // (1) consume BeginContent
@@ -218,7 +229,7 @@ impl<'s> Parser<'s> {
         Ok(content)
     }
 
-    pub fn parse_argument_value(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> anyhow::Result<tree::DocumentNode> {
+    fn parse_argument_value(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> anyhow::Result<tree::DocumentNode> {
         let mut arg_value = tree::DocumentNode::new();
 
         // (1) consume BeginArgValue
@@ -308,7 +319,7 @@ impl<'s> Parser<'s> {
         Ok(arg_value)
     }
 
-    pub fn parse_function(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> anyhow::Result<tree::DocumentElement> {
+    fn parse_function(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> anyhow::Result<tree::DocumentElement> {
         let mut func = tree::DocumentFunction::new();
 
         // (01) consume BeginFunction
@@ -466,6 +477,7 @@ impl<'s> Parser<'s> {
         Ok(tree::DocumentElement::Function(func))
     }
 
+    /// Consumes the tokens provided by the `LexingIterator` argument
     pub fn consume_iter(&mut self, iter: lexer::LexingIterator) -> anyhow::Result<()> {
         let mut peekable_iter = iter.peekable();
 
@@ -524,10 +536,12 @@ impl<'s> Parser<'s> {
         Ok(())
     }
 
+    /// Declares the end of the text document
     pub fn finalize(&mut self) -> anyhow::Result<()> {
         Ok(())
     }
 
+    /// Returns the Abstract Syntax Tree to be processed further
     pub fn tree(self) -> tree::DocumentTree {
         let mut args = HashMap::new();
         if let Some(fp) = self.filepath.to_str() {

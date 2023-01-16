@@ -1,20 +1,36 @@
+//! Lexer for litua text documents
+
 use std::collections::VecDeque;
 use std::fmt;
 use std::mem;
 use std::ops;
 use std::str;
 
-const OPEN_FUNCTION: char = '{'; // U+007B  LEFT CURLY BRACKET
-const CLOSE_FUNCTION: char = '}'; // U+007D  RIGHT CURLY BRACKET
-const OPEN_ARG: char = '['; // U+005B  LEFT SQUARE BRACKET
-const CLOSE_ARG: char = ']'; // U+005D  RIGHT SQUARE BRACKET
-const ASSIGN: char = '='; // U+003D  EQUALS SIGN
-const OPEN_RAW: char = '<'; // U+003C  LESS-THAN SIGN
-const CLOSE_RAW: char = '>'; // U+003E  GREATER-THAN SIGN
+// characters part of the litua text document syntax
 
+/// U+007B  LEFT CURLY BRACKET
+pub const OPEN_FUNCTION: char = '{';
+/// U+007D  RIGHT CURLY BRACKET
+pub const CLOSE_FUNCTION: char = '}';
+/// U+005B  LEFT SQUARE BRACKET
+pub const OPEN_ARG: char = '[';
+/// U+005D  RIGHT SQUARE BRACKET
+pub const CLOSE_ARG: char = ']';
+/// U+003D  EQUALS SIGN
+pub const ASSIGN: char = '=';
+/// U+003C  LESS-THAN SIGN
+pub const OPEN_RAW: char = '<';
+/// U+003E  GREATER-THAN SIGN
+pub const CLOSE_RAW: char = '>';
+
+/// `Lexer` is an object holding a reference to the source code
+/// of the text document to lex. Method `iter()` returns an
+/// `LexingIterator` which allows to iterate over the tokens of
+/// the lexed document.
 #[derive(Clone,Debug,PartialEq)]
 pub struct Lexer<'l> {
-    source: &'l str,
+    /// reference to source code
+    pub source: &'l str,
 }
 
 impl<'l> Lexer<'l> {
@@ -35,8 +51,13 @@ enum LexingScope {
     FunctionInArgumentValue,
 }
 
+/// The various states the lexer can be in during the
+/// lexing phase. Reading prefixes mean “I just read the
+/// first or more characters” whereas Found prefixes mean
+/// “I just read the first character”. For details, please
+/// refer to the state diagrams in the `design/` folder.
 #[derive(Clone,Debug,PartialEq)]
-pub(crate) enum LexingState {
+pub enum LexingState {
     ReadingContent,
     ReadingContentText,
     ReadingArgumentValue,
@@ -70,10 +91,11 @@ impl fmt::Display for LexingState {
     }
 }
 
+/// `LexingIteratior` is the object you receive when calling `.iter()` on the `Lexer` object.
 #[derive(Debug)]
 pub struct LexingIterator<'l> {
     /// state of this iterator
-    state: LexingState,
+    pub state: LexingState,
     /// byte offset where the current token started
     token_start: usize,
     /// byte offset where the second-to-most-current token started.
@@ -101,13 +123,15 @@ pub struct LexingIterator<'l> {
     /// `progress()` is one token, but sometimes several tokens are generated.
     /// In this case, the tokens are `push_back`ed and consecutively
     /// `pop_front`ed to process them.
-    next_tokens: VecDeque<Token>,
+    pub next_tokens: VecDeque<Token>,
     /// if an error occured, the error is returned once
     /// and the lexer switches to the infinite EOF state
-    occured_error: Option<anyhow::Error>,
+    pub occured_error: Option<anyhow::Error>,
 }
 
 impl<'l> LexingIterator<'l> {
+    /// Create a `LexingIterator` instance based on the source code `src`
+    /// of the text document provided.
     pub fn new(src: &str) -> LexingIterator {
         LexingIterator {
             state: LexingState::ReadingContent,
@@ -410,6 +434,14 @@ impl<'l> LexingIterator<'l> {
     }
 }
 
+/// Tokens as interface between lexer and parser. The arguments of some
+/// variant refer to a byte position within the source document where
+/// this token happens (1-ary) or goes from-to (`ops::Range` instances).
+/// `Whitespace` is an exception since it provides the whitespace character
+/// directly.
+/// 
+/// The admissible sequences of `Token`s is not specified here. It is an
+/// implicit contract between lexer and parser.
 #[derive(Clone,Debug,PartialEq)]
 pub enum Token {
     BeginFunction(usize),
