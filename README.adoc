@@ -5,7 +5,7 @@ author::
 version::
   0.5
 
-Read a text document, receive its tree in Lua and manipulate it to your liking before representing it as string.
+Read a text document, receive its tree in Lua and manipulate it before representing it as string.
 
 What is it about?
 -----------------
@@ -102,7 +102,29 @@ litua -h
 Litua input specification
 -------------------------
 
-TODO
+The following document defines the syntax (see also `design/litua-lexer-state-diagram.jpg`):
+
+[source]
+____
+Node       = (Content | RawString | Function){0,…}
+Content    = (NOT the symbols "{" or "}"){1,…}
+RawString  = "{<" (NOT the string ">}") ">}"
+           | "{<<" (NOT the string ">>}") ">>}"
+           | "{<<<" (NOT the string ">>>}") ">>>}"
+           … continue up to 126 "<" characters
+Function   = "{" Call "}"
+           | "{" Call Whitespace "}"
+           | "{" Call Whitespace Node "}"
+           | "{" Call ( "[" Key "=" Node "]" ){1,…} Whitespace "}"
+           | "{" Call ( "[" Key "=" Node "]" ){1,…} Whitespace Node "}"
+
+Call       = (NOT the symbols "[" or "<"){1,…}
+Key        = (NOT the symbol "="){1,…}
+Whitespace = any of the 25 Unicode Whitespace characters
+____
+
+In essence, don't use "<" or "[" in function call names, or "=" in argument keys.
+Keep the number of opening and closing braces balanced.
 
 Source Code
 -----------

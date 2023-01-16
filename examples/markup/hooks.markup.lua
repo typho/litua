@@ -79,8 +79,18 @@ local node_to_xml = function (node)
     local out = SUB_ELEMENT_START .. node.call
 
     -- attach attributes
+    local attribs = {}
     local attributes = ""
-    for attr, values in pairs(node.args) do
+
+    for attr, _ in pairs(node.args) do
+        table.insert(attribs, attr)
+    end
+
+    table.sort(attribs)
+    for i = 1, #attribs do
+        local attr = attribs[i]
+        local values = node.args[attr]
+
         local value = ""
         for i=1,#values do
             value = value .. tostring(values[i])

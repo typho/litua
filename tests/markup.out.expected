@@ -1,0 +1,41 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>An HTML5 document represented in litua</title>
+    <meta content="HTML5 document" name="dcterms.subject" />
+    <meta content="meisterluk" name="dcterms.creator" />
+    <meta content="a website about me" name="dcterms.description" />
+    <meta content="a website about me" name="description" />
+    <meta content="en" name="dcterms.language" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="all" name="robots" />
+    <link href="https://typo.social/@tajpulo" rel="me" />
+    <link href="/humans.txt" rel="author" type="text/plain" />
+    <link href="/static/img/favicon.png" rel="shortcut icon" />
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css" />
+    <script src="/static/js/categories_filter.js" />
+  </head>
+
+  <body id="index" lang="en-US">
+    <main>
+      <h1 id="logo-font"><span>My profile</span></h1>
+      <nav>
+        <ul>
+          <li><a href="about"><strong>About</strong></a></li>
+          <li><a href="contact"><strong>Contact</strong></a></li>
+          <li><a href="projects"><strong>Projects</strong></a></li>
+          <li><a href="articles"><strong>Articles</strong></a></li>
+        </ul>
+      </nav>
+    </main>
+    <footer>
+      <p>
+        Switch to <a href="/eo/">Esperanto</a>.
+        <br />
+        Impressum can be found under <a href="/en/contact">contact</a>.
+        For copyright, see <a href="/static/license/cc-by-4-intl.txt">CC-BY-4 Intl</a>.
+      </p>
+      <p>Letzte Aktualisierung: <time>2020-12-28</time></p>
+    </footer>
+  </body>
+</html>

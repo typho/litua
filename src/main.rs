@@ -24,7 +24,6 @@ fn run_lua<A: AsRef<path::Path>, B: AsRef<path::Path>, C: AsRef<path::Path>>(_co
 
     // (1) load litua libraries
     let litua_table = include_str!("litua.lua");
-    // TODO don't load string but chunk implementing AsChunk https://docs.rs/mlua/0.8.6/mlua/trait.AsChunk.html
     lua.load(litua_table).set_name("litua.lua")?.exec()?;
     let litua_lib = include_str!("litua.lib.lua");
     lua.load(litua_lib).set_name("litua.lib.lua")?.exec()?;

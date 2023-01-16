@@ -1,3 +1,5 @@
-mod lexer;
-mod parser;
-mod tree;
+//! litua library
+
+pub mod lexer;
+pub mod parser;
+pub mod tree;
