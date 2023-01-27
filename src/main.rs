@@ -79,6 +79,14 @@ fn derive_destination_filepath(p: &path::Path) -> path::PathBuf {
 
 // auxiliary functions
 
+/// Does the given Path correspond to an empty string?
+fn path_is_empty(p: &path::Path) -> bool {
+    match p.to_str() {
+        Some(s) => s.is_empty(),
+        None => false, // NOTE: debatable, but meaningful for us
+    }
+}
+
 /// Determine the set of hook files in the directory at the given filepath
 fn find_hook_files(hooks_dir: &path::Path) -> Result<Vec<path::PathBuf>, io::Error> {
     let mut hook_files = vec![];
@@ -260,10 +268,17 @@ fn main() -> Result<(), Error> {
         None => derived_dst.as_path(),
     };
 
+    // if you specified some hook directory, use it.
+    // if not, use the folder the source file lies within
     let default_hooks_dir = path::PathBuf::from(".");
     let hooks_dir = match &settings.hooks_dir {
+        Some(d) if path_is_empty(&d) => default_hooks_dir.as_path(),
         Some(d) => d.as_path(),
-        None => settings.source.parent().unwrap_or(default_hooks_dir.as_path()),
+        None => match settings.source.parent() {
+            Some(p) if path_is_empty(p) => &default_hooks_dir.as_path(),
+            Some(p) => p,
+            None => &default_hooks_dir.as_path(),
+        },
     };
 
     let mut lua_path_additions = vec![];
