@@ -4,6 +4,8 @@ author::
   tajpulo
 version::
   1.0.0
+badges::
+  image:https://github.com/typho/litua/actions/workflows/release.yml/badge.svg[state of the release process] image:https://github.com/typho/litua/actions/workflows/build.yml/badge.svg[state of the build process]
 
 Read a text document, receive its tree in Lua and manipulate it before representing it as string.
 
