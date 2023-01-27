@@ -224,7 +224,7 @@ fn lex_and_dump(conf: &Settings) -> Result<(), Error> {
 #[derive(Parser, Debug)]
 #[command(name = "litua")]
 #[command(author = "tajpulo <admin@lukas-prokop.at>")]
-#[command(version = "0.9")]
+#[command(version = "1.0.0")]
 #[command(about = "Read document as tree and apply Lua functions to nodes")]
 #[command(author, version, about, long_about = None)]
 struct CLISettings {

@@ -3,7 +3,7 @@
 author::
   tajpulo
 version::
-  0.9
+  1.0.0
 
 Read a text document, receive its tree in Lua and manipulate it before representing it as string.
 
@@ -150,6 +150,8 @@ Changelog
 
 0.9::
   first public release with raw strings and four examples
+1.0.0::
+  improves stdout/stderr, improved documentation, CI builds, upload to crates.io
 
 Issues
 ------
