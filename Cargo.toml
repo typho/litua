@@ -1,7 +1,14 @@
 [package]
 name = "litua"
-version = "0.9.0"
+description = "Read a text document, receive its tree in Lua and manipulate it before representing it as string"
+repository = "https://github.com/typho/litua"
+readme = "README.adoc"
+license = "MIT"
+version = "0.9.1"
+authors = ["tajpulo <tajpulo@typho.org>"]
 edition = "2021"
+keywords = ["markup", "content-tree", "lua", "document-generation"]
+categories = ["command-line-utilities", "compilers", "encoding", "text-processing"]
 
 [dependencies]
 mlua = { version = "0.7", features = ["lua54", "vendored"] }
