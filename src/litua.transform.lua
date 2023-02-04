@@ -186,7 +186,7 @@ Litua.recurse_node_to_string = function (node, depth, hook_name)
             Litua.log("transform", "ran " .. hook.src .. " for call '" .. node.call .. "'")
 
             local result
-            result, err = hook.impl(node, depth)
+            result, err = hook.impl(node, depth, call)
             if err ~= nil then
                 Litua.error(tostring(hook_name) .. " hook returned non-nil value as second value", {
                     ["context"] = tostring(hook_name) .. " hooks must return two values (node and error)",

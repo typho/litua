@@ -61,9 +61,9 @@ Then you can use the hooks …
 * ``Litua.on_setup = function (hook) […] end`` where ``hook`` takes no argument and returns nil
 * ``Litua.on_teardown = function (hook) […] end`` where ``hook`` takes no argument and returns nil
 * ``Litua.read_new_node = function (filter, hook) […] end`` where ``hook`` takes a copy of the current node and the tree depth as integer and returns nil
-* ``Litua.modify_node = function (filter, hook) […] end`` where ``hook`` takes the current node, the tree depth as integer, and the call name and returns some node and nil
+* ``Litua.modify_node = function (filter, hook) […] end`` where ``hook`` takes the current node, the tree depth as integer, and the filter name and returns some node and nil
 * ``Litua.read_modified_node = function (filter, hook) […] end`` where ``hook`` takes a copy of the current node and the tree depth as integer and returns nil
-* ``Litua.convert_node_to_string = function (filter, hook) […] end`` where ``hook`` takes the current node, the tree depth as integer, and the call name and returns a string and nil
+* ``Litua.convert_node_to_string = function (filter, hook) […] end`` where ``hook`` takes the current node, the tree depth as integer, and the filter name and returns a string and nil
 
 … to modify the generation process of the output document. ``hook`` is a function, you need to provide and ``filter`` is either the call name or ``""`` to be invoked for every call. The names should give an idea of their purpose. E.g. ``on_setup`` and ``on_teardown`` run before/after all other hooks. You can supply a hook by creating a file ``hooks.lua`` next to your input ``doc.txt`` with the content:
 

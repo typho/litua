@@ -96,7 +96,7 @@ Litua.read_new_node = function (filter, hook) Litua.register_hook("read-new-node
 
 --- Register a new modify_node hook, invoked after read_new_node hooks
 -- @param filter  call name to filter for, or "" to call hook for every call
--- @param hook  hook ``function (node, depth, call_name) return node, nil end`` to invoke
+-- @param hook  hook ``function (node, depth, filter) return node, nil end`` to invoke
 Litua.modify_node = function (filter, hook) Litua.register_hook("modify-node", filter, hook) end
 
 --- Register a new read_modified_node hook, invoked after modify_node hooks
@@ -106,7 +106,7 @@ Litua.read_modified_node = function (filter, hook) Litua.register_hook("read-mod
 
 --- Register a new convert_node_to_string hook, invoked after read_modified_node hooks
 -- @param filter  call name to filter for, or "" to call hook for every call
--- @param hook  hook ``function (node, depth, call_name) return "…", nil end`` to invoke
+-- @param hook  hook ``function (node, depth, filter) return "…", nil end`` to invoke
 Litua.convert_node_to_string = function (filter, hook) Litua.register_hook("convert-node-to-string", filter, hook) end
 
 --- Register a new modify_final_string hook, invoked after convert_node_to_string hooks
