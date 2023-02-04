@@ -61,7 +61,7 @@ Then you can use the hooks …
 * ``Litua.on_setup = function (hook) […] end`` where ``hook`` takes no argument and returns nil
 * ``Litua.on_teardown = function (hook) […] end`` where ``hook`` takes no argument and returns nil
 * ``Litua.read_new_node = function (filter, hook) […] end`` where ``hook`` takes a copy of the current node and the tree depth as integer and returns nil
-* ``Litua.modify_node = function (filter, hook) […] end`` where ``hook`` takes the current node, the tree depth as integer, and the filter name and returns some node and nil
+* ``Litua.modify_node = function (filter, hook) […] end`` where ``hook`` takes the current node, the tree depth as integer, and the filter name and returns (some node or string) and nil.
 * ``Litua.read_modified_node = function (filter, hook) […] end`` where ``hook`` takes a copy of the current node and the tree depth as integer and returns nil
 * ``Litua.convert_node_to_string = function (filter, hook) […] end`` where ``hook`` takes the current node, the tree depth as integer, and the filter name and returns a string and nil
 

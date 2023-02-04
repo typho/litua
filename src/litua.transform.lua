@@ -32,8 +32,8 @@ Litua.tree_to_nodes = function (tree)
 end
 
 --- Implementation of the read-new-node hooks
--- This function invokes the hook for the node and then recurses
--- into any content or arg nodes
+-- This function invokes the hook for the node and then recurses into any content
+-- or arg nodes (unless it's a string and thus has no children nodes)
 -- @param node  the current node to process
 -- @param depth  the current recursion depth
 -- @param hook_name  "read-new-node"
@@ -97,7 +97,7 @@ Litua.recurse_modify_node = function (node, depth, hook_name)
             for i, hook in ipairs(Litua.hooks[hook_name][call]) do
                 Litua.log("transform", "ran " .. Litua.hooks[hook_name][call][i].src .. " for call '" .. node.call .. "'")
                 node, err = hook.impl(node, depth, call)
-                if node == nil or (not node.is_node) then
+                if node == nil or (not node.is_node and type(node) ~= "string") then
                     Litua.error(tostring(hook_name) .. " hook #" .. tostring(i) .. " returned nil value", {
                         ["expected"] = "return value node",
                         ["actual"] = "nil",
@@ -118,22 +118,24 @@ Litua.recurse_modify_node = function (node, depth, hook_name)
         end
     end
 
-    for argkey, argvalues in pairs(node.args) do
-        for i, argvalue in ipairs(argvalues) do
-            if argvalue.is_node then
-                node.args[argkey][i], err = Litua.recurse_modify_node(argvalue, depth + 1, hook_name)
-                if err ~= nil then
-                    return nil, err
+    if type(node) ~= "string" then
+        for argkey, argvalues in pairs(node.args) do
+            for i, argvalue in ipairs(argvalues) do
+                if argvalue.is_node then
+                    node.args[argkey][i], err = Litua.recurse_modify_node(argvalue, depth + 1, hook_name)
+                    if err ~= nil then
+                        return nil, err
+                    end
                 end
             end
         end
-    end
 
-    for i, value in ipairs(node.content) do
-        if value.is_node then
-            node.content[i], err = Litua.recurse_modify_node(value, depth + 1, hook_name)
-            if err ~= nil then
-                return nil, err
+        for i, value in ipairs(node.content) do
+            if value.is_node then
+                node.content[i], err = Litua.recurse_modify_node(value, depth + 1, hook_name)
+                if err ~= nil then
+                    return nil, err
+                end
             end
         end
     end
