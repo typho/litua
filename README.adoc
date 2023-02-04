@@ -3,7 +3,7 @@
 author::
   tajpulo
 version::
-  1.0.0
+  1.1.0
 badges::
   image:https://github.com/typho/litua/actions/workflows/release.yml/badge.svg[state of the release process] image:https://github.com/typho/litua/actions/workflows/build.yml/badge.svg[state of the build process]
 
@@ -154,6 +154,8 @@ Changelog
   first public release with raw strings and four examples
 1.0.0::
   improves stdout/stderr, improved documentation, CI builds, upload to crates.io
+1.1.0::
+  bugfix third argument of modify-node hook, modify-hook may now also return strings
 
 Issues
 ------
