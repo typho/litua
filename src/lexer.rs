@@ -348,6 +348,7 @@ impl<'l> LexingIterator<'l> {
                         if self.token_wrapping_start == usize::MAX {
                             self.token_wrapping_start = byte_offset;
                         }
+                        self.raw_delimiter_read = 0;
                     }
                 }
             },
