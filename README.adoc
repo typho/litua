@@ -9,6 +9,18 @@ badges::
 
 Read a text document, receive its tree in Lua and manipulate it before representing it as string.
 
+
+TODO if I run concat on an argument value, why do I not get the content with expanded elements
+TODO fix confusion regarding outer and inner byte offsets
+
+function concat(tbl)
+  local cat = ""
+  for c = 1,#tbl do
+    cat = cat .. tostring(tbl[c])
+  end
+  return cat
+end
+
 What is it about?
 -----------------
 
@@ -57,6 +69,7 @@ local node = {
 
 Then you can use the hooks …
 
+* ``Litua.modify_initial_string = function (hook, filepath) […] end`` where ``hook`` takes the source code as a string, the ``filepath`` of its file and returns a string
 * ``Litua.modify_final_string = function (hook) […] end`` where ``hook`` takes a string and returns a string
 * ``Litua.on_setup = function (hook) […] end`` where ``hook`` takes no argument and returns nil
 * ``Litua.on_teardown = function (hook) […] end`` where ``hook`` takes no argument and returns nil
