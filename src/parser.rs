@@ -20,15 +20,26 @@ use crate::errors;
 pub struct Parser<'s> {
     pub filepath: path::PathBuf,
     pub source_code: &'s str,
-    pub tree: tree::DocumentNode,
+    pub root: tree::DocumentFunction,
 }
 
 impl<'s> Parser<'s> {
     pub fn new(filepath: &path::Path, source_code: &'s str) -> Parser<'s> {
+        let mut args = HashMap::new();
+        if let Some(fp) = filepath.to_str() {
+            args.insert("filepath".to_owned(), vec![tree::DocumentElement::Text(fp.to_owned())]);
+        }
+
+        let root = tree::DocumentFunction {
+            name: "document".to_owned(),
+            args,
+            content: vec!(),
+        };
+
         Parser{
             filepath: filepath.to_owned(),
             source_code,
-            tree: tree::DocumentNode::new(),
+            root,
         }
     }
 
@@ -464,6 +475,7 @@ impl<'s> Parser<'s> {
         // admissible tokens
         enum NextToken {
             BeginFunction,
+            BeginContent,
             BeginRaw,
             Text,
             EndOfFile,
@@ -476,6 +488,7 @@ impl<'s> Parser<'s> {
             if let Some(token_or_err) = peekable_iter.peek() {
                 next_token = match token_or_err {
                     Ok(lexer::Token::BeginFunction(_)) => NextToken::BeginFunction,
+                    Ok(lexer::Token::BeginContent(_)) => NextToken::BeginContent,
                     Ok(lexer::Token::BeginRaw(_)) => NextToken::BeginRaw,
                     Ok(lexer::Token::Text(_)) => NextToken::Text,
                     Ok(lexer::Token::EndOfFile(_)) => NextToken::EndOfFile,
@@ -486,16 +499,20 @@ impl<'s> Parser<'s> {
             match next_token {
                 NextToken::BeginFunction => {
                     let func = self.parse_function(&mut peekable_iter)?;
-                    self.tree.push(func);
+                    self.root.content.push(func);
+                },
+                NextToken::BeginContent => {
+                    let mut content = self.parse_content(&mut peekable_iter)?;
+                    self.root.content.append(&mut content);
                 },
                 NextToken::BeginRaw => {
                     let text = self.parse_raw(&mut peekable_iter)?;
-                    self.tree.push(text);
+                    self.root.content.push(text);
                 },
                 NextToken::Text => {
                     if let Some(Ok(lexer::Token::Text(range))) = peekable_iter.next() {
                         let text = &self.source_code[range];
-                        self.tree.push(tree::DocumentElement::Text(text.to_owned()));
+                        self.root.content.push(tree::DocumentElement::Text(text.to_owned()));
                     }
                 },
                 NextToken::EndOfFile => {
@@ -505,7 +522,7 @@ impl<'s> Parser<'s> {
                 NextToken::Unexpected => {
                     // protocol violation
                     match peekable_iter.next() {
-                        Some(Ok(tok)) => return Self::unexpected_token(&tok, "start of function/raw string or some text or end of file"),
+                        Some(Ok(tok)) => return Self::unexpected_token(&tok, &format!("unexpected token {:?} while parsing document", peekable_iter.peek())),
                         Some(Err(err)) => Err(err)?,
                         None => return Self::unexpected_token(&lexer::Token::EndOfFile(0), "unexpected end of lexer tokens iterator"),
                     }
@@ -523,17 +540,7 @@ impl<'s> Parser<'s> {
 
     /// Returns the Abstract Syntax Tree to be processed further
     pub fn tree(self) -> tree::DocumentTree {
-        let mut args = HashMap::new();
-        if let Some(fp) = self.filepath.to_str() {
-            args.insert("filepath".to_owned(), vec![tree::DocumentElement::Text(fp.to_owned())]);
-        }
-
-        let elem = tree::DocumentElement::Function(tree::DocumentFunction {
-            name: "document".to_owned(),
-            args,
-            content: self.tree,
-        });
-        tree::DocumentTree(elem)
+        tree::DocumentTree(tree::DocumentElement::Function(self.root))
     }
 }
 

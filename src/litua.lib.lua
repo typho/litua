@@ -1,6 +1,6 @@
 --- Generate an error object and invoke error() to terminate with an error
--- @param errmsg  string to explain issue
--- @param info  more detailed context information like expected and actual value in a table
+-- @tparam string errmsg  string to explain issue
+-- @tparam table info  more detailed context information like expected and actual value in a table
 Litua.error = function (errmsg, info)
     local out = "ERROR: " .. tostring(errmsg) .. "\n"
     if type(info) == "table" then
@@ -24,18 +24,69 @@ Litua.error = function (errmsg, info)
 end
 
 --- Generate a message and log it to stdout for human consumption
--- @param component  the component where this issue occurs
--- @param msg  the string explaining the issue
+-- @tparam string component  the component where this issue occurs
+-- @tparam string msg  the string explaining the issue
 Litua.log = function (component, msg)
     print("LOG[" .. component .. "]: " .. msg)
 end
 
---- Take a table and print it to stdout
--- @param tbl  the table to represent
-Litua.print_table = function (tbl)
-    print("<table>")
-    for k, v in pairs(tbl) do
-        print("  <" .. tostring(k) .. ">" .. tostring(v) .. "</" .. tostring(k) .. ">")
+--- Represent a table as a string without traversing recursively.
+--- It calls `tostring()` on each key and value to retrieve its string representation.
+-- @tparam table tbl  the table to represent
+Litua.represent_table = function (tbl)
+    local repr = "{ "
+    for key, value in pairs(tbl) do
+        repr = repr .. "[" .. tostring(key) .. "] = " .. tostring(value) .. ", "
     end
-    print("</table>")
+    return repr:sub(#repr - 1) .. " }"
+end
+
+--- Iterate over values of a table, call `tostring`, and concatenate its output
+-- @tparam table tbl  the table to iterate over (index 1, index 2, … until its value is nil)
+-- @treturn string string concatenation of table values
+Litua.concat_table_values = function (tbl)
+    local concat = ""
+    for c = 1,#tbl do
+      concat = concat .. tostring(tbl[c])
+    end
+    return concat
+end
+
+--- Replace a single-quote with a backslash-single-quote sequence
+-- @param text  the text to replace
+-- @treturn string string representation
+Litua.escape_single_quote_text = function (text)
+    return tostring(text):gsub("'", "\\'")[1]
+end
+
+--- Format a string provided as argument by replacing strings like '%1', '%2', … with the respective argument
+--- provided. Only 9 arguments are supported, so '%1' up to '%9'.
+-- @tparam string format_string  formatting string to insert values into
+-- @treturn string  format_string with replaced values
+Litua.format = function (format_string, ...)
+    -- determine number of arguments
+    local count_args = #arg
+    if count_args > 9 then
+        Litua.error("formatting with format string '" .. Litua.escape_single_quote_text(format_string) ..
+            "' is provided " .. count_args .. " arguments, but only 9 are supported"
+        )
+        count_args = 9
+    end
+
+    -- collect arguments
+    local func_args = {}
+    for i in 2,count_args do
+        local value = tostring(arg[i])  -- tostring(…) for number/function/CFunction/userdata
+        if arg[i] == nil then
+            value = "nil"
+        elseif type(arg[i]) == "string" then
+            value = "'" .. Litua.escape_single_quote_text(arg[i]) .. "'"
+        elseif type(arg[i]) == "table" then
+            value = Litua.represent_table(arg[i])
+        end
+        func_args[tostring(i - 1)] = value
+    end
+
+    -- replace placeholders
+    return format_string:gsub("%%(%d)", func_args)
 end

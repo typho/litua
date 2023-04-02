@@ -48,7 +48,7 @@ Litua.recurse_reading = function (node, depth, hook_name)
                 Litua.log("transform", "ran " .. Litua.hooks[hook_name][call][i].src .. " for call '" .. node.call .. "'")
                 err = hook.impl(node:copy(), depth)
                 if err ~= nil then
-                    Litua.error(tostring(hook_name) .. " hook #" .. tostring(i) .. " returned non-nil value", {
+                    Litua.error(Litua.format("%1 hook #%2 returned non-nil value", hook_name, i), {
                         ["expected"] = "return value nil",
                         ["actual"] = err,
                         ["fix"] = "make hook return non-error",
@@ -98,7 +98,7 @@ Litua.recurse_modify_node = function (node, depth, hook_name)
                 Litua.log("transform", "ran " .. Litua.hooks[hook_name][call][i].src .. " for call '" .. node.call .. "'")
                 node, err = hook.impl(node, depth, call)
                 if node == nil or (not node.is_node and type(node) ~= "string") then
-                    Litua.error(tostring(hook_name) .. " hook #" .. tostring(i) .. " returned nil value", {
+                    Litua.error(Litua.format("%1 hook #%2 returned nil value", hook_name, i), {
                         ["expected"] = "return value node",
                         ["actual"] = "nil",
                         ["fix"] = "make hook return a proper node",
@@ -106,7 +106,7 @@ Litua.recurse_modify_node = function (node, depth, hook_name)
                     })
                     return err
                 elseif err ~= nil then
-                    Litua.error(tostring(hook_name) .. " hook #" .. tostring(i) .. " returned non-nil value", {
+                    Litua.error(Litua.format("%1 hook #%2 returned non-nil value", hook_name, i), {
                         ["expected"] = "return value nil",
                         ["actual"] = err,
                         ["fix"] = "make hook return non-error",
@@ -190,20 +190,20 @@ Litua.recurse_node_to_string = function (node, depth, hook_name)
             local result
             result, err = hook.impl(node, depth, call)
             if err ~= nil then
-                Litua.error(tostring(hook_name) .. " hook returned non-nil value as second value", {
+                Litua.error(Litua.format("%1 hook returned non-nil value as second value", hook_name), {
                     ["context"] = tostring(hook_name) .. " hooks must return two values (node and error)",
                     ["expected"] = "error return value to be nil",
-                    ["actual"] = "error return value is '" .. tostring(err) .. "'",
+                    ["actual"] = Litua.format("error return value is %1", err),
                     ["fix"] = "make hook return no error",
                     ["source"] = hook.src,
                 })
                 return nil, err
             end
             if type(result) ~= "string" then
-                Litua.error(tostring(hook_name) .. " hook returned non-string value as first return value", {
-                    ["context"] = tostring(hook_name) .. " hooks must return two values (string representation and error)",
+                Litua.error(Litua.format("%1 hook returned non-string value as first return value", hook_name), {
+                    ["context"] = Litua.format("%1 hooks must return two values (string representation and error)", hook_name),
                     ["expected"] = "string representation return value to be a string",
-                    ["actual"] = "string representation return value is '" .. type(result) .. "'",
+                    ["actual"] = Litua.format("string representation return value is %1", type(result)),
                     ["fix"] = "make hook return a string",
                     ["source"] = hook.src,
                 })
@@ -222,23 +222,6 @@ end
 -- @param tree  the Litua.Node instance of the root
 -- @return  error or string representation
 Litua.transform = function (tree)
-    local err, repr
-
-    -- (0) run setup hooks
-    Litua.log("transform", "run setup hooks")
-    local hook = "setup"
-    for i=1,#Litua.hooks[hook][""] do
-        Litua.log("transform", "ran " .. Litua.hooks[hook][""][i].src)
-        err = Litua.hooks[hook][""][i].impl()
-        if err ~= nil then
-            Litua.error(tostring(hook) .. " hook returned non-nil value", {
-                ["expected"] = tostring(hook) .. " hooks must return nil",
-                ["actual"] = "return value is '" .. tostring(err) .. "'",
-                ["source"] = Litua.hooks[hook][""][i].src,
-            })
-        end
-    end
-
     --[[
     -- debug the tree generated
     local function dump_tree(t, depth)
@@ -268,77 +251,92 @@ Litua.transform = function (tree)
     print(dump_tree(tree))
     ]]
 
-    -- (1) take tree data and convert it into Node objects
+    -- take tree data and convert it into Node objects
     local root = Litua.tree_to_nodes(tree)
 
     -- root has a special string representation
     root.tostring = function (self)
-        local out = ""
-        for i = 1,#self.content do
-            out = out .. tostring(self.content[i])
-        end
-        return out
+        return Litua.concat_table_values(self.content)
     end
 
-    local function middle()
-        -- (2) read-new-node hooks
-        Litua.log("transform", "run read-new-node hooks")
-        err = Litua.recurse_reading(root, 0, "read-new-node")
+    local function run_intermediate_hooks(top_node)
+        local err, repr, hook_name
+
+        -- (2) run read_new_node hooks
+        hook_name = "read_new_node"
+        Litua.log("transform", "run " .. hook_name .. " hooks")
+        err = Litua.recurse_reading(top_node, 0, hook_name)
         if err ~= nil then
             return err
         end
 
-        -- (3) modify-node hooks
-        Litua.log("transform", "run modify-node hooks")
-        root, err = Litua.recurse_modify_node(root, 0, "modify-node")
+        -- (3) run modify_node hooks
+        hook_name = "modify_node"
+        Litua.log("transform", "run " .. hook_name .. " hooks")
+        top_node, err = Litua.recurse_modify_node(top_node, 0, hook_name)
         if err ~= nil then
             return err
         end
 
-        -- (4) read-modified-node hooks
-        Litua.log("transform", "run read-modified-node hooks")
-        err = Litua.recurse_reading(root, 0, "read-modified-node")
+        -- (4) run read_modified_node hooks
+        hook_name = "read_modified_node"
+        Litua.log("transform", "run " .. hook_name .. " hooks")
+        err = Litua.recurse_reading(top_node, 0, hook_name)
         if err ~= nil then
             return err
         end
 
-        -- (5) convert-node-to-string hooks
-        Litua.log("transform", "run convert-node-to-string hooks")
-        repr, err = Litua.recurse_node_to_string(root, 0, "convert-node-to-string")
+        -- (5) run convert_node_to_string hooks
+        hook_name = "convert_node_to_string"
+        Litua.log("transform", "run " .. hook_name .. " hooks")
+        repr, err = Litua.recurse_node_to_string(top_node, 0, hook_name)
         if err ~= nil then
             return err
         end
 
-        -- (6) modify-final-string hooks
-        Litua.log("transform", "run modify-final-string hooks")
-        for i=1,#Litua.hooks["modify-final-string"][""] do
-            repr, err = Litua.hooks["modify-final-string"][""][i].impl(repr)
-            if err ~= nil then
-                return err
-            end
-        end
+        return repr
     end
-    local middle_success, err = pcall(middle)
 
-    -- (7) run teardown hooks
-    hook = "teardown"
-    for i=1,#Litua.hooks[hook][""] do
-        Litua.log("transform", "ran " .. Litua.hooks[hook][""][i].src)
-        local teardown_err = Litua.hooks[hook][""][i].impl()
-        if teardown_err ~= nil then
-            Litua.error(tostring(hook) .. " hook returned non-nil value", {
-                ["expected"] = tostring(hook) .. " hooks must return nil",
-                ["actual"] = "return value is '" .. tostring(teardown_err) .. "'",
-                ["source"] = Litua.hooks[hook][""][i].src,
+    local no_error_occured, err_or_text = pcall(run_intermediate_hooks, root)
+    return err_or_text
+end
+
+--- Post-processing functions are all hooks which run
+--- after the tree has been converted to a string.
+-- @param text  the text document content
+-- @return  text document content
+Litua.postprocess = function (text)
+    local result, hook_name
+
+    -- (6) run modify_final_string hooks
+    hook_name = "modify_final_string"
+    Litua.log("postprocess", "run " .. hook_name .. " hooks")
+    for i=1,#Litua.hooks[hook_name][""] do
+        text = Litua.hooks[hook_name][""][i].impl(text)
+        if type(text) ~= "string" then
+            Litua.error(Litua.format("%1 hook returned non-string value as first return value", hook_name), {
+                ["context"] = Litua.format("%1 hooks must return two values (string representation and error)", hook_name),
+                ["expected"] = "string representation return value to be a string",
+                ["actual"] = Litua.format("string representation return value is %1", type(text)),
+                ["fix"] = "make hook return a string",
+                ["source"] = Litua.hooks[hook_name][""][i].src,
             })
         end
     end
-    if not middle_success then
-        return err
-    end
-    if err ~= nil then
-        return err
+
+    -- (7) run on_teardown hooks
+    hook_name = "on_teardown"
+    Litua.log("postprocess", "run " .. hook_name .. " hooks")
+    for i=1,#Litua.hooks[hook_name][""] do
+        result = Litua.hooks[hook_name][""][i].impl()
+        if result ~= nil then
+            Litua.error(Litua.format("%1 hook returned non-nil value", hook_name), {
+                ["expected"] = Litua.format("%1 hooks must return nil", hook_name),
+                ["actual"] = Litua.format("return value is %1", result),
+                ["source"] = Litua.hooks[hook_name][""][i].src,
+            })
+        end
     end
 
-    return repr
+    return text
 end
