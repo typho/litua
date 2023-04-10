@@ -11,5 +11,5 @@ keywords = ["markup", "content-tree", "lua", "document-generation"]
 categories = ["command-line-utilities", "compilers", "encoding", "text-processing"]
 
 [dependencies]
-mlua = { version = "0.7", features = ["lua54", "vendored"] }
-clap = { version = "4.0.27", features = ["derive"] }
+mlua = { version = "0.8.8", features = ["lua54", "vendored"] }
+clap = { version = "4.2.1", features = ["derive"] }
