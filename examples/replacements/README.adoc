@@ -1,5 +1,9 @@
 = Replacements example
-== Text document
+
+In this example, we want to design one call to assign replacement strings to variables.
+Calls to these new variables are replaced by their assigned string.
+
+== Litua input syntax document
 
 Consider a simple document which invokes the ``let`` call. Its arguments define substitution pairs.
 
@@ -24,9 +28,9 @@ All the best,
 
 So, ``let`` is supposed to define call hooks for each of its arguments.
 
-== The hooks
+== litua hooks file
 
-We only need to consider the ``convert-node-to-string`` hook called for ``let``. In this case, we iterate over its arguments and for each ``arg``, we define a new ``convert-node-to-string`` hook which just returns the substitution value. Remember that ``val`` is a table since it might be a concatenation of several strings and calls. ``let`` calls themselves shall disappear and thus be represented as empty string (``return ""``).
+We only need to consider the ``convert_node_to_string`` hook called for ``let``. In this case, we iterate over its arguments and for each ``arg``, we define a new ``convert_node_to_string`` hook which just returns the substitution value. Remember that ``val`` is a table since it might be a concatenation of several strings and calls. ``let`` calls themselves shall disappear and thus be represented as empty string (``return ""``).
 
 [source,lua]
 ----
@@ -41,4 +45,16 @@ Litua.convert_node_to_string("let", function (node)
     end
     return ""
 end)
+----
+
+== Output file
+
+----
+Dear 세종대왕,
+
+I want to congratulate on the occasion of your 52th birthday.
+I am a big fan of your development of the Korean alphabet!
+
+All the best,
+tajpulo
 ----

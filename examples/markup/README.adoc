@@ -127,3 +127,6 @@ Now, usually we introduce the XML notation with those substitution characters. S
 The result is the implementation given.
 
 A more beautiful approach would be to introduce a custom type ``XMLElement`` with a metatable overwriting ``tostring``. We provide a hook for ``modify-node`` which replaces node with a ``XMLElement`` value which escapes string children and turns node children into ``XMLElement`` as well. This should work, but I did not spend the time to do it this right way yet.
+
+
+TODO final output

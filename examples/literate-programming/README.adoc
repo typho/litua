@@ -4,7 +4,7 @@ Literate programming comes from the idea to make program speak. Code and documen
 
 Literate programming originally triggered development of this tool. ``litua`` comes from the conjunction __lit__erate programming in L__ua__.
 
-== Text document
+== Litua input syntax document
 
 Consider that we have two content blocks. We have one call for explanations called _docu_ and one call for source _code_.
 
@@ -18,6 +18,8 @@ Consider that we have two content blocks. We have one call for explanations call
     print("Hello World!")
 }
 ----
+
+TODO docu to one file and code to the other? not mixed?
 
 Now the idea is that all _docu_ blocks are printed to one file and all _code_ blocks are printed to another file. Attributes could implement further features of literate programming such as reordering of blocks or adding labels to address them. However, these features are neglected for simplicity in this example.
 
@@ -33,7 +35,7 @@ The character “{” is very common in source code. As such it is inconvenient 
 
 If text starts with “{<”, then it needs to stop with “>}”. All “{” and “}” betweens these markers are taken literally and thus do not start or finish a call. Does the sequence “{<” or “>}” occur itself inside the call content? Then use “{<<” and “>>}”. You can increase the number of less-than/greater-than symbol up to length 126 assuming you keep the initializer and finalizer balanced.
 
-== Writing files with Lua
+== Introduction to writing files with Lua
 
 [source,lua]
 ----
@@ -43,15 +45,15 @@ file_code:write(tostring("Hello World!"))
 file_code:close()
 ----
 
-Here, we import the functionalities of the standard library ``io``. Then we follow the common three-steps process for file writing:
+Here, we import the library ``io``. ``io`` is part of the standard library and provides us functionalities for reading/writing files. In particular, we use the function ``io.open`` to create a so-called ``file descriptor``. This file descriptor allows us to use the method ``write`` for writing content to the file. In general, we follow the common three-steps process for file writing:
 
 1. open a file
 2. write content to the file
 3. close the file
 
-Here the file ``dst.txt`` is written with the text ``Hello World!``.
+In this example the file ``dst.txt`` is written with the text ``Hello World!``.
 
-== Hooks
+== litua hooks file
 
 Now, we facilitate two files to be written to.
 In the ``on_setup`` hook, we will open them.
@@ -87,3 +89,7 @@ Litua.on_teardown(function ()
     Litua.global.file_docu:close()
 end)
 ----
+
+## Final output file
+
+TODO

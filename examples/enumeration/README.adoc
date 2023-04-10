@@ -2,7 +2,7 @@
 
 In this example, we want to discover that litua can be used for enumerations.
 
-== Text document
+== Litua input syntax document
 
 Fundamentally, we can create a text file which contains the same _call_ several times (the _call_ in this example is called _item_):
 
@@ -21,7 +21,7 @@ This is an ordered list:
 
 In this file we call _item_ exactly five times.
 
-== Lua
+== Lua introduction
 
 So in Lua, we can define an integer and successively increment it:
 
@@ -42,9 +42,9 @@ print("(" .. tostring(Litua.global.enum) .. ")")
 ``Litua.global`` is a table where you can store any values, you need during runtime.
 To facilitate this increment in Litua, we need to plug this code into hooks. These hooks will be called whenever certain actions with calls happen.
 
-== Litua hooks
+== litua hooks file
 
-In our Litua implementation, the code is distributed between a _setup_ hook and a _convert-node-to-string_ hook:
+In our Litua implementation, the code is distributed between a __on_setup__ hook and a __convert_node_to_string__ hook:
 
 [source,lua]
 ----
@@ -76,6 +76,8 @@ end)
 This example illustrates that we can use variables across calls. So on the first time, _item_ will return 1, then 2, then 3, ….
 We store this Lua source code in some file with a filename starting with “hooks” and ending with “.lua” (``hooks.enumeration.lua``, for example).
 In the same directory, we store the text content above in a text document (``doc.txt``, for example).
+
+== Final output file
 
 [source]
 ----
