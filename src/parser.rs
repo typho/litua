@@ -45,7 +45,7 @@ impl<'s> Parser<'s> {
 
     #[inline]
     fn unexpected_token<T>(tok: &lexer::Token, expected: &str) -> Result<T, errors::Error> {
-        Err(errors::Error::UnexpectedToken(format!("{tok:?}"), expected.to_owned()))
+        Err(errors::Error::UnexpectedToken(tok.clone(), expected.to_owned()))
     }
 
     #[inline]
@@ -362,13 +362,13 @@ impl<'s> Parser<'s> {
         }
 
         // (04) if BeginArgs
-        if let Some(Ok(lexer::Token::BeginArgs)) = iter.peek() {
+        if let Some(Ok(lexer::Token::BeginArgs(_))) = iter.peek() {
             // (05)   consume BeginArgs
             match iter.next() {
                 Some(tok_or_err) => {
                     let token = tok_or_err?;
                     match token {
-                        lexer::Token::BeginArgs => {
+                        lexer::Token::BeginArgs(_) => {
                             // NOTE: expected token, yay!
                         },
                         lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
@@ -387,7 +387,7 @@ impl<'s> Parser<'s> {
                     Some(token_or_err) => {
                         let token = token_or_err?;
                         match token {
-                            lexer::Token::EndArgs => {
+                            lexer::Token::EndArgs(_) => {
                                 // NOTE: end of arguments? Ok.
                                 break;
                             },
@@ -411,7 +411,7 @@ impl<'s> Parser<'s> {
                 Some(tok_or_err) => {
                     let token = tok_or_err?;
                     match token {
-                        lexer::Token::EndArgs => {
+                        lexer::Token::EndArgs(_) => {
                             // NOTE: expected token, yay!
                         },
                         lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
@@ -544,88 +544,35 @@ impl<'s> Parser<'s> {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use path;
 
+    #[test]
+    fn lex_only_text() -> Result<(), errors::Error> {
+        let input = "{e_lement[a_ttr=v_alue] c_ontent}";
+        let lex = lexer::Lexer::new(input);
+        let mut par = Parser::new(path::Path::new("example"), input);
+        par.consume_iter(lex.iter())?;
+        let tree = par.tree();
 
-/*
-/// This parser can be helpful if you want to debug
-/// the interface between lexer and parser.
-pub(crate) struct DebuggingParser<'s> {
-    filepath: path::PathBuf,
-    source_code: &'s str,
-}
-
-impl<'s> DebuggingParser<'s> {
-    pub fn new(filepath: &path::Path, source_code: &'s str) -> DebuggingParser<'s> {
-        Self {
-            filepath: filepath.to_owned(),
-            source_code
-        }
-    }
-
-    fn show_token(name: &str, indent: &mut i32, indent_change: i32) {
-        if indent_change < 0 { (*indent) += indent_change; }
-        print!("{}", "  ".repeat(*indent as usize));
-        println!("{name}");
-        if indent_change >= 0 { (*indent) += indent_change; }
-    }
-
-    fn show_pos(name: &str, pos: usize, indent: &mut i32, indent_change: i32, src: &str) {
-        if indent_change < 0 { (*indent) += indent_change; }
-        print!("{}", "  ".repeat(*indent as usize));
-        let content: char = match &src[pos..].chars().next() {
-            Some(c) => *c,
-            None => panic!("invalid UTF-8 offset position {pos} in token {name} received"),
-        };
-        println!("{name}({content})");
-        if indent_change >= 0 { (*indent) += indent_change; }
-    }
-
-    fn show_range(name: &str, range: ops::Range<usize>, indent: &mut i32, indent_change: i32, src: &str) {
-        if indent_change < 0 { (*indent) += indent_change; }
-        print!("{}", "  ".repeat(*indent as usize));
-        let content: &str = &src[range];
-        println!("{name}({content})");
-        if indent_change >= 0 { (*indent) += indent_change; }
-    }
-
-    pub fn consume_iter(&self, iter: lexer::LexingIterator) -> Result<(), errors::Error> {
-        let mut indent = 0;
-        for tok_or_err in iter {
-            match tok_or_err {
-                Ok(tok) => {
-                    match tok {
-                        lexer::Token::BeginFunction(pos) => Self::show_pos("BeginFunction", pos, &mut indent, 1, self.source_code),
-                        lexer::Token::Call(range) => Self::show_range("Call", range, &mut indent, 0, self.source_code),
-                        lexer::Token::BeginArgs => Self::show_token("BeginArgs", &mut indent, 1),
-                        lexer::Token::ArgKey(range) => Self::show_range("ArgKey", range, &mut indent, 0, self.source_code),
-                        lexer::Token::BeginArgValue(pos) => Self::show_pos("BeginArgValue", pos, &mut indent, 1, self.source_code),
-                        lexer::Token::EndArgValue(pos) => Self::show_pos("EndArgValue", pos, &mut indent, -1, self.source_code),
-                        lexer::Token::EndArgs => Self::show_token("EndArgs", &mut indent, -1),
-                        lexer::Token::BeginContent(pos) => Self::show_pos("BeginContent", pos, &mut indent, 1, self.source_code),
-                        lexer::Token::EndContent(pos) => Self::show_pos("EndContent", pos, &mut indent, -1, self.source_code),
-                        lexer::Token::EndFunction(pos) => Self::show_pos("EndFunction", pos, &mut indent, -1, self.source_code),
-                        lexer::Token::BeginRaw(range) => Self::show_range("BeginRaw", range, &mut indent, 1, self.source_code),
-                        lexer::Token::EndRaw(range) => Self::show_range("EndRaw", range, &mut indent, -1, self.source_code),
-                        lexer::Token::Whitespace(pos, ws) => Self::show_pos(&format!("Whitespace({ws})"), pos, &mut indent, 0, self.source_code),
-                        lexer::Token::Text(range) => Self::show_range("Text", range, &mut indent, 0, self.source_code),
-                        lexer::Token::EndOfFile(_) => Self::show_token("EOF", &mut indent, 0),
-                    }
-                },
-                Err(e) => { eprintln!("{e:?}"); break },
-            }
+        match tree.0 {
+            tree::DocumentElement::Function(doc) => {
+                assert_eq!(doc.name, "document");
+                assert_eq!(doc.args["filepath"], vec![tree::DocumentElement::Text("example".to_string())]);
+                match &doc.content[0] {
+                    tree::DocumentElement::Function(elem) => {
+                        assert_eq!(elem.name, "e_lement");
+                        assert_eq!(elem.args["a_ttr"], vec![tree::DocumentElement::Text("v_alue".to_string())]);
+                        assert_eq!(elem.content, vec![tree::DocumentElement::Text("c_ontent".to_string())]);
+                    },
+                    _ => { assert!(false) },
+                }
+            },
+            tree::DocumentElement::Text(_) => assert!(false),
         }
 
         Ok(())
     }
-
-    /// Declares the end of the text document. Dummy function, in case of `DebuggingParser`.
-    pub fn finalize(&mut self) -> Result<(), errors::Error> {
-        Ok(())
-    }
-
-    /// Returns the Abstract Syntax Tree to be processed further.  Dummy function, in case of `DebuggingParser`.
-    pub fn tree(self) -> tree::DocumentTree {
-        tree::DocumentTree::new()
-    }
 }
-*/

@@ -56,7 +56,8 @@ end
 -- @param text  the text to replace
 -- @treturn string string representation
 Litua.escape_single_quote_text = function (text)
-    return tostring(text):gsub("'", "\\'")[1]
+    local replaced = tostring(text):gsub("'", "\\'")
+    return replaced
 end
 
 --- Format a string provided as argument by replacing strings like '%1', '%2', … with the respective argument
@@ -65,7 +66,7 @@ end
 -- @treturn string  format_string with replaced values
 Litua.format = function (format_string, ...)
     -- determine number of arguments
-    local count_args = #arg
+    local count_args = select('#', ...)
     if count_args > 9 then
         Litua.error("formatting with format string '" .. Litua.escape_single_quote_text(format_string) ..
             "' is provided " .. count_args .. " arguments, but only 9 are supported"
@@ -75,16 +76,17 @@ Litua.format = function (format_string, ...)
 
     -- collect arguments
     local func_args = {}
-    for i in 2,count_args do
-        local value = tostring(arg[i])  -- tostring(…) for number/function/CFunction/userdata
-        if arg[i] == nil then
+    for i=1,count_args do
+        local val = select(i, ...)
+        local value = tostring(val)  -- tostring(…) for number/function/CFunction/userdata
+        if val == nil then
             value = "nil"
-        elseif type(arg[i]) == "string" then
-            value = "'" .. Litua.escape_single_quote_text(arg[i]) .. "'"
-        elseif type(arg[i]) == "table" then
-            value = Litua.represent_table(arg[i])
+        elseif type(val) == "string" then
+            value = "'" .. Litua.escape_single_quote_text(value) .. "'"
+        elseif type(val) == "table" then
+            value = Litua.represent_table(val)
         end
-        func_args[tostring(i - 1)] = value
+        func_args[tostring(i)] = value
     end
 
     -- replace placeholders

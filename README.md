@@ -172,7 +172,7 @@ Whitespace = any of the 25 Unicode Whitespace characters
 ```
 
 In essence, don't use "<" or "[" in function call names, or "=" in argument keys.
-Keep the number of opening and closing braces balanced.
+Keep the number of opening and closing braces balanced (though this is not enforced throughout the syntax).
 
 ## Improvements
 
