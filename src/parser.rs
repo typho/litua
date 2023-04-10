@@ -54,7 +54,8 @@ impl<'s> Parser<'s> {
     }
 
     fn parse_raw(&mut self, iter: &mut iter::Peekable<lexer::LexingIterator>) -> Result<tree::DocumentElement, errors::Error> {
-        let whitespace;
+        let whitespace_before;
+        let whitespace_after;
         let name;
         let text;
 
@@ -80,11 +81,11 @@ impl<'s> Parser<'s> {
                 let token = tok_or_err?;
                 match token {
                     lexer::Token::Whitespace(_, ws) => {
-                        whitespace = ws;
+                        whitespace_before = ws;
                         // NOTE: expected token, yay!
                     },
                     lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
-                    _ => return Self::unexpected_token(&token, "some whitespace"),
+                    _ => return Self::unexpected_token(&token, "whitespace before"),
                 }
             },
             None => return Self::unexpected_eof(),
@@ -106,7 +107,24 @@ impl<'s> Parser<'s> {
             None => return Self::unexpected_eof(),
         }
 
-        // (4) consume EndRaw
+
+        // (4) consume Whitespace
+        match iter.next() {
+            Some(tok_or_err) => {
+                let token = tok_or_err?;
+                match token {
+                    lexer::Token::Whitespace(_, ws) => {
+                        whitespace_after = ws;
+                        // NOTE: expected token, yay!
+                    },
+                    lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
+                    _ => return Self::unexpected_token(&token, "whitespace after raw string"),
+                }
+            },
+            None => return Self::unexpected_eof(),
+        }
+
+        // (5) consume EndRaw
         match iter.next() {
             Some(tok_or_err) => {
                 let token = tok_or_err?;
@@ -123,7 +141,8 @@ impl<'s> Parser<'s> {
 
         // Ok(tree::DocumentElement::Text(text.to_owned()))  // NOTE would not convey `whitespace`
         let mut h = HashMap::new();
-        h.insert("=whitespace".to_owned(), vec![ tree::DocumentElement::Text(whitespace.to_string()) ]);
+        h.insert("=whitespace".to_owned(), vec![ tree::DocumentElement::Text(whitespace_before.to_string()) ]);
+        h.insert("=whitespace-after".to_owned(), vec![ tree::DocumentElement::Text(whitespace_after.to_string()) ]);
         Ok(tree::DocumentElement::Function(tree::DocumentFunction {
             call: name.to_string(),
             args: h,

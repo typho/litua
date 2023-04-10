@@ -154,25 +154,26 @@ litua -h
 The following document defines the syntax (see also [``design/litua-lexer-state-diagram.jpg``](design/litua-lexer-state-diagram.jpg)):
 
 ```
-Node       = (Content | RawString | Function){0,…}
-Content    = (NOT the symbols "{" or "}"){1,…}
-RawString  = "{<" (NOT the string ">}") ">}"
-           | "{<<" (NOT the string ">>}") ">>}"
-           | "{<<<" (NOT the string ">>>}") ">>>}"
+Node       = (Text | RawString | Function){0,…}
+Text       = (NOT the symbols "{" or "}"){1,…}
+RawString  = "{<" Whitespace (NOT the string Whitespace-and-">}") Whitespace ">}"
+           | "{<<" Whitespace (NOT the string Whitespace-and-">>}") Whitespace ">>}"
+           | "{<<<" Whitespace (NOT the string Whitespace-and-">>>}") Whitespace ">>>}"
            … continue up to 126 "<" characters
 Function   = "{" Call "}"
            | "{" Call Whitespace "}"
            | "{" Call Whitespace Node "}"
+           | "{" Call ( "[" Key "=" Node "]" ){1,…} "}"
            | "{" Call ( "[" Key "=" Node "]" ){1,…} Whitespace "}"
            | "{" Call ( "[" Key "=" Node "]" ){1,…} Whitespace Node "}"
 
-Call       = (NOT the symbols "[" or "<"){1,…}
+Call       = (NOT the symbols "}", "[" or "<")(NOT the symbols "[" or "<"){0,…}
 Key        = (NOT the symbol "="){1,…}
 Whitespace = any of the 25 Unicode Whitespace characters
 ```
 
 In essence, don't use "<" or "[" in function call names, or "=" in argument keys.
-Keep the number of opening and closing braces balanced (though this is not enforced throughout the syntax).
+Keep the number of opening and closing braces balanced (though this is not enforced by the syntax).
 
 ## Improvements
 
