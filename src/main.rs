@@ -1,7 +1,4 @@
-mod lexer;
-mod parser;
-mod tree;
-mod errors;
+use litua;
 
 use mlua::prelude::*;
 use clap::Parser;
@@ -21,7 +18,7 @@ enum Error {
     CLIArg(String),
     Io(io::Error),
     Encoding(str::Utf8Error),
-    Litua(errors::Error),
+    Litua(litua::errors::Error),
     Mlua(mlua::Error),
 }
 
@@ -36,7 +33,7 @@ impl fmt::Display for Error {
             Io(err) => write!(f, "{err:?}"),
             Encoding(err) => write!(f, "{err:?}"),
             Litua(err) => write!(f, "{err:?}"),
-            Mlua(err) => write!(f, "{err:?}"),
+            Mlua(err) => write!(f, "{err}"),
         }
     }
 }
@@ -53,8 +50,8 @@ impl From<str::Utf8Error> for Error {
     }
 }
 
-impl From<errors::Error> for Error {
-    fn from(error: errors::Error) -> Self {
+impl From<litua::errors::Error> for Error {
+    fn from(error: litua::errors::Error) -> Self {
         Self::Litua(error)
     }
 }
@@ -172,22 +169,25 @@ fn run(conf: &Settings) -> Result<(), Error> {
 
     // (6) lex and parse source code to turn it into a tree
     let doc_tree = {
-        let l = lexer::Lexer::new(&doc_src);
+        let l = litua::lexer::Lexer::new(&doc_src);
 
         if conf.op == "dump_lexed" {
             // Read the source file mentioned in `conf` and lex its source code.
             // Print the resulting sequence of tokens. Useful for debugging.
-            let l = lexer::Lexer::new(&doc_src);
+            let l = litua::lexer::Lexer::new(&doc_src);
 
             for tok_or_err in l.iter() {
-                let token = tok_or_err?;
+                let token = match tok_or_err {
+                    Ok(tok) => tok,
+                    Err(e) => return Err(Error::Litua(e.format_with_source(&conf.source, &doc_src))),
+                };
                 println!("{token:?}");
             }
 
             return Ok(());
         }
 
-        let mut p = parser::Parser::new(&conf.source, &doc_src);
+        let mut p = litua::parser::Parser::new(&conf.source, &doc_src);
         p.consume_iter(l.iter())?;
         p.finalize()?;
 
