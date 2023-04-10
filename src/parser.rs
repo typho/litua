@@ -31,7 +31,7 @@ impl<'s> Parser<'s> {
         }
 
         let root = tree::DocumentFunction {
-            name: "document".to_owned(),
+            call: "document".to_owned(),
             args,
             content: vec!(),
         };
@@ -125,7 +125,7 @@ impl<'s> Parser<'s> {
         let mut h = HashMap::new();
         h.insert("=whitespace".to_owned(), vec![ tree::DocumentElement::Text(whitespace.to_string()) ]);
         Ok(tree::DocumentElement::Function(tree::DocumentFunction {
-            name: name.to_string(),
+            call: name.to_string(),
             args: h,
             content: vec![tree::DocumentElement::Text(text.to_owned())],
         }))
@@ -335,7 +335,7 @@ impl<'s> Parser<'s> {
                 match token {
                     lexer::Token::Call(range) => {
                         let name = &self.source_code[range];
-                        func.name = name.to_owned();
+                        func.call = name.to_owned();
                     },
                     lexer::Token::EndOfFile(_) => return Self::unexpected_eof(),
                     _ => return Self::unexpected_token(&token, "call name"),
@@ -559,11 +559,11 @@ mod tests {
 
         match tree.0 {
             tree::DocumentElement::Function(doc) => {
-                assert_eq!(doc.name, "document");
+                assert_eq!(doc.call, "document");
                 assert_eq!(doc.args["filepath"], vec![tree::DocumentElement::Text("example".to_string())]);
                 match &doc.content[0] {
                     tree::DocumentElement::Function(elem) => {
-                        assert_eq!(elem.name, "e_lement");
+                        assert_eq!(elem.call, "e_lement");
                         assert_eq!(elem.args["a_ttr"], vec![tree::DocumentElement::Text("v_alue".to_string())]);
                         assert_eq!(elem.content, vec![tree::DocumentElement::Text("c_ontent".to_string())]);
                     },

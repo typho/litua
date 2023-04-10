@@ -11,7 +11,7 @@ impl DocumentTree {
     /// call `document`.
     pub fn new() -> DocumentTree {
         DocumentTree(DocumentElement::Function(DocumentFunction {
-            name: "document".to_owned(),
+            call: "document".to_owned(),
             args: HashMap::new(),
             content: Vec::new()
         }))
@@ -36,7 +36,7 @@ impl<'lua> mlua::ToLua<'lua> for &DocumentTree {
 /// and `content` is given as `DocumentNode::Text` “message”.
 #[derive(Clone,Debug,PartialEq)]
 pub struct DocumentFunction {
-    pub name: String,
+    pub call: String,
     pub args: HashMap<String, DocumentNode>,
     pub content: DocumentNode,
 }
@@ -44,7 +44,7 @@ pub struct DocumentFunction {
 impl DocumentFunction {
     /// Returns an empty `DocumentFunction` without args or content and `name` is set to “”.
     pub fn new() -> DocumentFunction {
-        DocumentFunction { name: "".to_owned(), args: HashMap::new(), content: Vec::new() }
+        DocumentFunction { call: "".to_owned(), args: HashMap::new(), content: Vec::new() }
     }
 
     /// Returns an empty `DocumentElement::Function` without args or content and `name` is set to “”.
@@ -65,7 +65,7 @@ impl<'lua> mlua::ToLua<'lua> for &DocumentFunction {
         let node = lua.create_table()?;
 
         // define call
-        node.set("call", self.name.clone())?;
+        node.set("call", self.call.clone())?;
 
         // define args
         let args = lua.create_table()?;
