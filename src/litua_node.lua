@@ -13,6 +13,7 @@ local identity_string = function (node)
     local content_string = ""
 
     local whitespace = " "
+    local whitespace_after = " "
     for argkey, argvalues in pairs(node.args) do
         if argkey:match("=") == nil then
             args_string = args_string .. "[" .. argkey .. "="
@@ -24,6 +25,9 @@ local identity_string = function (node)
         if argkey == "=whitespace" then
             whitespace = tostring(argvalues[1])
         end
+        if argkey == "=whitespace-after" then
+            whitespace_after = tostring(argvalues[1])
+        end
     end
 
     if #node.content > 0 then
@@ -34,7 +38,7 @@ local identity_string = function (node)
 
     if node.call:match("<+") ~= nil then
         local length = #node.call
-        return "{" .. node.call .. whitespace .. node.content[1] .. (">"):rep(length) .. "}"
+        return "{" .. node.call .. whitespace .. node.content[1] .. whitespace_after .. (">"):rep(length) .. "}"
     elseif args_string == "" and content_string == "" then
         return "{" .. node.call .. "}"
     elseif args_string == "" then

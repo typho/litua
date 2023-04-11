@@ -130,8 +130,8 @@ fn run(conf: &Settings) -> Result<(), Error> {
     // (3) load litua libraries
     let litua_table = include_str!("litua.lua");
     lua.load(litua_table).set_name("litua.lua")?.exec()?;
-    let litua_lib = include_str!("litua.lib.lua");
-    lua.load(litua_lib).set_name("litua.lib.lua")?.exec()?;
+    let litua_lib = include_str!("litua_stdlib.lua");
+    lua.load(litua_lib).set_name("litua_stdlib.lua")?.exec()?;
     eprintln!("litua standard library loaded");
 
     // (4) read hook files
@@ -207,10 +207,10 @@ fn run(conf: &Settings) -> Result<(), Error> {
     eprintln!("parsed tree converted into a Lua table");
 
     // (8) load transform function and node object (libraries, which users must not modify)
-    let litua_trans = include_str!("litua.transform.lua");
-    lua.load(litua_trans).set_name("litua.transform.lua")?.exec()?;
-    let litua_node = include_str!("litua.node.lua");
-    lua.load(litua_node).set_name("litua.node.lua")?.exec()?;
+    let litua_trans = include_str!("litua_transform.lua");
+    lua.load(litua_trans).set_name("litua_transform.lua")?.exec()?;
+    let litua_node = include_str!("litua_node.lua");
+    lua.load(litua_node).set_name("litua_node.lua")?.exec()?;
     eprintln!("litua transformation routines loaded");
 
     // (9) call transformation
