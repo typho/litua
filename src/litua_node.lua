@@ -9,7 +9,7 @@ Litua.Node = {}
 -- where any whitespace would have been accepted
 -- @param node  A Litua.Node to represent
 -- @return  node's string representation
-local identity_string = function (node)
+Litua.Node.identity_representation = function (node)
     -- read regular arguments and reconstruct the argument string
     local args_string = ""
 
@@ -59,8 +59,35 @@ local identity_string = function (node)
     end
 end
 
+--- Text-only string representation of a node
+-- Considers the given node and represents only its text content.
+-- It discards any attributes and handles raw strings like regular strings.
+-- Since the call name is not represented, also whitespace information is discarded.
+-- @param node  A Litua.Node to represent
+-- @return  node's string representation
+Litua.Node.text_only_representation = function (node)
+    if node.call:match("<+") ~= nil then
+        -- Oh, a raw string. Then just return its only content item of type "string"
+        return node.content[1]
+    end
+
+    -- reconstruct content string
+    local content_string = ""
+    for i=1,#node.content do
+        if type(node.content[i]) == "table" then
+            -- A content node which is a table? Then we need to get its text repr recursively
+            content_string = content_string .. Litua.Node.text_only_representation(node.content[i])
+        elseif type(node.content[i]) == "string" then
+            -- A content node which is a string itself? Then use it.
+            content_string = content_string .. tostring(node.content[i])
+        end
+    end
+
+    return content_string
+end
+
 --- The set of admissible API call
-Litua.Node.Api = { "call", "args", "content", "copy", "is_node", "tostring" }
+Litua.Node.Api = { "call", "args", "content", "copy", "is_node", "tostring", "totext" }
 
 --- Constructor for a new node
 -- It takes the `call` name, arguments `args`, and a table `content`.
@@ -102,6 +129,7 @@ Litua.Node.init = function (call, args, content)
     end
 
     node.is_node = true
+    node.totext = Litua.Node.text_only_representation
     return setmetatable(node, Litua.Node)
 end
 
@@ -132,5 +160,5 @@ Litua.Node.__tostring = function (self)
     if type(rawget(self, 'tostring')) == "function" then
         return rawget(self, 'tostring')(self)
     end
-    return identity_string(self)
+    return Litua.Node.identity_representation(self)
 end
