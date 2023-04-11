@@ -27,7 +27,7 @@ end
 -- @tparam string component  the component where this issue occurs
 -- @tparam string msg  the string explaining the issue
 Litua.log = function (component, msg)
-    print("LOG[" .. component .. "]: " .. msg)
+    print("LOG[" .. component .. "]:\t" .. msg)
 end
 
 --- Represent a table as a string without traversing recursively.

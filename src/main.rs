@@ -12,6 +12,11 @@ use std::str;
 use std::error;
 use std::fmt;
 
+macro_rules! log {
+    ($fmt:literal) => { eprintln!(concat!("LOG[rust]:\t", $fmt)); };
+    ($fmt:literal, $($args:expr),+) => { eprintln!(concat!("LOG[rust]:\t", $fmt), $($args),+); };
+}
+
 // Error type (covers all error cases)
 #[derive(Debug)]
 enum Error {
@@ -110,7 +115,7 @@ fn run(conf: &Settings) -> Result<(), Error> {
     // NOTE: 'debug' library is only available with Lua::unsafe_new()
     //       https://github.com/khvzak/mlua/issues/39
     let lua = unsafe { Lua::unsafe_new() };
-    eprintln!("Lua runtime initialized");
+    log!("Lua runtime initialized");
 
     // (1) add paths to Lua path variable
     for lua_path in conf.lua_path_additions.iter() {
@@ -121,22 +126,22 @@ fn run(conf: &Settings) -> Result<(), Error> {
             None => return Err(Error::CLIArg("cannot convert the luapath extension path (supplied as --add-require-path) to a UTF-8 string. But this is sadly required by the mlua interface (the library to run Lua)".to_owned())),
         };
     }
-    eprintln!("Lua paths added");
+    log!("Lua paths added");
 
     // (2) find hook files
     let hook_files = find_hook_files(&conf.hooks_dir).map_err(Error::Io)?;
-    eprintln!("{} hook files found", hook_files.len());
+    log!("{} hook file{} found", hook_files.len(), if hook_files.len() == 1 { "" } else { "" });
 
     // (3) load litua libraries
     let litua_table = include_str!("litua.lua");
     lua.load(litua_table).set_name("litua.lua")?.exec()?;
     let litua_lib = include_str!("litua_stdlib.lua");
     lua.load(litua_lib).set_name("litua_stdlib.lua")?.exec()?;
-    eprintln!("litua standard library loaded");
+    log!("litua standard library loaded");
 
     // (4) read hook files
     for hook_file in hook_files.iter() {
-        eprintln!("Loading hook file '{}'", hook_file.display());
+        log!("Loading hook file '{}'", hook_file.display());
 
         let lua_file_src = fs::read_to_string(hook_file)?;
         let mut chunk = lua.load(&lua_file_src);
@@ -146,7 +151,7 @@ fn run(conf: &Settings) -> Result<(), Error> {
         }
         chunk.exec()?;
     }
-    eprintln!("hook files loaded");
+    log!("All hook files loaded");
 
     // (5) run preprocessing hooks
     let mut doc_src = {
@@ -155,7 +160,7 @@ fn run(conf: &Settings) -> Result<(), Error> {
         fd.read_to_end(&mut buf)?;
         str::from_utf8(&buf)?.to_owned()
     };
-    eprintln!("source file '{}' read", conf.source.display());
+    log!("source file '{}' read", conf.source.display());
 
     {
         let globals = lua.globals();
@@ -165,7 +170,7 @@ fn run(conf: &Settings) -> Result<(), Error> {
         // TODO verify which errors are triggered for non-UTF-8 return values
         doc_src = lua_result.to_str()?.to_owned();
     }
-    eprintln!("source file '{}' pre-processed", conf.source.display());
+    log!("source file '{}' pre-processed", conf.source.display());
 
     // (6) lex and parse source code to turn it into a tree
     let doc_tree = {
@@ -193,7 +198,7 @@ fn run(conf: &Settings) -> Result<(), Error> {
 
         p.tree()
     };
-    eprintln!("source file '{}' lexed and parsed", conf.source.display());
+    log!("source file '{}' lexed and parsed", conf.source.display());
 
     if conf.op == "dump_parsed" {
         // Read the source file mentioned in `conf` and lex and parse
@@ -204,14 +209,14 @@ fn run(conf: &Settings) -> Result<(), Error> {
 
     // (7) turn tree into a Lua object
     let tree = doc_tree.to_lua(&lua)?;
-    eprintln!("parsed tree converted into a Lua table");
+    log!("parsed tree converted into a Lua table");
 
     // (8) load transform function and node object (libraries, which users must not modify)
     let litua_trans = include_str!("litua_transform.lua");
     lua.load(litua_trans).set_name("litua_transform.lua")?.exec()?;
     let litua_node = include_str!("litua_node.lua");
     lua.load(litua_node).set_name("litua_node.lua")?.exec()?;
-    eprintln!("litua transformation routines loaded");
+    log!("litua transformation routines loaded");
 
     // (9) call transformation
     let globals = lua.globals();
@@ -221,17 +226,17 @@ fn run(conf: &Settings) -> Result<(), Error> {
         let transform: mlua::Function = global_litua.get("transform")?;
         transform.call::<mlua::Value, mlua::String>(tree)?
     };
-    eprintln!("litua hooks for tree manipulation finished");
+    log!("litua hooks for tree manipulation finished");
 
     // (10) run postprocessing hooks
     let postprocess: mlua::Function = global_litua.get("postprocess")?;
     let lua_result = postprocess.call::<mlua::Value, mlua::String>(intermediate.to_lua(&lua)?)?;
     let output = lua_result.to_str()?;
-    eprintln!("source file '{}' post-processed", conf.source.display());
+    log!("source file '{}' post-processed", conf.source.display());
 
     // (11) print the result
     fs::write(&conf.destination, output)?;
-    eprintln!("File '{}' written.", conf.destination.display());
+    log!("File '{}' written.", conf.destination.display());
 
     Ok(())
 }
