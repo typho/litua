@@ -21,12 +21,12 @@ Litua = {
 AccessLoggingTable = {}
 AccessLoggingTable.tablename = "Litua.global"
 AccessLoggingTable.__index = function(table, key)
-    Litua.log("internal", Litua.format("indexing %1 of %2", key, AccessLoggingTable.tablename))
+    Litua.log("runtime", Litua.format("indexing %1 of %2", key, AccessLoggingTable.tablename))
     return rawget(table, key)
 end
 AccessLoggingTable.__newindex = function(table, key, value)
     rawset(table, key, value)
-    Litua.log("internal", Litua.format("setting %1 of %2 to %3", key, AccessLoggingTable.tablename, value))
+    Litua.log("runtime", Litua.format("setting %1 of %2 to %3", key, AccessLoggingTable.tablename, value))
     return rawget(table, key)
 end
 
