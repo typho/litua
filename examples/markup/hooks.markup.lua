@@ -174,7 +174,8 @@ Litua.convert_node_to_string("document", function (node)
     local nonempty_content_nodes = {}
 
     for _, content in ipairs(node.content) do
-        if content:find("[\x09\x0A\x0B\x0C\x0D\x20\x85\xA0]*$") == 1 then
+        local is_non_empty = content:find("^[\x09\x0A\x0B\x0C\x0D\x20\x85\xA0]*$") == nil
+        if is_non_empty then
             table.insert(nonempty_content_nodes, content)
         end
     end
