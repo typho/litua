@@ -4,49 +4,58 @@ Litua.Node = {}
 
 --- Identity string representation of a node
 -- Considers the given node and represents it in litua input syntax.
--- It uses the "=whitespace" key to recover the original whitespace
--- character where any whitespace would have been accepted
+-- It uses keys starting with "=" to recover its original representation.
+-- e.g. value of key "=whitespace" stores the whitespace
+-- where any whitespace would have been accepted
 -- @param node  A Litua.Node to represent
 -- @return  node's string representation
 local identity_string = function (node)
+    -- read regular arguments and reconstruct the argument string
     local args_string = ""
-    local content_string = ""
 
-    local whitespace = " "
-    local whitespace_after = " "
-    for argkey, argvalues in pairs(node.args) do
+    local args_keys = {}
+    for argkey, _ in pairs(node.args) do
         if argkey:match("=") == nil then
-            args_string = args_string .. "[" .. argkey .. "="
-            for _, argvalue in ipairs(argvalues) do
-                args_string = args_string .. tostring(argvalue)
-            end
-            args_string = args_string .. "]"
+            table.insert(args_keys, argkey)
         end
+    end
+    -- NOTE: we want to represent them in a sorted manner to get some
+    --       deterministic behavior
+    table.sort(args_keys)
+
+    for i = 1,#args_keys do
+        local argkey = tostring(args_keys[i])
+        local argvalues = node.args[argkey]
+
+        args_string = args_string .. "[" .. argkey .. "=" .. Litua.concat_table_values(argvalues) .. "]"
+    end
+
+    -- read special arguments
+    local whitespace = ""
+    local whitespace_after = ""
+    for argkey, argvalues in pairs(node.args) do
         if argkey == "=whitespace" then
-            whitespace = tostring(argvalues[1])
-        end
-        if argkey == "=whitespace-after" then
-            whitespace_after = tostring(argvalues[1])
-        end
-    end
-
-    if #node.content > 0 then
-        for i, value in ipairs(node.content) do
-            content_string = content_string .. tostring(value)
+            whitespace = Litua.concat_table_values(argvalues)
+        elseif argkey == "=whitespace-after" then
+            whitespace_after = Litua.concat_table_values(argvalues)
         end
     end
 
+    -- reconstruct content string
+    local content_string = Litua.concat_table_values(node.content)
+
+    -- NOTE: if =whitespace is not set, but there is some content_string,
+    --       we still need some separating whitespace, U+0020 SPACE per default
+    if whitespace == "" and #content_string > 0 then
+        whitespace = " "
+    end
+
+    -- reconstruct entire function
     if node.call:match("<+") ~= nil then
         local length = #node.call
-        return "{" .. node.call .. whitespace .. node.content[1] .. whitespace_after .. (">"):rep(length) .. "}"
-    elseif args_string == "" and content_string == "" then
-        return "{" .. node.call .. "}"
-    elseif args_string == "" then
-        return "{" .. node.call .. whitespace .. content_string .. "}"
-    elseif content_string == "" then
-        return "{" .. node.call .. args_string .. "}"
+        return "{" .. node.call .. whitespace .. content_string .. whitespace_after .. (">"):rep(length) .. "}"
     else
-        return "{" .. node.call .. args_string .. "\n" .. content_string .. "}"
+        return "{" .. node.call .. args_string .. whitespace .. content_string .. whitespace_after .. "}"
     end
 end
 
