@@ -1,27 +1,15 @@
-{docu 
-  Hello World!
-}
-
-{code {<
-    let mut p = String::new();
-    p.push_str(&s[0..s.rfind(".").unwrap()]);
-    p.push_str(".");
-    p.push_str(ext);
-    p
->}}
-
 {docu
-  This is an ordered list:
+    The following source code is going to print the text “Hello World!” to stdout.
 }
 
-{code {<<
-    if args_string == "" and content_string == "" then
-        return "{" .. node.call .. "}"
-    elseif args_string == "" then
-        return "{" .. node.call .. " " .. content_string .. "}"
-    elseif content_string == "" then
-        return "{" .. node.call .. args_string .. "}"
-    else
-        return "{" .. node.call .. args_string .. "\n" .. content_string .. "}"
-    end
->>}}
+{code {<<<
+    print("Hello World!")
+ >>>}}
+
+{docu 
+    But sometimes the world is frightening and we just panic!
+}
+
+{code {<<<
+    panic!("this world is too scary");
+ >>>}}

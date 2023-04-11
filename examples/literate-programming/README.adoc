@@ -1,8 +1,8 @@
 = Literate programming example
 
-Literate programming comes from the idea to make program speak. Code and documentation shall be intertwined to create a single flow for reading the program. Extracting the source code comprehensible for the compiler is then considered a minor technical detail.
+Literate programming comes from the idea to make program speak. Code and documentation shall be intertwined to create a single flow for reading the program. Extracting the source code comprehensible for the compiler is then considered a secondary step and minor technical detail.
 
-Literate programming originally triggered development of this tool. ``litua`` comes from the conjunction __lit__erate programming in L__ua__.
+Literate programming originally triggered development of this tool. If you are interested, read about link:https://en.wikipedia.org/wiki/Web_(programming_system)[WEB] by Donald Knuth. The name ``litua`` actually comes from the conjunction __lit__erate programming in L__ua__. I want to present here, how this tool can help to implement such mechanism.
 
 == Litua input syntax document
 
@@ -15,13 +15,11 @@ Consider that we have two content blocks. We have one call for explanations call
 }
 
 {code
-    print("Hello World!")
+    println!("Hello World!");
 }
 ----
 
-TODO docu to one file and code to the other? not mixed?
-
-Now the idea is that all _docu_ blocks are printed to one file and all _code_ blocks are printed to another file. Attributes could implement further features of literate programming such as reordering of blocks or adding labels to address them. However, these features are neglected for simplicity in this example.
+Now the idea is that all _code_ blocks are printed to one file for the compiler and all _docu_ blocks together with wrapped _code_ blocks are printed to another file. As such you have one file for the compiler to run the program. Another file is meant to be converted to a PDF. Attributes could implement further features of literate programming such as reordering of blocks or adding labels to address them. However, these features are neglected for simplicity in this example.
 
 == Raw strings
 
@@ -29,52 +27,56 @@ The character “{” is very common in source code. As such it is inconvenient 
 
 ----
 {code {<
-    print("Hello World!")
+    println!("Hello World!");
 >}}
 ----
 
-If text starts with “{<”, then it needs to stop with “>}”. All “{” and “}” betweens these markers are taken literally and thus do not start or finish a call. Does the sequence “{<” or “>}” occur itself inside the call content? Then use “{<<” and “>>}”. You can increase the number of less-than/greater-than symbol up to length 126 assuming you keep the initializer and finalizer balanced.
+If text starts with “{<” and some whitespace, then it needs to stop with any whitespace and “>}”. All “{” and “}” betweens these markers are taken literally and thus do not start or finish a call. Does the sequence “{<” or “>}” occur itself inside the call content? Then use “{<<” and “>>}”. You can increase the number of less-than/greater-than symbol up to length 126 assuming you keep the initializer and finalizer balanced. A required whitspace after “<” and before “>” ensures the content is visually distinguishable from Litua's input syntax.
 
 == Introduction to writing files with Lua
+
+In this section, I want to explain to you how to write content into files using the Lua programming language.
 
 [source,lua]
 ----
 local io = require("io")
 local file_code = io.open("dst.txt", "w")
-file_code:write(tostring("Hello World!"))
+file_code:write("Hello World!")
 file_code:close()
 ----
 
-Here, we import the library ``io``. ``io`` is part of the standard library and provides us functionalities for reading/writing files. In particular, we use the function ``io.open`` to create a so-called ``file descriptor``. This file descriptor allows us to use the method ``write`` for writing content to the file. In general, we follow the common three-steps process for file writing:
+Here, we import the library ``io``. ``io`` is part of the standard library and provides us functionalities for reading/writing files. In particular, we use the function ``io.open`` to create a so-called ``file descriptor``. This file descriptor is stored in the variable ``file_code``. Successively tt allows us to use the method ``write`` for writing content to the file. In general, we follow the common three-steps process for file writing:
 
 1. open a file
 2. write content to the file
 3. close the file
 
-In this example the file ``dst.txt`` is written with the text ``Hello World!``.
+After running this source code, the file ``dst.txt`` will contain the text ``Hello World!``.
 
 == litua hooks file
 
-Now, we facilitate two files to be written to.
-In the ``on_setup`` hook, we will open them.
-In the respective ``read_new_node`` hook, we will write content in the corresponding file.
-In the ``on_teardown`` hook, we will close all files.
+In order to implement our literate programming system, we are going to use two files to write to. For each of them, we need to implement all three steps:
 
-The ``read_new_node`` hook is called after the ``on_setup`` hook and after creating the nodes of the tree initially.
-The ``on_teardown`` hook is executed even if some previous hook fails.
-
+1. In the ``on_setup`` hook, we will open the code file. In the ``on_setup`` hook, we will open the docu file.
++
 [source,lua]
 ----
-local io = require("io")
-
 Litua.on_setup(function ()
-    Litua.global.file_code = io.open("src.code", "w")
-    Litua.global.file_docu = io.open("src.docu", "w")
+    Litua.global.file_code = io.open("code.txt", "w")
+    Litua.global.file_docu = io.open("docu.txt", "w")
 end)
-
+----
+2. In the ``read_new_node`` hook of a code element, we are going to write the content into the code file. In the ``read_new_node`` hook of a code element, we are going to write the content into the docu file as well wrapped inside three backticks (a frequent notation in markup languages for source code). In the ``read_new_node`` hook of a docu element, we are going to write the content into the docu file.
++
+[source,lua]
+----
 Litua.read_new_node("code", function (node)
     for i=1,#node.content do
         Litua.global.file_code:write(tostring(node.content[i]))
+
+        Litua.global.file_docu:write("```\n")
+        Litua.global.file_docu:write(tostring(node.content[i]))
+        Litua.global.file_docu:write("```\n")
     end
 end)
 
@@ -83,13 +85,42 @@ Litua.read_new_node("docu", function (node)
         Litua.global.file_docu:write(tostring(node.content[i]))
     end
 end)
-
+----
+3. In the ``on_teardown`` hook, we will close both files.
++
+[source,lua]
+----
 Litua.on_teardown(function ()
     Litua.global.file_code:close()
     Litua.global.file_docu:close()
 end)
 ----
 
+The ``read_new_node`` hook is called after the ``on_setup`` hook and after creating the nodes of the tree initially. So we can already read the content of a node. The ``on_teardown`` hook is executed even if some previous hook fails.
+
 ## Final output file
 
-TODO
+Of course, in this case we are not interested in the actual generated output file since we did not modify ``convert_node_to_string``, but the files that were written by Lua:
+
+### code.txt
+
+----
+    println!("Hello World!");
+    panic!("this world is too scary");
+----
+
+### docu.txt
+
+----
+    The following source code is going to print the text “Hello World!” to stdout.
+```
+    println!("Hello World!");
+
+```
+
+    But sometimes the world is frightening and we just panic!
+```
+    panic!("this world is too scary");
+
+```
+----
