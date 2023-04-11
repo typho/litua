@@ -136,14 +136,6 @@ pub struct LexingIterator<'l> {
     /// While parsing raw string content we discover '>' and count this number
     /// of '>' until we reach “raw_delimiter_length”
     raw_delimiter_read: u8,
-    /// TODO: this is an alternative design to setting ``token_start == usize::MAX``
-    /// NOTE: I am not yet convinced one boolean suffices, since token_function_start
-    ///       also uses the usize::MAX semantics. Thus commented.
-    /// Should the next byte offset emit a new token?
-    /// This is set in the scenario when the previous byte offset recognized
-    /// the end of a token and the next byte offset needs to start a new one.
-    /// But the new token really needs the byte offset of the next character.
-    //start_new_token_at_next_byte_offset: bool,
     /// iterator over (UTF-8 byte offset, Unicode scalar)
     chars: str::CharIndices<'l>,
     /// `stack` stores the hierarchical level, we are in.
