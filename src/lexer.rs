@@ -1016,4 +1016,25 @@ mod tests {
 
         Ok(())
     }
+
+
+    #[test]
+    fn lex_rawstring_with_newlines() -> Result<(), errors::Error> {
+        let input = "{code {<<< \n   panic!(\"this world is too scary\");\n >>>}}";
+        let lex = Lexer::new(input);
+        let mut iter = lex.iter();
+
+        assert_eq!(iter.next().unwrap()?, Token::BeginFunction(0));
+        assert_eq!(iter.next().unwrap()?, Token::Call(1..5));
+        assert_eq!(iter.next().unwrap()?, Token::Whitespace(5, ' '));
+        assert_eq!(iter.next().unwrap()?, Token::BeginContent(6));
+        assert_eq!(iter.next().unwrap()?, Token::BeginRaw(7..10));
+        assert_eq!(iter.next().unwrap()?, Token::Whitespace(10, ' '));
+        assert_eq!(iter.next().unwrap()?, Token::Text(11..50));
+        assert_eq!(iter.next().unwrap()?, Token::Whitespace(50, ' '));
+        assert_eq!(iter.next().unwrap()?, Token::EndRaw(51..54));
+        assert_eq!(iter.next().unwrap()?, Token::EndContent(55));
+        assert_eq!(iter.next().unwrap()?, Token::EndFunction(55));
+        Ok(())
+    }
 }
