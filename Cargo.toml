@@ -2,7 +2,7 @@
 name = "litua"
 description = "Read a text document, receive its tree in Lua and manipulate it before representing it as string"
 repository = "https://github.com/typho/litua"
-readme = "README.adoc"
+readme = "README.md"
 license = "MIT"
 version = "2.0.0"
 authors = ["tajpulo <tajpulo@typho.org>"]
