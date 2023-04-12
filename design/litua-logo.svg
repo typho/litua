@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="256" height="256" viewBox="0 0 67.733332 67.733336" version="1.1" id="svg5" inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)" sodipodi:docname="litua_logo.svg" inkscape:export-xdpi="96" inkscape:export-ydpi="96" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview id="namedview7" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageshadow="2" inkscape:pageopacity="0.0" inkscape:pagecheckerboard="0" inkscape:document-units="px" showgrid="false" units="px" inkscape:snap-global="false" inkscape:zoom="2.6155444" inkscape:cx="124.25712" inkscape:cy="77.612907" inkscape:window-width="1920" inkscape:window-height="919" inkscape:window-x="0" inkscape:window-y="31" inkscape:window-maximized="1" inkscape:current-layer="layer1" showguides="false"/>
+  <defs id="defs2">
+    <mask id="holes-6">
+      <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect287-6"/>
+      <circle id="hole-4" cy="-40" r="3" cx="0"/>
+      <use xlink:href="#hole-4" transform="rotate(72)" id="use290-3" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-4" transform="rotate(144)" id="use292-5" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-4" transform="rotate(-144)" id="use294-1" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-4" transform="rotate(-72)" id="use296-7" x="0" y="0" width="100%" height="100%"/>
+    </mask>
+    <mask id="holes-2">
+      <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect287-9"/>
+      <circle id="hole-5" cy="-40" r="3" cx="0"/>
+      <use xlink:href="#hole-5" transform="rotate(72)" id="use290-1" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5" transform="rotate(144)" id="use292-4" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5" transform="rotate(-144)" id="use294-14" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5" transform="rotate(-72)" id="use296-4" x="0" y="0" width="100%" height="100%"/>
+    </mask>
+    <mask id="holes-5">
+      <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect287-0"/>
+      <circle id="hole-3" cy="-40" r="3" cx="0"/>
+      <use xlink:href="#hole-3" transform="rotate(72)" id="use290-6" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-3" transform="rotate(144)" id="use292-7" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-3" transform="rotate(-144)" id="use294-3" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-3" transform="rotate(-72)" id="use296-5" x="0" y="0" width="100%" height="100%"/>
+    </mask>
+    <mask id="mask3407">
+      <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect3395"/>
+      <circle id="circle3397" cy="-40" r="3" cx="0"/>
+      <use xlink:href="#hole-3" transform="rotate(72)" id="use3399" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-3" transform="rotate(144)" id="use3401" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-3" transform="rotate(-144)" id="use3403" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-3" transform="rotate(-72)" id="use3405" x="0" y="0" width="100%" height="100%"/>
+    </mask>
+    <mask id="holes-2-7">
+      <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect287-9-6"/>
+      <circle id="hole-5-4" cy="-40" r="3" cx="0"/>
+      <use xlink:href="#hole-5-4" transform="rotate(72)" id="use290-1-7" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-4" transform="rotate(144)" id="use292-4-4" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-4" transform="rotate(-144)" id="use294-14-8" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-4" transform="rotate(-72)" id="use296-4-5" x="0" y="0" width="100%" height="100%"/>
+    </mask>
+    <mask id="holes-2-3">
+      <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect287-9-67"/>
+      <circle id="hole-5-5" cy="-40" r="3" cx="0"/>
+      <use xlink:href="#hole-5-5" transform="rotate(72)" id="use290-1-3" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-5" transform="rotate(144)" id="use292-4-5" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-5" transform="rotate(-144)" id="use294-14-6" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-5" transform="rotate(-72)" id="use296-4-2" x="0" y="0" width="100%" height="100%"/>
+    </mask>
+    <mask id="holes-2-2">
+      <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect287-9-7"/>
+      <circle id="hole-5-2" cy="-40" r="3" cx="0"/>
+      <use xlink:href="#hole-5-2" transform="rotate(72)" id="use290-1-2" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-2" transform="rotate(144)" id="use292-4-6" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-2" transform="rotate(-144)" id="use294-14-1" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-2" transform="rotate(-72)" id="use296-4-0" x="0" y="0" width="100%" height="100%"/>
+    </mask>
+    <mask id="holes-2-1">
+      <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect287-9-78"/>
+      <circle id="hole-5-57" cy="-40" r="3" cx="0"/>
+      <use xlink:href="#hole-5-57" transform="rotate(72)" id="use290-1-4" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-57" transform="rotate(144)" id="use292-4-1" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-57" transform="rotate(-144)" id="use294-14-85" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-57" transform="rotate(-72)" id="use296-4-9" x="0" y="0" width="100%" height="100%"/>
+    </mask>
+    <mask id="mask1074-8">
+      <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect1062-0"/>
+      <circle id="circle1064-21" cy="-40" r="3" cx="0"/>
+      <use xlink:href="#hole-5-57" transform="rotate(72)" id="use1066-05" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-57" transform="rotate(144)" id="use1068-1" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-57" transform="rotate(-144)" id="use1070-10" x="0" y="0" width="100%" height="100%"/>
+      <use xlink:href="#hole-5-57" transform="rotate(-72)" id="use1072-8" x="0" y="0" width="100%" height="100%"/>
+    </mask>
+  </defs>
+  <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1">
+    <g id="g80" transform="matrix(0.02698885,0,0,0.02698885,-93.724942,-78.250859)">
+      <path fill="#000080" d="m 835.5,473.6 c 0,-199.8 -162.2,-362 -362,-362 -199.8,0 -362,162.2 -362,362 0,199.8 162.2,362 362,362 199.8,0 362,-162.2 362,-362" id="path64"/>
+      <path fill="#ffffff" d="m 729.5,323.6 c 0,-58.5 -47.5,-106 -106,-106 -58.5,0 -106,47.5 -106,106 0,58.5 47.5,106 106,106 58.5,0 106,-47.5 106,-106" id="path66"/>
+      <path fill="#000080" d="m 941.5,111.5 c 0,-58.5 -47.5,-106 -106,-106 -58.5,0 -106,47.5 -106,106 0,58.5 47.5,106 106,106 58.5,0 106,-47.4 106,-106" id="path68"/>
+      <g id="g76">
+        <path fill="#ffffff" d="m 258.1,627.8 h 117.3 v 26.7 H 227.8 V 417 h 30.3 z" id="path70"/>
+        <path fill="#ffffff" d="m 515.5,654.5 v -23.8 c -16,22.5 -31.9,31.3 -57,31.3 -33.2,0 -54.4,-18.2 -54.4,-46.6 V 483.8 h 27 v 120.9 c 0,20.5 13.7,33.6 35.2,33.6 28.3,0 46.6,-22.8 46.6,-57.7 v -96.8 h 27 v 170.7 z" id="path72"/>
+        <path fill="#ffffff" d="m 738.4,659.1 c -8.8,2.3 -13,2.9 -18.6,2.9 -17.6,0 -26.1,-7.8 -28,-25.1 -19.2,17.6 -36.5,25.1 -58,25.1 -34.5,0 -56,-19.5 -56,-50.5 0,-22.2 10.1,-37.5 30,-45.6 10.4,-4.2 16.3,-5.5 54.7,-10.4 21.5,-2.6 28.3,-7.5 28.3,-18.9 v -7.2 c 0,-16.3 -13.7,-25.4 -38.1,-25.4 -25.4,0 -37.8,9.4 -40.1,30.3 h -27.4 c 0.7,-16.9 3.9,-26.7 11.7,-35.5 11.4,-12.7 31.9,-19.9 56.7,-19.9 42,0 64.2,16.3 64.2,46.6 v 100.4 c 0,8.5 5.2,13.4 14.7,13.4 1.6,0 2.9,0 5.9,-0.7 z m -47.6,-89 c -9.1,4.2 -15,5.5 -43.7,9.4 -29,4.2 -41.1,13.4 -41.1,31.3 0,17.3 12.4,27.4 33.6,27.4 16,0 29.3,-5.2 40.4,-15.3 8.1,-7.5 10.8,-13 10.8,-22.2 z" id="path74"/>
+      </g>
+      <path fill="none" stroke="#808080" stroke-width="10.8612" stroke-miterlimit="10" stroke-dasharray="40.8475" d="m 890.6,261 c 33.5,65.8 51,138.6 51,212.5 0,258.4 -209.7,468.1 -468.1,468.1 C 215.1,941.6 5.4,731.9 5.4,473.5 5.4,215.1 215.1,5.4 473.5,5.4 c 83.1,0 164.6,22.1 236.2,63.9" id="path78"/>
+    </g>
+    <g id="logo" transform="matrix(0.26458334,0,0,0.26458334,-34.454938,-61.877959)">
+      <path id="r" transform="translate(0.5,0.5)" stroke="#000000" stroke-width="1" stroke-linejoin="round" d="M -9,-15 H 4 c 8,0 8,8 0,8 H -9 Z M -40,22 H 0 V 11 H -9 V 3 H 1 C 12,3 6,22 15,22 H 40 V 3 h -6 v 2 c 0,8 -9,7 -10,2 -1,-5 -5,-9 -6,-9 15,-8 6,-24 -6,-24 h -47 v 11 h 10 v 26 h -15 z"/>
+      <g id="gear" mask="url(#holes)">
+        <circle r="43" fill="none" stroke="#000000" stroke-width="9" id="circle210" cx="0" cy="0"/>
+        <g id="cogs">
+          <polygon id="cog" stroke="#000000" stroke-width="3" stroke-linejoin="round" points="46,3 51,0 46,-3 "/>
+          <use xlink:href="#cog" transform="rotate(11.25)" id="use213" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(22.5)" id="use215" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(33.75)" id="use217" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(45)" id="use219" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(56.25)" id="use221" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(67.5)" id="use223" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(78.75)" id="use225" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(90)" id="use227" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(101.25)" id="use229" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(112.5)" id="use231" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(123.75)" id="use233" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(135)" id="use235" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(146.25)" id="use237" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(157.5)" id="use239" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(168.75)" id="use241" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="scale(-1)" id="use243" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-168.75)" id="use245" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-157.5)" id="use247" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-146.25)" id="use249" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-135)" id="use251" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-123.75)" id="use253" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-112.5)" id="use255" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-101.25)" id="use257" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-90)" id="use259" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-78.75)" id="use261" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-67.5)" id="use263" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-56.25)" id="use265" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-45)" id="use267" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-33.75)" id="use269" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-22.5)" id="use271" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog" transform="rotate(-11.25)" id="use273" x="0" y="0" width="100%" height="100%"/>
+        </g>
+        <g id="mounts">
+          <polygon id="mount" stroke="#000000" stroke-width="6" stroke-linejoin="round" points="-7,-42 0,-35 7,-42 "/>
+          <use xlink:href="#mount" transform="rotate(72)" id="use277" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#mount" transform="rotate(144)" id="use279" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#mount" transform="rotate(-144)" id="use281" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#mount" transform="rotate(-72)" id="use283" x="0" y="0" width="100%" height="100%"/>
+        </g>
+      </g>
+      <mask id="holes">
+        <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect287"/>
+        <circle id="hole" cy="-40" r="3" cx="0"/>
+        <use xlink:href="#hole" transform="rotate(72)" id="use290" x="0" y="0" width="100%" height="100%"/>
+        <use xlink:href="#hole" transform="rotate(144)" id="use292" x="0" y="0" width="100%" height="100%"/>
+        <use xlink:href="#hole" transform="rotate(-144)" id="use294" x="0" y="0" width="100%" height="100%"/>
+        <use xlink:href="#hole" transform="rotate(-72)" id="use296" x="0" y="0" width="100%" height="100%"/>
+      </mask>
+    </g>
+    <circle r="11.377084" fill="none" stroke="#000000" stroke-width="2.38125" id="circle210-6" cx="100.6399" cy="46.135803" style="fill:#000080;fill-opacity:1;stroke:#000080;stroke-opacity:1"/>
+    <g id="mounts-9" transform="matrix(0.26458334,0,0,0.26458334,100.6399,18.741335)"/>
+    <path fill="none" stroke="#808080" stroke-width="0.700203" stroke-miterlimit="10" stroke-dasharray="40.8475" d="m 60.756332,20.166961 c 2.159689,4.242015 3.287885,8.935309 3.287885,13.699518 0,16.658614 -13.519007,30.177621 -30.177621,30.177621 -16.658614,0 -30.1776205,-13.519007 -30.1776205,-30.177621 0,-16.658614 13.5190065,-30.1776206 30.1776205,-30.1776206 5.077211,0 10.061776,1.2796588 14.498228,3.7072748" id="path78-8" style="stroke-width:0.700087;stroke-miterlimit:10;stroke-dasharray:2.10026, 2.10026;stroke-dashoffset:0" sodipodi:nodetypes="cssssc"/>
+    <g id="logo-8" transform="matrix(0.41989173,0,0,0.41989173,33.866667,33.866667)">
+      <path id="r-6" transform="translate(0.5,0.5)" stroke="#000000" stroke-width="1" stroke-linejoin="round" d="M -9,-15 H 4 c 8,0 8,8 0,8 H -9 Z M -40,22 H 0 V 11 H -9 V 3 H 1 C 12,3 6,22 15,22 H 40 V 3 h -6 v 2 c 0,8 -9,7 -10,2 -1,-5 -5,-9 -6,-9 15,-8 6,-24 -6,-24 h -47 v 11 h 10 v 26 h -15 z"/>
+      <g id="gear-78" mask="url(#holes-2)">
+        <circle r="43" fill="none" stroke="#000000" stroke-width="9" id="circle210-3" cx="0" cy="0"/>
+        <g id="cogs-1">
+          <polygon id="cog-9" stroke="#000000" stroke-width="3" stroke-linejoin="round" points="51,0 46,-3 46,3 "/>
+          <use xlink:href="#cog-9" transform="rotate(11.25)" id="use213-1" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(22.5)" id="use215-5" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(33.75)" id="use217-12" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(45)" id="use219-04" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(56.25)" id="use221-1" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(67.5)" id="use223-5" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(78.75)" id="use225-5" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(90)" id="use227-7" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(101.25)" id="use229-8" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(112.5)" id="use231-9" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(123.75)" id="use233-1" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(135)" id="use235-0" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(146.25)" id="use237-6" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(157.5)" id="use239-9" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(168.75)" id="use241-86" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="scale(-1)" id="use243-8" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(-168.75)" id="use245-9" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(-157.5)" id="use247-2" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(-146.25)" id="use249-0" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(-135)" id="use251-3" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(-123.75)" id="use253-20" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(-112.5)" id="use255-9" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(-101.25)" id="use257-1" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(-90)" id="use259-9" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="matrix(0,-0.41989172,0.41989172,0,65.820349,90.039701)" id="use259-9-2" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(-78.75)" id="use261-4" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(-67.5)" id="use263-3" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="matrix(0.1606856,-0.38792937,0.38792937,0.1606856,186.11351,186.05984)" id="use263-3-96" x="0" y="0" width="100%" height="100%" style="fill:#000080;fill-opacity:1"/>
+          <use xlink:href="#cog-9" transform="rotate(-56.25)" id="use265-0" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(-45)" id="use267-6" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(-33.75)" id="use269-8" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(-22.5)" id="use271-1" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9" transform="rotate(-11.25)" id="use273-0" x="0" y="0" width="100%" height="100%"/>
+        </g>
+        <g id="mounts-0">
+          <polygon id="mount-5" stroke="#000000" stroke-width="6" stroke-linejoin="round" points="0,-35 7,-42 -7,-42 "/>
+          <use xlink:href="#mount-5" transform="rotate(72)" id="use277-37" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#mount-5" transform="rotate(144)" id="use279-2" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#mount-5" transform="rotate(-144)" id="use281-05" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#mount-5" transform="rotate(-72)" id="use283-4" x="0" y="0" width="100%" height="100%"/>
+        </g>
+      </g>
+      <mask id="mask1074">
+        <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect1062"/>
+        <circle id="circle1064" cy="-40" r="3" cx="0"/>
+        <use xlink:href="#hole-5" transform="rotate(72)" id="use1066" x="0" y="0" width="100%" height="100%"/>
+        <use xlink:href="#hole-5" transform="rotate(144)" id="use1068" x="0" y="0" width="100%" height="100%"/>
+        <use xlink:href="#hole-5" transform="rotate(-144)" id="use1070" x="0" y="0" width="100%" height="100%"/>
+        <use xlink:href="#hole-5" transform="rotate(-72)" id="use1072" x="0" y="0" width="100%" height="100%"/>
+      </mask>
+    </g>
+    <g id="mounts-0-8" transform="matrix(0.41989173,0,0,0.41989173,45.564281,103.22325)"/>
+    <g id="g7155" transform="translate(-202.30509,-38.438795)">
+      <path fill="#000080" d="m 181.09863,61.639283 c 0,-3.771397 -3.06225,-6.833642 -6.83364,-6.833642 -3.7714,0 -6.83364,3.062245 -6.83364,6.833642 0,3.771397 3.06224,6.833642 6.83364,6.833642 3.77139,0 6.83364,-3.055798 6.83364,-6.833642" id="path68-8-0" style="stroke-width:0.0644683"/>
+      <path fill="none" stroke="#808080" stroke-width="0.700203" stroke-miterlimit="10" stroke-dasharray="40.8475" d="m 177.81719,71.277297 c 2.15969,4.242015 3.28789,8.935309 3.28789,13.699518 0,16.658615 -13.51901,30.177625 -30.17762,30.177625 -16.65862,0 -30.17762,-13.51901 -30.17762,-30.177625 0,-16.658614 13.519,-30.177621 30.17762,-30.177621 5.35731,0 10.61148,1.42475 15.22741,4.119526" id="path78-8-6" style="stroke-width:0.700087;stroke-miterlimit:10;stroke-dasharray:2.10026, 2.10026;stroke-dashoffset:0"/>
+      <g id="logo-8-6" transform="matrix(0.41989173,0,0,0.41989173,150.92753,84.977003)">
+        <path id="r-6-4" transform="translate(0.5,0.5)" stroke="#000000" stroke-width="1" stroke-linejoin="round" d="M -9,-15 H 4 c 8,0 8,8 0,8 H -9 Z M -40,22 H 0 V 11 H -9 V 3 H 1 C 12,3 6,22 15,22 H 40 V 3 h -6 v 2 c 0,8 -9,7 -10,2 -1,-5 -5,-9 -6,-9 15,-8 6,-24 -6,-24 h -47 v 11 h 10 v 26 h -15 z"/>
+        <g id="gear-78-8" mask="url(#holes-2-7)">
+          <circle r="43" fill="none" stroke="#000000" stroke-width="9" id="circle210-3-8" cx="0" cy="0"/>
+          <g id="cogs-1-8">
+            <polygon id="cog-9-0" stroke="#000000" stroke-width="3" stroke-linejoin="round" points="51,0 46,-3 46,3 "/>
+            <use xlink:href="#cog-9-0" transform="rotate(11.25)" id="use213-1-8" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(22.5)" id="use215-5-8" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(33.75)" id="use217-12-2" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(45)" id="use219-04-7" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(56.25)" id="use221-1-3" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(67.5)" id="use223-5-4" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(78.75)" id="use225-5-5" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(90)" id="use227-7-3" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(101.25)" id="use229-8-7" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(112.5)" id="use231-9-1" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(123.75)" id="use233-1-4" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(135)" id="use235-0-8" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(146.25)" id="use237-6-9" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(157.5)" id="use239-9-4" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(168.75)" id="use241-86-3" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="scale(-1)" id="use243-8-7" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-168.75)" id="use245-9-4" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-157.5)" id="use247-2-1" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-146.25)" id="use249-0-3" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-135)" id="use251-3-3" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-123.75)" id="use253-20-8" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-112.5)" id="use255-9-4" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-101.25)" id="use257-1-8" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-90)" id="use259-9-8" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-78.75)" id="use261-4-0" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-67.5)" id="use263-3-5" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-56.25)" id="use265-0-2" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-45)" id="use267-6-1" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-33.75)" id="use269-8-5" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-22.5)" id="use271-1-2" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-9-0" transform="rotate(-11.25)" id="use273-0-1" x="0" y="0" width="100%" height="100%"/>
+          </g>
+          <g id="mounts-0-3">
+            <polygon id="mount-5-2" stroke="#000000" stroke-width="6" stroke-linejoin="round" points="0,-35 7,-42 -7,-42 "/>
+            <use xlink:href="#mount-5-2" transform="rotate(72)" id="use277-37-3" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#mount-5-2" transform="rotate(144)" id="use279-2-2" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#mount-5-2" transform="rotate(-144)" id="use281-05-6" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#mount-5-2" transform="rotate(-72)" id="use283-4-7" x="0" y="0" width="100%" height="100%"/>
+          </g>
+        </g>
+        <mask id="mask1074-9">
+          <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect1062-1"/>
+          <circle id="circle1064-7" cy="-40" r="3" cx="0"/>
+          <use xlink:href="#hole-5-4" transform="rotate(72)" id="use1066-3" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#hole-5-4" transform="rotate(144)" id="use1068-5" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#hole-5-4" transform="rotate(-144)" id="use1070-5" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#hole-5-4" transform="rotate(-72)" id="use1072-2" x="0" y="0" width="100%" height="100%"/>
+        </mask>
+      </g>
+    </g>
+    <g id="g1816">
+      <g id="g80-1" transform="matrix(0.04966075,0,0,0.04966075,-77.498952,-38.702462)">
+        <path fill="#000080" d="m 835.5,473.6 c 0,-199.8 -162.2,-362 -362,-362 -199.8,0 -362,162.2 -362,362 0,199.8 162.2,362 362,362 199.8,0 362,-162.2 362,-362" id="path64-5"/>
+        <path fill="#ffffff" d="m 729.5,323.6 c 0,-58.5 -47.5,-106 -106,-106 -58.5,0 -106,47.5 -106,106 0,58.5 47.5,106 106,106 58.5,0 106,-47.5 106,-106" id="path66-0"/>
+        <g id="g76-5">
+          <path fill="#ffffff" d="m 258.1,627.8 h 117.3 v 26.7 H 227.8 V 417 h 30.3 z" id="path70-3"/>
+          <path fill="#ffffff" d="m 515.5,654.5 v -23.8 c -16,22.5 -31.9,31.3 -57,31.3 -33.2,0 -54.4,-18.2 -54.4,-46.6 V 483.8 h 27 v 120.9 c 0,20.5 13.7,33.6 35.2,33.6 28.3,0 46.6,-22.8 46.6,-57.7 v -96.8 h 27 v 170.7 z" id="path72-0"/>
+          <path fill="#ffffff" d="m 738.4,659.1 c -8.8,2.3 -13,2.9 -18.6,2.9 -17.6,0 -26.1,-7.8 -28,-25.1 -19.2,17.6 -36.5,25.1 -58,25.1 -34.5,0 -56,-19.5 -56,-50.5 0,-22.2 10.1,-37.5 30,-45.6 10.4,-4.2 16.3,-5.5 54.7,-10.4 21.5,-2.6 28.3,-7.5 28.3,-18.9 v -7.2 c 0,-16.3 -13.7,-25.4 -38.1,-25.4 -25.4,0 -37.8,9.4 -40.1,30.3 h -27.4 c 0.7,-16.9 3.9,-26.7 11.7,-35.5 11.4,-12.7 31.9,-19.9 56.7,-19.9 42,0 64.2,16.3 64.2,46.6 v 100.4 c 0,8.5 5.2,13.4 14.7,13.4 1.6,0 2.9,0 5.9,-0.7 z m -47.6,-89 c -9.1,4.2 -15,5.5 -43.7,9.4 -29,4.2 -41.1,13.4 -41.1,31.3 0,17.3 12.4,27.4 33.6,27.4 16,0 29.3,-5.2 40.4,-15.3 8.1,-7.5 10.8,-13 10.8,-22.2 z" id="path74-2"/>
+        </g>
+        <path fill="none" stroke="#808080" stroke-width="10.8612" stroke-miterlimit="10" stroke-dasharray="40.8475" d="m 890.6,261 c 33.5,65.8 51,138.6 51,212.5 0,258.4 -209.7,468.1 -468.1,468.1 C 215.1,941.6 5.4,731.9 5.4,473.5 5.4,215.1 215.1,5.4 473.5,5.4 c 83.1,0 164.6,22.1 236.2,63.9" id="path78-2"/>
+      </g>
+      <g id="logo-1" transform="matrix(0.12697235,0,0,0.12697235,-35.044379,-33.138694)">
+        <path id="r-5" transform="translate(0.5,0.5)" stroke="#000000" stroke-width="1" stroke-linejoin="round" d="M -9,-15 H 4 c 8,0 8,8 0,8 H -9 Z M -40,22 H 0 V 11 H -9 V 3 H 1 C 12,3 6,22 15,22 H 40 V 3 h -6 v 2 c 0,8 -9,7 -10,2 -1,-5 -5,-9 -6,-9 15,-8 6,-24 -6,-24 h -47 v 11 h 10 v 26 h -15 z"/>
+        <g id="gear-7" mask="url(#holes-6)">
+          <circle r="43" fill="none" stroke="#000000" stroke-width="9" id="circle210-4" cx="0" cy="0"/>
+          <g id="cogs-5">
+            <polygon id="cog-1" stroke="#000000" stroke-width="3" stroke-linejoin="round" points="46,-3 46,3 51,0 "/>
+            <use xlink:href="#cog-1" transform="rotate(11.25)" id="use213-8" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(22.5)" id="use215-9" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(33.75)" id="use217-1" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(45)" id="use219-0" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(56.25)" id="use221-2" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(67.5)" id="use223-7" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(78.75)" id="use225-0" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(90)" id="use227-6" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(101.25)" id="use229-0" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(112.5)" id="use231-8" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(123.75)" id="use233-5" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(135)" id="use235-4" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(146.25)" id="use237-1" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(157.5)" id="use239-0" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(168.75)" id="use241-8" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="scale(-1)" id="use243-0" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-168.75)" id="use245-1" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-157.5)" id="use247-5" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-146.25)" id="use249-3" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-135)" id="use251-1" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-123.75)" id="use253-2" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-112.5)" id="use255-8" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-101.25)" id="use257-3" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-90)" id="use259-4" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-78.75)" id="use261-0" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-67.5)" id="use263-4" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-56.25)" id="use265-9" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-45)" id="use267-9" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-33.75)" id="use269-0" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-22.5)" id="use271-7" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#cog-1" transform="rotate(-11.25)" id="use273-2" x="0" y="0" width="100%" height="100%"/>
+          </g>
+          <g id="mounts-8">
+            <polygon id="mount-6" stroke="#000000" stroke-width="6" stroke-linejoin="round" points="7,-42 -7,-42 0,-35 "/>
+            <use xlink:href="#mount-6" transform="rotate(72)" id="use277-3" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#mount-6" transform="rotate(144)" id="use279-0" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#mount-6" transform="rotate(-144)" id="use281-0" x="0" y="0" width="100%" height="100%"/>
+            <use xlink:href="#mount-6" transform="rotate(-72)" id="use283-3" x="0" y="0" width="100%" height="100%"/>
+          </g>
+        </g>
+        <mask id="mask434">
+          <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect422"/>
+          <circle id="circle424" cy="-40" r="3" cx="0"/>
+          <use xlink:href="#hole-4" transform="rotate(72)" id="use426" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#hole-4" transform="rotate(144)" id="use428" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#hole-4" transform="rotate(-144)" id="use430" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#hole-4" transform="rotate(-72)" id="use432" x="0" y="0" width="100%" height="100%"/>
+        </mask>
+      </g>
+    </g>
+    <path fill="none" stroke="#808080" stroke-width="0.700203" stroke-miterlimit="10" stroke-dasharray="40.8475" d="m -25.309009,112.1464 c 2.159689,4.24201 3.287885,8.93531 3.287885,13.69952 0,16.65861 -13.519007,30.17762 -30.177621,30.17762 -16.658614,0 -30.177621,-13.51901 -30.177621,-30.17762 0,-16.65862 13.519007,-30.177624 30.177621,-30.177624 5.077211,0 10.061776,1.279659 14.498228,3.707274" id="path78-8-9" style="stroke-width:0.700087;stroke-miterlimit:10;stroke-dasharray:2.10026, 2.10026;stroke-dashoffset:0" sodipodi:nodetypes="cssssc"/>
+    <g id="logo-8-1" transform="matrix(0.41989173,0,0,0.41989173,-52.198674,125.8461)">
+      <path id="r-6-2" transform="translate(0.5,0.5)" stroke="#000000" stroke-width="1" stroke-linejoin="round" d="M -9,-15 H 4 c 8,0 8,8 0,8 H -9 Z M -40,22 H 0 V 11 H -9 V 3 H 1 C 12,3 6,22 15,22 H 40 V 3 h -6 v 2 c 0,8 -9,7 -10,2 -1,-5 -5,-9 -6,-9 15,-8 6,-24 -6,-24 h -47 v 11 h 10 v 26 h -15 z"/>
+      <g id="gear-78-7" mask="url(#holes-2-3)">
+        <circle r="43" fill="none" stroke="#000000" stroke-width="9" id="circle210-3-0" cx="0" cy="0"/>
+        <g id="cogs-1-9">
+          <polygon id="cog-9-3" stroke="#000000" stroke-width="3" stroke-linejoin="round" points="51,0 46,-3 46,3 "/>
+          <use xlink:href="#cog-9-3" transform="rotate(11.25)" id="use213-1-6" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(22.5)" id="use215-5-0" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(33.75)" id="use217-12-6" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(45)" id="use219-04-2" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(56.25)" id="use221-1-6" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(67.5)" id="use223-5-1" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(78.75)" id="use225-5-8" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(90)" id="use227-7-7" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(101.25)" id="use229-8-9" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(112.5)" id="use231-9-2" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(123.75)" id="use233-1-0" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(135)" id="use235-0-2" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(146.25)" id="use237-6-3" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(157.5)" id="use239-9-7" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(168.75)" id="use241-86-5" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="scale(-1)" id="use243-8-9" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-168.75)" id="use245-9-2" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-157.5)" id="use247-2-2" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-146.25)" id="use249-0-8" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-135)" id="use251-3-9" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-123.75)" id="use253-20-7" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-112.5)" id="use255-9-3" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-101.25)" id="use257-1-6" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-90)" id="use259-9-1" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-78.75)" id="use261-4-2" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-67.5)" id="use263-3-9" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-56.25)" id="use265-0-3" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-45)" id="use267-6-19" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-33.75)" id="use269-8-4" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-22.5)" id="use271-1-7" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-3" transform="rotate(-11.25)" id="use273-0-8" x="0" y="0" width="100%" height="100%"/>
+        </g>
+        <g id="mounts-0-4">
+          <polygon id="mount-5-5" stroke="#000000" stroke-width="6" stroke-linejoin="round" points="0,-35 7,-42 -7,-42 "/>
+          <use xlink:href="#mount-5-5" transform="rotate(72)" id="use277-37-0" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#mount-5-5" transform="rotate(144)" id="use279-2-3" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#mount-5-5" transform="rotate(-144)" id="use281-05-61" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#mount-5-5" transform="rotate(-72)" id="use283-4-0" x="0" y="0" width="100%" height="100%"/>
+        </g>
+      </g>
+      <mask id="mask1074-6">
+        <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect1062-3"/>
+        <circle id="circle1064-2" cy="-40" r="3" cx="0"/>
+        <use xlink:href="#hole-5-5" transform="rotate(72)" id="use1066-0" x="0" y="0" width="100%" height="100%"/>
+        <use xlink:href="#hole-5-5" transform="rotate(144)" id="use1068-6" x="0" y="0" width="100%" height="100%"/>
+        <use xlink:href="#hole-5-5" transform="rotate(-144)" id="use1070-1" x="0" y="0" width="100%" height="100%"/>
+        <use xlink:href="#hole-5-5" transform="rotate(-72)" id="use1072-5" x="0" y="0" width="100%" height="100%"/>
+      </mask>
+    </g>
+    <circle r="5.5361533" fill="none" stroke="#000000" stroke-width="1.15873" id="circle210-6-1-4" cx="-31.085136" cy="104.01665" style="fill:#000080;fill-opacity:1;stroke:#000080;stroke-opacity:1"/>
+    <g id="g2004">
+      <path id="cog-7-0-7" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -24.518997,104.01665 -0.643739,-0.38624 v 0.77248 z"/>
+      <path id="use213-7-1-6" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -25.351885,105.55087 0.706722,-0.25323 -0.556017,-0.50441 z"/>
+      <path id="use215-4-5-5" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -25.76136,106.6399 0.742546,-0.1105 -0.446929,-0.60319 z"/>
+      <path id="use217-0-4-6" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -26.375425,107.62811 0.749834,0.0365 -0.320663,-0.6788 z"/>
+      <path id="use219-7-7-9" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -27.170481,108.47753 0.728307,0.18208 -0.182076,-0.72831 z"/>
+      <path id="use221-20-9-3" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -28.115974,109.15553 0.678791,0.32066 -0.03649,-0.74983 z"/>
+      <path id="use223-9-2-7" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -29.175571,109.63604 0.60319,0.44693 0.110494,-0.74255 z"/>
+      <path id="use225-4-1-4" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -30.308551,109.9006 0.504408,0.55602 0.253235,-0.70672 z"/>
+      <path id="use227-0-9-5" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -31.471375,109.93905 0.386243,0.64374 0.386243,-0.64374 z"/>
+      <path id="use229-6-2-2" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -32.619356,109.7499 0.253234,0.70672 0.504409,-0.55602 z"/>
+      <path id="use231-97-3-5" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -33.708377,109.34042 0.110494,0.74255 0.60319,-0.44693 z"/>
+      <path id="use233-9-6-4" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -34.696589,108.72636 -0.03649,0.74983 0.678791,-0.32066 z"/>
+      <path id="use235-1-6-7" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -35.546014,107.9313 -0.182077,0.72831 0.728307,-0.18208 z"/>
+      <path id="use237-3-4-4" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -36.22401,106.98581 -0.320664,0.67879 0.749834,-0.0365 z"/>
+      <path id="use239-3-2-4" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -36.704522,105.92621 -0.446928,0.60319 0.742546,0.1105 z"/>
+      <path id="use241-5-8-3" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -36.969084,104.79323 -0.556017,0.50441 0.706722,0.25323 z"/>
+      <path id="use243-05-7-0" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -37.007529,103.63041 -0.643738,0.38624 0.643738,0.38624 z"/>
+      <path id="use245-0-7-7" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -36.818379,102.48243 -0.706722,0.25323 0.556017,0.50441 z"/>
+      <path id="use247-6-0-8" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -36.408904,101.39341 -0.742546,0.11049 0.446928,0.60319 z"/>
+      <path id="use249-2-2-6" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -35.79484,100.40519 -0.749834,-0.0365 0.320664,0.67879 z"/>
+      <path id="use251-5-0-8" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -34.999784,99.555768 -0.728307,-0.182076 0.182077,0.728308 z"/>
+      <path id="use253-3-8-8" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -34.05429,98.877773 -0.678791,-0.320664 0.03649,0.749835 z"/>
+      <path id="use255-6-2-4" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -32.994693,98.39726 -0.60319,-0.446928 -0.110494,0.742546 z"/>
+      <path id="use257-14-9-3" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -31.861713,98.132699 -0.504409,-0.556018 -0.253234,0.706722 z"/>
+      <path id="use259-2-9-1" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -30.698889,98.094254 -0.386243,-0.643739 -0.386243,0.643739 z"/>
+      <path id="use261-04-9-4" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -29.550908,98.283403 -0.253235,-0.706722 -0.504408,0.556018 z"/>
+      <path id="use263-9-2-9" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -28.461887,98.692878 -0.110494,-0.742546 -0.60319,0.446929 z"/>
+      <path id="use265-90-6-2" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -27.473675,99.306943 0.03649,-0.749835 -0.678791,0.320665 z"/>
+      <path id="use267-0-6-0" style="fill:#000080;stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill-opacity:1" d="m -26.62425,100.102 0.182076,-0.728308 -0.728307,0.182076 z"/>
+      <path id="use269-7-4-6" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -25.946254,101.04749 0.320663,-0.67879 -0.749834,0.0365 z"/>
+      <path id="use271-3-8-8" style="stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill:#000080;fill-opacity:1" d="m -25.465743,102.10709 0.446929,-0.60319 -0.742546,-0.11049 z"/>
+      <path id="use273-08-8-9" style="fill:#000080;stroke:#000080;stroke-width:0.386243;stroke-linejoin:round;stroke-opacity:1;fill-opacity:1" d="m -25.20118,103.24007 0.556017,-0.50441 -0.706722,-0.25323 z"/>
+    </g>
+    <path style="fill:none;stroke:#000000;stroke-width:0.124387px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 105.2346,3.8975574 c 2.55861,0 5.26108,2.437081 5.26108,5.3736584 0,2.9365782 -2.27406,5.3646462 -5.26108,5.3736592 -2.98703,0.009 -5.324981,-2.46435 -5.324981,-5.3736592 0,-2.9093087 2.810741,-5.3812443 5.324981,-5.3736584" id="path2660" sodipodi:nodetypes="czzzc"/>
+    <g id="g13404">
+      <path id="use259-2" style="fill:#000080;fill-opacity:1;stroke:#000080;stroke-width:1.93796;stroke-linejoin:round;stroke-opacity:1" d="m 102.57785,34.347116 -1.93795,-3.229929 -1.937952,3.229929 z"/>
+    </g>
+    <path d="m 87.682805,101.44621 a 3.7461984,3.7461984 0 0 1 -3.746198,3.7462 3.7461984,3.7461984 0 0 1 -3.746198,-3.7462 3.7461984,3.7461984 0 0 1 3.746198,-3.746112 3.7461984,3.7461984 0 0 1 3.746198,3.746112 z" style="fill:#000080;stroke-width:0.569844;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:1.70954, 1.70954" id="path18035"/>
+    <g id="g13404-4" transform="translate(5.7804562,54.464352)">
+      <path id="use259-2-8" style="fill:#000080;fill-opacity:1;stroke:#000080;stroke-width:1.93796;stroke-linejoin:round;stroke-opacity:1" d="m 102.57785,34.347116 -1.93795,-3.229929 -1.937952,3.229929 z"/>
+    </g>
+    <path fill="none" stroke="#808080" stroke-width="0.700203" stroke-miterlimit="10" stroke-dasharray="40.8475" d="m -24.099768,185.38675 c 2.159689,4.24202 3.287885,8.93531 3.287885,13.69952 0,16.65861 -13.519007,30.17762 -30.177621,30.17762 -16.658614,0 -30.17762,-13.51901 -30.17762,-30.17762 0,-16.65862 13.519006,-30.17762 30.17762,-30.17762 5.077211,0 10.061776,1.27966 14.498228,3.70727" id="path78-8-61" style="stroke-width:0.700087;stroke-miterlimit:10;stroke-dasharray:2.10026, 2.10026;stroke-dashoffset:0" sodipodi:nodetypes="cssssc"/>
+    <g id="logo-8-5" transform="matrix(0.41989173,0,0,0.41989173,-50.989433,199.08646)">
+      <path id="r-6-9" transform="translate(0.5,0.5)" stroke="#000000" stroke-width="1" stroke-linejoin="round" d="M -9,-15 H 4 c 8,0 8,8 0,8 H -9 Z M -40,22 H 0 V 11 H -9 V 3 H 1 C 12,3 6,22 15,22 H 40 V 3 h -6 v 2 c 0,8 -9,7 -10,2 -1,-5 -5,-9 -6,-9 15,-8 6,-24 -6,-24 h -47 v 11 h 10 v 26 h -15 z"/>
+      <g id="gear-78-4" mask="url(#holes-2-2)">
+        <circle r="43" fill="none" stroke="#000000" stroke-width="9" id="circle210-3-9" cx="0" cy="0"/>
+        <g id="cogs-1-0">
+          <polygon id="cog-9-9" stroke="#000000" stroke-width="3" stroke-linejoin="round" points="46,-3 46,3 51,0 "/>
+          <use xlink:href="#cog-9-9" transform="rotate(11.25)" id="use213-1-1" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(22.5)" id="use215-5-7" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(33.75)" id="use217-12-7" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(45)" id="use219-04-1" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(56.25)" id="use221-1-1" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(67.5)" id="use223-5-5" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(78.75)" id="use225-5-9" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(90)" id="use227-7-77" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(101.25)" id="use229-8-6" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(112.5)" id="use231-9-7" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(123.75)" id="use233-1-3" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(135)" id="use235-0-6" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(146.25)" id="use237-6-5" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(157.5)" id="use239-9-6" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(168.75)" id="use241-86-39" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="scale(-1)" id="use243-8-4" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-168.75)" id="use245-9-8" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-157.5)" id="use247-2-12" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-146.25)" id="use249-0-9" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-135)" id="use251-3-39" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-123.75)" id="use253-20-0" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-112.5)" id="use255-9-8" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-101.25)" id="use257-1-85" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-90)" id="use259-9-0" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-78.75)" id="use261-4-9" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-67.5)" id="use263-3-6" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-56.25)" id="use265-0-38" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-45)" id="use267-6-5" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-33.75)" id="use269-8-6" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-22.5)" id="use271-1-1" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#cog-9-9" transform="rotate(-11.25)" id="use273-0-15" x="0" y="0" width="100%" height="100%"/>
+        </g>
+        <g id="mounts-0-9">
+          <polygon id="mount-5-8" stroke="#000000" stroke-width="6" stroke-linejoin="round" points="7,-42 -7,-42 0,-35 "/>
+          <use xlink:href="#mount-5-8" transform="rotate(72)" id="use277-37-4" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#mount-5-8" transform="rotate(144)" id="use279-2-8" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#mount-5-8" transform="rotate(-144)" id="use281-05-1" x="0" y="0" width="100%" height="100%"/>
+          <use xlink:href="#mount-5-8" transform="rotate(-72)" id="use283-4-03" x="0" y="0" width="100%" height="100%"/>
+        </g>
+      </g>
+      <mask id="mask1074-0">
+        <rect x="-60" y="-60" width="120" height="120" fill="#ffffff" id="rect1062-4"/>
+        <circle id="circle1064-4" cy="-40" r="3" cx="0"/>
+        <use xlink:href="#hole-5-2" transform="rotate(72)" id="use1066-4" x="0" y="0" width="100%" height="100%"/>
+        <use xlink:href="#hole-5-2" transform="rotate(144)" id="use1068-4" x="0" y="0" width="100%" height="100%"/>
+        <use xlink:href="#hole-5-2" transform="rotate(-144)" id="use1070-7" x="0" y="0" width="100%" height="100%"/>
+        <use xlink:href="#hole-5-2" transform="rotate(-72)" id="use1072-6" x="0" y="0" width="100%" height="100%"/>
+      </mask>
+    </g>
+    <g id="g24573-3" transform="rotate(-36.695037,260.95221,222.11862)">
+      <path d="m 58.33561,11.603915 a 3.843957,3.843957 0 0 1 -3.843957,3.843957 3.843957,3.843957 0 0 1 -3.843957,-3.843957 3.843957,3.843957 0 0 1 3.843957,-3.8439573 3.843957,3.843957 0 0 1 3.843957,3.8439573 z" style="fill:#000080;stroke-width:0.584715;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:1.75414, 1.75414" id="path18035-7-1"/>
+      <g id="g7577-1-7" transform="translate(-38.944327,-99.335085)">
+        <path d="m 95.4132,113.172 3.6786,0.336 -2.6657,-2.649 z m -2.4575,0.711 2.0741,3.06 0.358,-3.738 z m -2.105,-1.456 -1.052,3.547 3.1147,-2.091 z m -0.2019,-2.552 -3.4131,1.437 3.5888,1.082 z m 1.8511,-1.769 -3.2776,-1.731 1.4371,3.459 z m 2.5407,0.317 -0.7401,-3.635 -1.7619,3.301 z m 1.3593,2.17 2.344,-2.88 -3.6667,0.73 z" style="fill:#000080;fill-opacity:1;stroke:#000080;stroke-width:1.93796;stroke-linejoin:round;stroke-opacity:1" id="path24333-7-5"/>
+      </g>
+    </g>
+    <path id="use259-9-9" style="fill:#000080;stroke:#000080;stroke-width:1.25968;stroke-linecap:round;stroke-linejoin:round" d="m 96.985217,95.927324 h 2.519351 l -1.259676,-2.099458 z"/>
+    <path d="m 87.548855,101.44543 -0.5295,1.906 2.4202,-0.355 z m -1.3013,2.798 -1.8195,0.776 1.8149,1.66 z m -2.9976,0.725 -1.7417,-0.937 -0.2304,2.42 z m -2.4335,-1.893 -0.3557,-1.944 -2.0271,1.357 z m -0.0352,-3.081997 1.2115,-1.432 -2.2564,-0.773 z m 2.3887,-1.947 1.8746,0.059 -0.8305,-2.25 z m 3.0114,0.656 1.1194,1.504997 1.2262,-2.076997 z" style="fill:#000080;stroke:#000080;stroke-width:1.25968;stroke-linecap:round;stroke-linejoin:round" id="path4135"/>
+    <g id="g46312" transform="rotate(2.6889366,51.80841,22.959625)">
+      <path d="m 57.419489,12.251174 a 3.7461984,3.7461984 0 0 1 -4.238161,3.178995 3.7461984,3.7461984 0 0 1 -3.178992,-4.238162 3.7461984,3.7461984 0 0 1 4.238148,-3.1789078 3.7461984,3.7461984 0 0 1 3.179005,4.2380748 z" style="fill:#000080;stroke-width:0.569844;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:1.70954, 1.70954" id="path18035-5"/>
+      <path d="m 57.028396,13.187268 -1.235565,1.544858 2.365139,0.624109 z m -2.29569,2.062036 -1.978069,-0.001 1.017054,2.239434 z m -3.041463,-0.510626 -1.233708,-1.545785 -1.162384,2.135028 z m -1.494426,-2.696676 0.43643,-1.927482 -2.397184,0.451767 z m 1.17814,-2.8481448 1.676585,-0.8410815 -1.77146,-1.5971231 z m 2.961458,-0.852328 1.700779,0.7905426 0.119971,-2.3953783 z m 2.51174,1.7860648 0.438326,1.823717 1.943438,-1.428471 z" style="fill:#000080;stroke:#000080;stroke-width:1.25968;stroke-linecap:round;stroke-linejoin:round" id="path4135-0"/>
+    </g>
+  </g>
+</svg>
