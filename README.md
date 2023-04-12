@@ -2,7 +2,7 @@
 
 <dl>
 <dt>author:</dt><dd>tajpulo</dd>
-<dt>version:</dt><dd>1.1.1</dd>
+<dt>version:</dt><dd>2.0.0</dd>
 <dt>badges:</dt><dd><img src="https://github.com/typho/litua/actions/workflows/release.yml/badge.svg" alt="state of the release process"/> <img src="https://github.com/typho/litua/actions/workflows/build.yml/badge.svg" alt="state of the build process"/></dd>
 </dl>
 
@@ -198,6 +198,7 @@ See [the LICENSE file](LICENSE) (Hint: MIT license).
 <dt>1.0.0</dt> <dd>improves stdout/stderr, improved documentation, CI builds, upload to crates.io</dd>
 <dt>1.1.0</dt> <dd>bugfix third argument of modify-node hook, modify-hook may now also return strings</dd>
 <dt>1.1.1</dt> <dd>bugfix: interrupted '>' sequences inside raw string content can be used again, removed hook checks from testsuite</dd>
+<dt>2.0</dt> <dd>improved docs, require whitespace before ">" in raw strings</dd>
 </dl>
 
 ## Issues
